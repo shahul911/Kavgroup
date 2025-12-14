@@ -92,12 +92,15 @@ async def admin_login(login_data: AdminLogin):
     if not admin or not verify_password(login_data.password, admin['password']):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    token = create_jwt_token(admin['username'])
+    token = create_jwt_token(admin['username'], admin.get('role', 'manager'))
     
     return {
         "success": True,
         "token": token,
-        "user": {"username": admin['username']}
+        "user": {
+            "username": admin['username'],
+            "role": admin.get('role', 'manager')
+        }
     }
 
 # Get all bookings (admin)
