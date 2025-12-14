@@ -301,13 +301,13 @@ async def upload_document(
 @api_router.get("/admin/documents")
 async def get_all_documents(
     documentType: Optional[str] = None,
-    current_user: str = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user)
 ):
     query = {}
     if documentType:
         query['documentType'] = documentType
     
-    documents = await db.documents.find(query).sort('uploadDate', -1).to_list(1000)
+    documents = await db.documents.find(query, {'_id': 0}).sort('uploadDate', -1).to_list(1000)
     return {"documents": documents}
 
 # Delete document (admin)
