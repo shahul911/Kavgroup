@@ -22,11 +22,20 @@ export const AdminEnquiries = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isConvertDialogOpen, setIsConvertDialogOpen] = useState(false);
   const [editData, setEditData] = useState({
     status: '',
     notes: '',
     followUpDate: null,
     followUpReminder: false
+  });
+  const [bookingData, setBookingData] = useState({
+    amount: '',
+    advancePaid: '',
+    balanceDue: '',
+    eventTimeFrom: '07:00 AM',
+    eventTimeTo: '08:00 PM',
+    notes: ''
   });
 
   useEffect(() => {
