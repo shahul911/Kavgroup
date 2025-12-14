@@ -193,22 +193,34 @@ export const AdminBookings = () => {
                           {booking.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <Button
-                          onClick={() => handleEdit(booking)}
-                          variant="outline"
-                          size="sm"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          onClick={() => handleDelete(booking.id)}
-                          variant="outline"
-                          size="sm"
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex gap-2">
+                          {booking.status === 'confirmed' && (
+                            <Button
+                              onClick={() => handleGenerateReceipt(booking)}
+                              size="sm"
+                              className="bg-[#D4AF37] text-black hover:bg-[#C19B2E]"
+                              title="Generate Receipt"
+                            >
+                              <FileText className="w-4 h-4" />
+                            </Button>
+                          )}
+                          <Button
+                            onClick={() => handleEdit(booking)}
+                            variant="outline"
+                            size="sm"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            onClick={() => handleDelete(booking.id)}
+                            variant="outline"
+                            size="sm"
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}
