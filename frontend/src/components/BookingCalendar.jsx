@@ -49,12 +49,22 @@ export const BookingCalendar = () => {
     );
   };
 
-  const handleDateSelect = (date) => {
-    if (date && isDateAvailable(date)) {
+  const handleDateSelect = async (date) => {
+    if (date) {
       setSelectedDate(date);
-      setIsDialogOpen(true);
-    } else if (date) {
-      toast.error('This date is already booked. Please select another date.');
+      setIsLoadingSlots(true);
+      
+      try {
+        const dateStr = date.toISOString().split('T')[0];
+        const slotsData = await getDateTimeSlots(dateStr);
+        setTimeSlots(slotsData.bookedSlots || []);
+        setIsDialogOpen(true);
+      } catch (error) {
+        toast.error('Failed to load time slots');
+        setTimeSlots([]);
+      } finally {
+        setIsLoadingSlots(false);
+      }
     }
   };
 
