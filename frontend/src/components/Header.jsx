@@ -54,12 +54,6 @@ export const Header = () => {
               Amenities
             </button>
             <button
-              onClick={() => scrollToSection('booking')}
-              className="text-gray-300 hover:text-[#D4AF37] transition-colors duration-200 font-medium"
-            >
-              Booking
-            </button>
-            <button
               onClick={() => scrollToSection('location')}
               className="text-gray-300 hover:text-[#D4AF37] transition-colors duration-200 font-medium"
             >
