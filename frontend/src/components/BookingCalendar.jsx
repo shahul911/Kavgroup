@@ -98,10 +98,10 @@ export const BookingCalendar = () => {
     <section id="booking" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Check Availability</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Check Availability & Request Booking</h2>
           <div className="w-24 h-1 bg-[#D4AF37] mx-auto mb-6"></div>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Select an available date to book K.A.V Auditorium for your special event
+            View available dates and submit a booking request. We'll contact you to confirm your reservation.
           </p>
         </div>
 
