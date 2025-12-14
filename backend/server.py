@@ -503,13 +503,64 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# User Management (admin only)
+@api_router.get("/admin/users")
+async def get_all_users(current_user: dict = Depends(require_admin)):
+    users = await db.admin_users.find({}, {'password': 0}).to_list(1000)
+    return {"users": users}
+
+@api_router.post("/admin/users")
+async def create_user(
+    user_data: AdminUserCreate,
+    current_user: dict = Depends(require_admin)
+):
+    # Check if username exists
+    existing = await db.admin_users.find_one({"username": user_data.username})
+    if existing:
+        raise HTTPException(status_code=400, detail="Username already exists")
+    
+    hashed_pw = hash_password(user_data.password)
+    new_user = AdminUser(
+        username=user_data.username,
+        password=hashed_pw,
+        role=user_data.role
+    )
+    
+    await db.admin_users.insert_one(new_user.dict())
+    
+    return {
+        "success": True,
+        "user": {
+            "id": new_user.id,
+            "username": new_user.username,
+            "role": new_user.role
+        }
+    }
+
+@api_router.delete("/admin/users/{user_id}")
+async def delete_user(
+    user_id: str,
+    current_user: dict = Depends(require_admin)
+):
+    # Don't allow deleting yourself
+    user_to_delete = await db.admin_users.find_one({"id": user_id})
+    if user_to_delete and user_to_delete['username'] == current_user['username']:
+        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+    
+    result = await db.admin_users.delete_one({"id": user_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {"success": True, "message": "User deleted"}
+
 @app.on_event("startup")
 async def startup_event():
     # Create default admin user if not exists
     admin = await db.admin_users.find_one({"username": "Shahul"})
     if not admin:
         hashed_pw = hash_password("110076@Catlife")
-        admin_user = AdminUser(username="Shahul", password=hashed_pw)
+        admin_user = AdminUser(username="Shahul", password=hashed_pw, role="admin")
         await db.admin_users.insert_one(admin_user.dict())
         logger.info("Default admin user created")
 
