@@ -43,12 +43,51 @@ api_router = APIRouter(prefix="/api")
 async def root():
     return {"message": "K.A.V Auditorium API"}
 
-# Get all booked dates
+# Get availability status for date range (for calendar display)
 @api_router.get("/bookings/availability")
-async def get_booked_dates():
+async def get_availability_overview(start_date: str = None, end_date: str = None):
+    """Get availability status for multiple dates (for calendar color coding)"""
+    from time_utils import get_date_range
+    from datetime import datetime, timedelta
+    
+    # Default to current month if not specified
+    if not start_date:
+        today = datetime.utcnow().date()
+        start_date = today.replace(day=1).strftime('%Y-%m-%d')
+    if not end_date:
+        # Get last day of next month
+        today = datetime.utcnow().date()
+        next_month = today.replace(day=28) + timedelta(days=4)
+        end_date = (next_month.replace(day=1) + timedelta(days=32)).replace(day=1).strftime('%Y-%m-%d')
+    
+    # Get all bookings
     bookings = await db.bookings.find({"status": {"$in": ["pending", "confirmed"]}}, {'_id': 0}).to_list(1000)
-    booked_dates = [booking['eventDate'] for booking in bookings]
-    return {"bookedDates": booked_dates}
+    
+    # Generate date range
+    dates_to_check = get_date_range(start_date, end_date)
+    
+    # Check availability for each date
+    date_status = {}
+    for date_str in dates_to_check:
+        # Find bookings affecting this date
+        relevant_bookings = []
+        for booking in bookings:
+            b_start = booking.get('eventDate')
+            b_end = booking.get('eventEndDate') or b_start
+            if b_start <= date_str <= b_end:
+                relevant_bookings.append(booking)
+        
+        if not relevant_bookings:
+            date_status[date_str] = 'available'
+        else:
+            # Check if fully booked
+            availability = get_daily_availability(date_str, relevant_bookings)
+            if availability['isFullyBooked']:
+                date_status[date_str] = 'fullyBooked'
+            else:
+                date_status[date_str] = 'partiallyBooked'
+    
+    return {"dateStatus": date_status}
 
 # Get time slots for a specific date
 @api_router.get("/bookings/availability/{date}")
