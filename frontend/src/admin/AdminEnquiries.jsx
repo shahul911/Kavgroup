@@ -231,8 +231,18 @@ export const AdminEnquiries = () => {
             </SelectContent>
           </Select>
         </div>
+        )}
 
-        {/* Enquiries List */}
+        {/* Calendar View */}
+        {viewMode === 'calendar' && (
+          <EnquiryCalendarView 
+            enquiries={enquiries} 
+            onDateClick={(enquiry) => handleEdit(enquiry)}
+          />
+        )}
+
+        {/* List View */}
+        {viewMode === 'list' && (
         <div className="bg-white rounded-lg shadow overflow-hidden">
           {isLoading ? (
             <div className="p-8 text-center">Loading enquiries...</div>
