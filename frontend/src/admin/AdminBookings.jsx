@@ -92,6 +92,18 @@ export const AdminBookings = () => {
     window.location.href = `tel:${phone}`;
   };
 
+  const handleGenerateReceipt = async (booking) => {
+    try {
+      toast.info('Generating receipt...');
+      const response = await generateReceipt(booking.id);
+      const backendUrl = process.env.REACT_APP_BACKEND_URL;
+      window.open(`${backendUrl}${response.receiptUrl}`, '_blank');
+      toast.success('Receipt generated successfully!');
+    } catch (error) {
+      toast.error('Failed to generate receipt');
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'confirmed': return 'bg-green-100 text-green-800';
