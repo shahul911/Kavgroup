@@ -155,15 +155,23 @@ async def get_all_bookings(
     bookings = await db.bookings.find(query).sort('eventDate', 1).to_list(1000)
     return {"bookings": bookings}
 
-# Update booking (admin)
+# Update booking (admin only)
 @api_router.put("/admin/bookings/{booking_id}")
 async def update_booking(
     booking_id: str,
     update_data: BookingUpdate,
-    current_user: str = Depends(get_current_user)
+    current_user: dict = Depends(require_admin)
 ):
     update_dict = {k: v for k, v in update_data.dict().items() if v is not None}
     update_dict['updatedAt'] = datetime.utcnow()
+    
+    # Recalculate balance if amount or advance changed
+    if 'amount' in update_dict or 'advancePaid' in update_dict:
+        booking = await db.bookings.find_one({"id": booking_id})
+        if booking:
+            amount = update_dict.get('amount', booking.get('amount', 0))
+            advance = update_dict.get('advancePaid', booking.get('advancePaid', 0))
+            update_dict['balanceDue'] = amount - advance
     
     result = await db.bookings.update_one(
         {"id": booking_id},
@@ -176,11 +184,11 @@ async def update_booking(
     booking = await db.bookings.find_one({"id": booking_id})
     return {"success": True, "booking": booking}
 
-# Delete booking (admin)
+# Delete booking (admin only)
 @api_router.delete("/admin/bookings/{booking_id}")
 async def delete_booking(
     booking_id: str,
-    current_user: str = Depends(get_current_user)
+    current_user: dict = Depends(require_admin)
 ):
     result = await db.bookings.delete_one({"id": booking_id})
     
