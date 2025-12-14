@@ -339,7 +339,7 @@ async def convert_enquiry_to_booking(
     current_user: str = Depends(get_current_user)
 ):
     # Get enquiry
-    enquiry = await db.enquiries.find_one({"id": enquiry_id})
+    enquiry = await db.enquiries.find_one({"id": enquiry_id}, {'_id': 0})
     if not enquiry:
         raise HTTPException(status_code=404, detail="Enquiry not found")
     
