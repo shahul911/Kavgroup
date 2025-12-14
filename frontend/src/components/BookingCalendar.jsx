@@ -329,20 +329,44 @@ export const BookingCalendar = () => {
               </Select>
             </div>
 
-            {/* Multi-Day Event Option */}
-            <div className="space-y-2">
-              <Label>Event End Date (Optional - for multi-day events)</Label>
-              <Calendar
-                mode="single"
-                selected={selectedEndDate}
-                onSelect={setSelectedEndDate}
-                disabled={(date) => date < selectedDate || date < new Date()}
-                className="rounded-md border"
-              />
+            {/* Date Selection */}
+            <div className="col-span-2 space-y-2">
+              <Label>Event Dates</Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-sm text-gray-600">Start Date</Label>
+                  <div className="p-3 bg-gray-50 rounded border">
+                    <p className="font-medium text-gray-900">
+                      {selectedDate ? format(selectedDate, 'MMM dd, yyyy') : 'Selected when you clicked calendar'}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm text-gray-600">End Date (Optional)</Label>
+                  <Calendar
+                    mode="single"
+                    selected={selectedEndDate}
+                    onSelect={setSelectedEndDate}
+                    disabled={(date) => !selectedDate || date < selectedDate}
+                    className="rounded-md border text-sm scale-90 origin-top-left"
+                  />
+                  {selectedEndDate && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedEndDate(null)}
+                      className="text-xs"
+                    >
+                      Clear end date (single day event)
+                    </Button>
+                  )}
+                </div>
+              </div>
               {selectedEndDate && (
-                <p className="text-sm text-gray-600">
-                  Event duration: {selectedDate && format(selectedDate, 'MMM dd')} to {format(selectedEndDate, 'MMM dd, yyyy')}
-                </p>
+                <div className="bg-blue-50 border border-blue-200 rounded p-2 text-sm text-blue-800">
+                  <p><strong>Multi-day event:</strong> {format(selectedDate, 'MMM dd')} to {format(selectedEndDate, 'MMM dd, yyyy')}</p>
+                </div>
               )}
             </div>
 
