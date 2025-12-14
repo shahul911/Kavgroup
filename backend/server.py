@@ -506,7 +506,7 @@ logger = logging.getLogger(__name__)
 # User Management (admin only)
 @api_router.get("/admin/users")
 async def get_all_users(current_user: dict = Depends(require_admin)):
-    users = await db.admin_users.find({}, {'password': 0}).to_list(1000)
+    users = await db.admin_users.find({}, {'password': 0, '_id': 0}).to_list(1000)
     return {"users": users}
 
 @api_router.post("/admin/users")
