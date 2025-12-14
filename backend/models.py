@@ -60,7 +60,13 @@ class AdminUser(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     username: str
     password: str  # Will be hashed
+    role: str = 'manager'  # admin or manager
     createdAt: datetime = Field(default_factory=datetime.utcnow)
+
+class AdminUserCreate(BaseModel):
+    username: str
+    password: str
+    role: str = 'manager'
 
 # Document Model
 class DocumentCreate(BaseModel):
