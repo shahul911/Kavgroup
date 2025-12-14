@@ -189,7 +189,7 @@ export const EditBookingDialog = ({ isOpen, onClose, booking, editData, setEditD
               <p className="text-sm"><b>Invoice:</b> {booking.invoiceNumber}</p>
             </div>
             <div className="space-y-2">
-              <Label>Event Date</Label>
+              <Label>Event Start Date</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="w-full justify-start">
@@ -202,6 +202,25 @@ export const EditBookingDialog = ({ isOpen, onClose, booking, editData, setEditD
                     mode="single"
                     selected={editData.eventDate}
                     onSelect={(date) => setEditData({ ...editData, eventDate: date })}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="space-y-2">
+              <Label>Event End Date (Multi-day)</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-start">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {editData.eventEndDate ? format(editData.eventEndDate, 'PPP') : 'Same as start'}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={editData.eventEndDate}
+                    onSelect={(date) => setEditData({ ...editData, eventEndDate: date })}
+                    disabled={(date) => editData.eventDate && date < editData.eventDate}
                   />
                 </PopoverContent>
               </Popover>
