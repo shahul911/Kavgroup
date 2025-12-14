@@ -13,10 +13,10 @@ import shutil
 from models import (
     Booking, BookingCreate, BookingUpdate,
     Enquiry, EnquiryCreate, EnquiryUpdate,
-    AdminLogin, AdminUser,
+    AdminLogin, AdminUser, AdminUserCreate,
     Document, DocumentCreate
 )
-from auth import hash_password, verify_password, create_jwt_token, get_current_user
+from auth import hash_password, verify_password, create_jwt_token, get_current_user, require_admin
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
