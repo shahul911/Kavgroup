@@ -24,6 +24,12 @@ class Booking(BaseModel):
 class BookingUpdate(BaseModel):
     status: Optional[str] = None
     notes: Optional[str] = None
+    eventDate: Optional[str] = None
+    eventTimeFrom: Optional[str] = None
+    eventTimeTo: Optional[str] = None
+    amount: Optional[float] = None
+    advancePaid: Optional[float] = None
+    balanceDue: Optional[float] = None
 
 # Enquiry Model
 class EnquiryCreate(BaseModel):
