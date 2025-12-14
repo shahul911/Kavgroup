@@ -8,7 +8,7 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { getBookings, updateBooking, deleteBooking, generateReceipt } from '../utils/api';
 import { toast } from 'sonner';
-import { Phone, Calendar, Trash2, Edit, Search } from 'lucide-react';
+import { Phone, Calendar, Trash2, Edit, Search, FileText } from 'lucide-react';
 import { format } from 'date-fns';
 
 export const AdminBookings = () => {
