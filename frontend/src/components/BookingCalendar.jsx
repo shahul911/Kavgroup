@@ -6,19 +6,20 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { getBookedDates, createEnquiry, getDateTimeSlots } from '../utils/api';
+import { getAvailabilityOverview, createEnquiry, getDateTimeSlots } from '../utils/api';
 import { eventTypes } from '../mock';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 
 export const BookingCalendar = () => {
-  const [bookedDates, setBookedDates] = useState([]);
+  const [dateStatusMap, setDateStatusMap] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedEndDate, setSelectedEndDate] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [availabilityData, setAvailabilityData] = useState(null);
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -28,26 +29,29 @@ export const BookingCalendar = () => {
   });
 
   useEffect(() => {
-    loadBookedDates();
-  }, []);
+    loadAvailabilityForMonth(currentMonth);
+  }, [currentMonth]);
 
-  const loadBookedDates = async () => {
+  const loadAvailabilityForMonth = async (monthDate) => {
     try {
-      const response = await getBookedDates();
-      const dates = response.bookedDates.map(dateStr => new Date(dateStr));
-      setBookedDates(dates);
+      // Get first and last day of the month (plus some buffer)
+      const firstDay = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
+      const lastDay = new Date(monthDate.getFullYear(), monthDate.getMonth() + 2, 0);
+      
+      const startDate = firstDay.toISOString().split('T')[0];
+      const endDate = lastDay.toISOString().split('T')[0];
+      
+      const response = await getAvailabilityOverview(startDate, endDate);
+      setDateStatusMap(response.dateStatus || {});
     } catch (error) {
+      console.error('Failed to load availability:', error);
       toast.error('Failed to load availability');
     }
   };
 
-  const isDateAvailable = (date) => {
-    return !bookedDates.some(
-      bookedDate =>
-        bookedDate.getDate() === date.getDate() &&
-        bookedDate.getMonth() === date.getMonth() &&
-        bookedDate.getFullYear() === date.getFullYear()
-    );
+  const getDateStatus = (date) => {
+    const dateStr = date.toISOString().split('T')[0];
+    return dateStatusMap[dateStr] || 'unknown';
   };
 
   const handleDateSelect = async (date) => {
