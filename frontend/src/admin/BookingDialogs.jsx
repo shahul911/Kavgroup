@@ -37,12 +37,12 @@ export const CreateBookingDialog = ({ isOpen, onClose, createData, setCreateData
             />
           </div>
           <div className="space-y-2">
-            <Label>Event Date *</Label>
+            <Label>Event Start Date *</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {createData.eventDate ? format(createData.eventDate, 'PPP') : 'Select date'}
+                  {createData.eventDate ? format(createData.eventDate, 'PPP') : 'Select start date'}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -53,6 +53,35 @@ export const CreateBookingDialog = ({ isOpen, onClose, createData, setCreateData
                 />
               </PopoverContent>
             </Popover>
+          </div>
+          <div className="space-y-2">
+            <Label>Event End Date (Optional - for multi-day)</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full justify-start">
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {createData.eventEndDate ? format(createData.eventEndDate, 'PPP') : 'Same as start date'}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={createData.eventEndDate}
+                  onSelect={(date) => setCreateData({ ...createData, eventEndDate: date })}
+                  disabled={(date) => createData.eventDate && date < createData.eventDate}
+                />
+              </PopoverContent>
+            </Popover>
+            {createData.eventEndDate && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setCreateData({ ...createData, eventEndDate: null })}
+                className="text-xs"
+              >
+                Clear end date
+              </Button>
+            )}
           </div>
           <div className="space-y-2">
             <Label>Event Type *</Label>
