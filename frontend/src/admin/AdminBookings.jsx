@@ -138,12 +138,26 @@ export const AdminBookings = () => {
 
   const handleUpdate = async () => {
     try {
-      await updateBooking(selectedBooking.id, editData);
+      const updatePayload = {
+        status: editData.status,
+        notes: editData.notes
+      };
+
+      // Include date and payment fields if changed
+      if (editData.eventDate) {
+        updatePayload.eventDate = editData.eventDate.toISOString().split('T')[0];
+      }
+      if (editData.eventTimeFrom) updatePayload.eventTimeFrom = editData.eventTimeFrom;
+      if (editData.eventTimeTo) updatePayload.eventTimeTo = editData.eventTimeTo;
+      if (editData.amount) updatePayload.amount = parseFloat(editData.amount);
+      if (editData.advancePaid) updatePayload.advancePaid = parseFloat(editData.advancePaid);
+
+      await updateBooking(selectedBooking.id, updatePayload);
       toast.success('Booking updated successfully');
       setIsEditDialogOpen(false);
       loadBookings();
     } catch (error) {
-      toast.error('Failed to update booking');
+      toast.error(error.response?.data?.detail || 'Failed to update booking');
     }
   };
 
