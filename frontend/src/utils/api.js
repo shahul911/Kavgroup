@@ -97,3 +97,13 @@ export const getDashboardStats = async () => {
   const response = await axios.get(`${API}/admin/stats`, createAuthHeader());
   return response.data;
 };
+
+export const convertEnquiryToBooking = async (enquiryId, bookingDetails) => {
+  const response = await axios.post(`${API}/admin/enquiries/${enquiryId}/convert-to-booking`, bookingDetails, createAuthHeader());
+  return response.data;
+};
+
+export const generateReceipt = async (bookingId) => {
+  const response = await axios.get(`${API}/admin/bookings/${bookingId}/receipt`, createAuthHeader());
+  return response.data;
+};
