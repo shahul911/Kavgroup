@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar as CalendarIcon, CheckCircle2, XCircle } from 'lucide-react';
 import { Calendar } from './ui/calendar';
 import { Button } from './ui/button';
@@ -6,11 +6,13 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { bookedDates, isDateAvailable, submitBooking, eventTypes } from '../mock';
+import { getBookedDates, createBooking } from '../utils/api';
+import { eventTypes } from '../mock';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 
 export const BookingCalendar = () => {
+  const [bookedDates, setBookedDates] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -19,6 +21,29 @@ export const BookingCalendar = () => {
     phone: '',
     eventType: ''
   });
+
+  useEffect(() => {
+    loadBookedDates();
+  }, []);
+
+  const loadBookedDates = async () => {
+    try {
+      const response = await getBookedDates();
+      const dates = response.bookedDates.map(dateStr => new Date(dateStr));
+      setBookedDates(dates);
+    } catch (error) {
+      toast.error('Failed to load availability');
+    }
+  };
+
+  const isDateAvailable = (date) => {
+    return !bookedDates.some(
+      bookedDate =>
+        bookedDate.getDate() === date.getDate() &&
+        bookedDate.getMonth() === date.getMonth() &&
+        bookedDate.getFullYear() === date.getFullYear()
+    );
+  };
 
   const handleDateSelect = (date) => {
     if (date && isDateAvailable(date)) {
