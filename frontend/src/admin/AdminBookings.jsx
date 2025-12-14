@@ -85,8 +85,55 @@ export const AdminBookings = () => {
 
   const handleEdit = (booking) => {
     setSelectedBooking(booking);
-    setEditData({ status: booking.status, notes: booking.notes || '' });
+    setEditData({
+      status: booking.status,
+      notes: booking.notes || '',
+      eventDate: booking.eventDate ? new Date(booking.eventDate) : null,
+      eventTimeFrom: booking.eventTimeFrom || '07:00 AM',
+      eventTimeTo: booking.eventTimeTo || '08:00 PM',
+      amount: booking.amount || '',
+      advancePaid: booking.advancePaid || '',
+      balanceDue: booking.balanceDue || ''
+    });
     setIsEditDialogOpen(true);
+  };
+
+  const handleCreate = async () => {
+    if (!createData.name || !createData.phone || !createData.eventDate || !createData.eventType || !createData.amount) {
+      toast.error('Please fill all required fields');
+      return;
+    }
+
+    try {
+      const balanceDue = parseFloat(createData.amount) - parseFloat(createData.advancePaid || 0);
+      const bookingData = {
+        ...createData,
+        eventDate: createData.eventDate.toISOString().split('T')[0],
+        amount: parseFloat(createData.amount),
+        advancePaid: parseFloat(createData.advancePaid || 0),
+        balanceDue: balanceDue,
+        status: 'confirmed'
+      };
+
+      await createBookingDirect(bookingData);
+      toast.success('Booking created successfully!');
+      setIsCreateDialogOpen(false);
+      setCreateData({
+        name: '',
+        phone: '',
+        eventDate: null,
+        eventType: '',
+        eventTimeFrom: '07:00 AM',
+        eventTimeTo: '08:00 PM',
+        amount: '',
+        advancePaid: '',
+        balanceDue: '',
+        notes: ''
+      });
+      loadBookings();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to create booking');
+    }
   };
 
   const handleUpdate = async () => {
