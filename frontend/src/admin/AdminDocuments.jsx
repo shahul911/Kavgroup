@@ -380,7 +380,7 @@ export const AdminDocuments = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Amount (₹)</Label>
+              <Label>Amount (Rs.)</Label>
               <Input
                 type="number"
                 placeholder="Enter amount"
