@@ -124,6 +124,43 @@ export const AdminEnquiries = () => {
     window.location.href = `tel:${phone}`;
   };
 
+  const handleConvertToBooking = (enquiry) => {
+    setSelectedEnquiry(enquiry);
+    setBookingData({
+      amount: '',
+      advancePaid: '',
+      balanceDue: '',
+      eventTimeFrom: '07:00 AM',
+      eventTimeTo: '08:00 PM',
+      notes: ''
+    });
+    setIsConvertDialogOpen(true);
+  };
+
+  const handleConvert = async () => {
+    if (!bookingData.amount || !bookingData.advancePaid) {
+      toast.error('Please fill amount and advance paid');
+      return;
+    }
+
+    try {
+      const balanceDue = parseFloat(bookingData.amount) - parseFloat(bookingData.advancePaid);
+      const convertData = {
+        ...bookingData,
+        amount: parseFloat(bookingData.amount),
+        advancePaid: parseFloat(bookingData.advancePaid),
+        balanceDue: balanceDue
+      };
+
+      await convertEnquiryToBooking(selectedEnquiry.id, convertData);
+      toast.success('Enquiry converted to booking successfully!');
+      setIsConvertDialogOpen(false);
+      loadEnquiries();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to convert enquiry');
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'new': return 'bg-blue-100 text-blue-800';
