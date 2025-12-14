@@ -1,0 +1,255 @@
+import React, { useState, useEffect } from 'react';
+import { AdminDashboard } from './AdminDashboard';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../components/ui/dialog';
+import { Label } from '../components/ui/label';
+import { Textarea } from '../components/ui/textarea';
+import { getBookings, updateBooking, deleteBooking } from '../utils/api';
+import { toast } from 'sonner';
+import { Phone, Calendar, Trash2, Edit, Search } from 'lucide-react';
+import { format } from 'date-fns';
+
+export const AdminBookings = () => {
+  const [bookings, setBookings] = useState([]);
+  const [filteredBookings, setFilteredBookings] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editData, setEditData] = useState({ status: '', notes: '' });
+
+  useEffect(() => {
+    loadBookings();
+  }, []);
+
+  useEffect(() => {
+    filterBookings();
+  }, [searchTerm, statusFilter, bookings]);
+
+  const loadBookings = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getBookings();
+      setBookings(response.bookings);
+    } catch (error) {
+      toast.error('Failed to load bookings');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const filterBookings = () => {
+    let filtered = [...bookings];
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(b => b.status === statusFilter);
+    }
+
+    if (searchTerm) {
+      filtered = filtered.filter(b => 
+        b.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        b.phone.includes(searchTerm) ||
+        b.eventType.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setFilteredBookings(filtered);
+  };
+
+  const handleEdit = (booking) => {
+    setSelectedBooking(booking);
+    setEditData({ status: booking.status, notes: booking.notes || '' });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdate = async () => {
+    try {
+      await updateBooking(selectedBooking.id, editData);
+      toast.success('Booking updated successfully');
+      setIsEditDialogOpen(false);
+      loadBookings();
+    } catch (error) {
+      toast.error('Failed to update booking');
+    }
+  };
+
+  const handleDelete = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to delete this booking?')) return;
+
+    try {
+      await deleteBooking(bookingId);
+      toast.success('Booking deleted successfully');
+      loadBookings();
+    } catch (error) {
+      toast.error('Failed to delete booking');
+    }
+  };
+
+  const handleCall = (phone) => {
+    window.location.href = `tel:${phone}`;
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'confirmed': return 'bg-green-100 text-green-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  return (
+    <AdminDashboard currentPage=\"bookings\">
+      <div className=\"space-y-6\">
+        <div className=\"flex items-center justify-between\">
+          <h2 className=\"text-2xl font-bold text-gray-900\">Bookings Management</h2>
+          <Button onClick={loadBookings} variant=\"outline\">Refresh</Button>
+        </div>
+
+        {/* Filters */}
+        <div className=\"bg-white p-4 rounded-lg shadow space-y-4 md:space-y-0 md:flex md:items-center md:gap-4\">
+          <div className=\"flex-1\">
+            <div className=\"relative\">
+              <Search className=\"absolute left-3 top-3 h-4 w-4 text-gray-400\" />
+              <Input
+                placeholder=\"Search by name, phone, or event type...\"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className=\"pl-10\"
+              />
+            </div>
+          </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className=\"w-full md:w-48\">
+              <SelectValue placeholder=\"Filter by status\" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value=\"all\">All Status</SelectItem>
+              <SelectItem value=\"pending\">Pending</SelectItem>
+              <SelectItem value=\"confirmed\">Confirmed</SelectItem>
+              <SelectItem value=\"cancelled\">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Bookings List */}
+        <div className=\"bg-white rounded-lg shadow overflow-hidden\">
+          {isLoading ? (
+            <div className=\"p-8 text-center\">Loading bookings...</div>
+          ) : filteredBookings.length === 0 ? (
+            <div className=\"p-8 text-center text-gray-500\">No bookings found</div>
+          ) : (
+            <div className=\"overflow-x-auto\">
+              <table className=\"min-w-full divide-y divide-gray-200\">
+                <thead className=\"bg-gray-50\">
+                  <tr>
+                    <th className=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase\">Name</th>
+                    <th className=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase\">Phone</th>
+                    <th className=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase\">Event Date</th>
+                    <th className=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase\">Event Type</th>
+                    <th className=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase\">Status</th>
+                    <th className=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase\">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className=\"bg-white divide-y divide-gray-200\">
+                  {filteredBookings.map((booking) => (
+                    <tr key={booking.id} className=\"hover:bg-gray-50\">
+                      <td className=\"px-6 py-4 whitespace-nowrap\">
+                        <div className=\"font-medium text-gray-900\">{booking.name}</div>
+                      </td>
+                      <td className=\"px-6 py-4 whitespace-nowrap\">
+                        <button
+                          onClick={() => handleCall(booking.phone)}
+                          className=\"flex items-center text-blue-600 hover:text-blue-800\"
+                        >
+                          <Phone className=\"w-4 h-4 mr-1\" />
+                          {booking.phone}
+                        </button>
+                      </td>
+                      <td className=\"px-6 py-4 whitespace-nowrap\">
+                        <div className=\"flex items-center text-gray-900\">
+                          <Calendar className=\"w-4 h-4 mr-2 text-gray-400\" />
+                          {format(new Date(booking.eventDate), 'MMM dd, yyyy')}
+                        </div>
+                      </td>
+                      <td className=\"px-6 py-4 whitespace-nowrap text-gray-900\">{booking.eventType}</td>
+                      <td className=\"px-6 py-4 whitespace-nowrap\">
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(booking.status)}`}>
+                          {booking.status}
+                        </span>
+                      </td>
+                      <td className=\"px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2\">
+                        <Button
+                          onClick={() => handleEdit(booking)}
+                          variant=\"outline\"
+                          size=\"sm\"
+                        >
+                          <Edit className=\"w-4 h-4\" />
+                        </Button>
+                        <Button
+                          onClick={() => handleDelete(booking.id)}
+                          variant=\"outline\"
+                          size=\"sm\"
+                          className=\"text-red-600 hover:text-red-700\"
+                        >
+                          <Trash2 className=\"w-4 h-4\" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Booking</DialogTitle>
+            <DialogDescription>
+              Update booking status and add notes
+            </DialogDescription>
+          </DialogHeader>
+          <div className=\"space-y-4 mt-4\">
+            <div className=\"space-y-2\">
+              <Label>Status</Label>
+              <Select value={editData.status} onValueChange={(value) => setEditData({ ...editData, status: value })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value=\"pending\">Pending</SelectItem>
+                  <SelectItem value=\"confirmed\">Confirmed</SelectItem>
+                  <SelectItem value=\"cancelled\">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className=\"space-y-2\">
+              <Label>Notes</Label>
+              <Textarea
+                value={editData.notes}
+                onChange={(e) => setEditData({ ...editData, notes: e.target.value })}
+                placeholder=\"Add any notes...\"
+                rows={4}
+              />
+            </div>
+            <div className=\"flex gap-3\">
+              <Button variant=\"outline\" onClick={() => setIsEditDialogOpen(false)} className=\"flex-1\">
+                Cancel
+              </Button>
+              <Button onClick={handleUpdate} className=\"flex-1 bg-[#D4AF37] text-black hover:bg-[#C19B2E]\">
+                Update
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </AdminDashboard>
+  );
+};
