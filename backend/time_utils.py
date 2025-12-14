@@ -1,4 +1,4 @@
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 
 def parse_time(time_str):
     """Parse time string like '04:00 PM' to time object"""
@@ -9,6 +9,29 @@ def parse_time(time_str):
             return datetime.strptime(time_str, '%H:%M').time()
         except:
             return None
+
+def parse_date(date_str):
+    """Parse date string to date object"""
+    try:
+        return datetime.strptime(date_str, '%Y-%m-%d').date()
+    except:
+        return None
+
+def get_date_range(start_date_str, end_date_str):
+    """Get list of dates between start and end (inclusive)"""
+    start = parse_date(start_date_str)
+    end = parse_date(end_date_str) if end_date_str else start
+    
+    if not start or not end:
+        return [start_date_str]
+    
+    dates = []
+    current = start
+    while current <= end:
+        dates.append(current.strftime('%Y-%m-%d'))
+        current += timedelta(days=1)
+    
+    return dates
 
 def times_overlap(start1, end1, start2, end2):
     """
