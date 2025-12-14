@@ -14,9 +14,10 @@ import { format } from 'date-fns';
 export const BookingCalendar = () => {
   const [bookedDates, setBookedDates] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedEndDate, setSelectedEndDate] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [timeSlots, setTimeSlots] = useState([]);
+  const [availabilityData, setAvailabilityData] = useState(null);
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
