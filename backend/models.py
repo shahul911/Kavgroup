@@ -37,6 +37,8 @@ class EnquiryCreate(BaseModel):
     phone: str
     eventDate: str
     eventType: str
+    eventTimeFrom: Optional[str] = '07:00 AM'
+    eventTimeTo: Optional[str] = '08:00 PM'
 
 class Enquiry(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
