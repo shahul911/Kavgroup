@@ -234,7 +234,7 @@ export const AdminDocuments = () => {
                   {doc.amount && (
                     <div className="flex justify-between">
                       <span className="text-gray-600">Amount:</span>
-                      <span className="text-gray-900 font-medium">₹{doc.amount.toLocaleString()}</span>
+                      <span className="text-gray-900 font-medium">Rs. {doc.amount.toLocaleString()}</span>
                     </div>
                   )}
                   {doc.reminderEnabled && doc.reminderDate && (
