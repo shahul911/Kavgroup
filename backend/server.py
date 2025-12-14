@@ -68,17 +68,11 @@ async def get_date_availability(date: str):
         "availableForBooking": True
     }
 
-# Create a new booking
+# Create a new booking (enquiry/request)
 @api_router.post("/bookings")
 async def create_booking(booking_data: BookingCreate):
-    # Check if date is already booked
-    existing = await db.bookings.find_one({
-        "eventDate": booking_data.eventDate,
-        "status": {"$in": ["pending", "confirmed"]}
-    })
-    
-    if existing:
-        raise HTTPException(status_code=400, detail="This date is already booked")
+    # Note: This creates an enquiry, not a confirmed booking
+    # Time conflict checking will be done when admin converts to booking
     
     booking = Booking(**booking_data.dict())
     await db.bookings.insert_one(booking.dict())
