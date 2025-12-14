@@ -99,3 +99,164 @@ def format_time_12hr(time_str):
         return time_obj.strftime('%I:%M %p')
     except:
         return time_str
+
+def check_multiday_conflict(new_booking, existing_bookings):
+    """
+    Check if a multi-day booking conflicts with existing bookings.
+    Returns (has_conflict, conflict_message)
+    """
+    new_start_date = new_booking.get('eventDate')
+    new_end_date = new_booking.get('eventEndDate') or new_start_date
+    new_start_time = new_booking.get('eventTimeFrom', '07:00 AM')
+    new_end_time = new_booking.get('eventTimeTo', '11:00 PM')
+    
+    # Get all dates covered by the new booking
+    new_dates = get_date_range(new_start_date, new_end_date)
+    
+    for existing in existing_bookings:
+        existing_start_date = existing.get('eventDate')
+        existing_end_date = existing.get('eventEndDate') or existing_start_date
+        existing_start_time = existing.get('eventTimeFrom', '07:00 AM')
+        existing_end_time = existing.get('eventTimeTo', '11:00 PM')
+        
+        # Get all dates covered by existing booking
+        existing_dates = get_date_range(existing_start_date, existing_end_date)
+        
+        # Find overlapping dates
+        overlapping_dates = set(new_dates).intersection(set(existing_dates))
+        
+        if not overlapping_dates:
+            continue
+        
+        # Check time conflicts for each overlapping date
+        for date_str in overlapping_dates:
+            # Determine the effective time range for both bookings on this specific date
+            is_new_start = (date_str == new_start_date)
+            is_new_end = (date_str == new_end_date)
+            is_existing_start = (date_str == existing_start_date)
+            is_existing_end = (date_str == existing_end_date)
+            
+            # Calculate effective time ranges
+            # For new booking
+            if is_new_start and is_new_end:
+                # Single day or same start/end date
+                new_effective_start = new_start_time
+                new_effective_end = new_end_time
+            elif is_new_start:
+                # Start day of multi-day event
+                new_effective_start = new_start_time
+                new_effective_end = '11:59 PM'
+            elif is_new_end:
+                # End day of multi-day event
+                new_effective_start = '12:00 AM'
+                new_effective_end = new_end_time
+            else:
+                # Middle day - fully booked
+                new_effective_start = '12:00 AM'
+                new_effective_end = '11:59 PM'
+            
+            # For existing booking
+            if is_existing_start and is_existing_end:
+                existing_effective_start = existing_start_time
+                existing_effective_end = existing_end_time
+            elif is_existing_start:
+                existing_effective_start = existing_start_time
+                existing_effective_end = '11:59 PM'
+            elif is_existing_end:
+                existing_effective_start = '12:00 AM'
+                existing_effective_end = existing_end_time
+            else:
+                existing_effective_start = '12:00 AM'
+                existing_effective_end = '11:59 PM'
+            
+            # Check if times overlap
+            if times_overlap(new_effective_start, new_effective_end, 
+                           existing_effective_start, existing_effective_end):
+                return True, f"Time conflict on {date_str}: {existing_effective_start} - {existing_effective_end} already booked"
+    
+    return False, None
+
+def get_daily_availability(date_str, bookings):
+    """
+    Get available and booked time slots for a specific date.
+    Returns list of available and booked periods.
+    """
+    booked_periods = []
+    
+    for booking in bookings:
+        if booking['status'] not in ['confirmed', 'pending']:
+            continue
+        
+        start_date = booking.get('eventDate')
+        end_date = booking.get('eventEndDate') or start_date
+        dates = get_date_range(start_date, end_date)
+        
+        if date_str not in dates:
+            continue
+        
+        # Determine effective time for this specific date
+        is_start = (date_str == start_date)
+        is_end = (date_str == end_date)
+        start_time = booking.get('eventTimeFrom', '07:00 AM')
+        end_time = booking.get('eventTimeTo', '11:00 PM')
+        
+        if is_start and is_end:
+            effective_start = start_time
+            effective_end = end_time
+        elif is_start:
+            effective_start = start_time
+            effective_end = '11:59 PM'
+        elif is_end:
+            effective_start = '12:00 AM'
+            effective_end = end_time
+        else:
+            effective_start = '12:00 AM'
+            effective_end = '11:59 PM'
+        
+        # Convert to 12-hour format
+        effective_start = format_time_12hr(effective_start)
+        effective_end = format_time_12hr(effective_end)
+        
+        booked_periods.append({
+            'start': effective_start,
+            'end': effective_end,
+            'customer': booking['name'],
+            'eventType': booking['eventType'],
+            'isMultiDay': start_date != end_date,
+            'eventDateRange': f"{start_date} to {end_date}" if start_date != end_date else start_date
+        })
+    
+    # Sort by start time
+    booked_periods.sort(key=lambda x: parse_time(x['start']) or time(0, 0))
+    
+    # Calculate available periods
+    available_periods = []
+    last_end = parse_time('12:00 AM')
+    day_end = parse_time('11:59 PM')
+    
+    for period in booked_periods:
+        period_start = parse_time(period['start'])
+        
+        if period_start and last_end and period_start > last_end:
+            # There's a gap - this is available time
+            available_periods.append({
+                'start': format_time_12hr(last_end.strftime('%H:%M')),
+                'end': period['start']
+            })
+        
+        period_end = parse_time(period['end'])
+        if period_end and (not last_end or period_end > last_end):
+            last_end = period_end
+    
+    # Add remaining time at end of day if available
+    if last_end and last_end < day_end:
+        available_periods.append({
+            'start': format_time_12hr(last_end.strftime('%H:%M')),
+            'end': '11:59 PM'
+        })
+    
+    return {
+        'bookedPeriods': booked_periods,
+        'availablePeriods': available_periods,
+        'isFullyBooked': len(available_periods) == 0
+    }
