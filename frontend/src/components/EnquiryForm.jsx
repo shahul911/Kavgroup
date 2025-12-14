@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { Send, CheckCircle } from 'lucide-react';
+import { Send, CheckCircle, CalendarIcon } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Calendar } from './ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { submitEnquiry, eventTypes } from '../mock';
+import { createEnquiry } from '../utils/api';
+import { eventTypes } from '../mock';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
 
 export const EnquiryForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
