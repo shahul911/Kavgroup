@@ -21,6 +21,7 @@ export const AdminEnquiries = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
+  const [viewMode, setViewMode] = useState('list'); // 'list' or 'calendar'
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isConvertDialogOpen, setIsConvertDialogOpen] = useState(false);
