@@ -155,6 +155,7 @@ export const BookingCalendar = () => {
                 mode="single"
                 selected={selectedDate}
                 onSelect={handleDateSelect}
+                onMonthChange={setCurrentMonth}
                 modifiers={modifiers}
                 modifiersClassNames={modifiersClassNames}
                 disabled={(date) => date < new Date()}
