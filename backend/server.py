@@ -138,7 +138,10 @@ async def create_booking_direct(
     booking_dict['eventTimeFrom'] = booking_data.get('eventTimeFrom', '07:00 AM')
     booking_dict['eventTimeTo'] = booking_data.get('eventTimeTo', '08:00 PM')
     
-    await db.bookings.insert_one(booking_dict)
+    result = await db.bookings.insert_one(booking_dict)
+    
+    # Remove _id from dict before returning
+    booking_dict.pop('_id', None)
     
     return {"success": True, "booking": booking_dict}
 
