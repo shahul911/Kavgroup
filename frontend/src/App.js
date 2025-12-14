@@ -29,7 +29,6 @@ const HomePage = () => {
       <Amenities />
       <Gallery />
       <Testimonials />
-      <BookingCalendar />
       <Location />
       <Contact />
       <EnquiryForm />
