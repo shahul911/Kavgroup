@@ -19,6 +19,7 @@ import { AdminBookings } from './admin/AdminBookings';
 import { AdminEnquiries } from './admin/AdminEnquiries';
 import { AdminDocuments } from './admin/AdminDocuments';
 import { AdminReminders } from './admin/AdminReminders';
+import { AdminUsers } from './admin/AdminUsers';
 
 const HomePage = () => {
   return (
