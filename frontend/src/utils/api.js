@@ -107,3 +107,24 @@ export const generateReceipt = async (bookingId) => {
   const response = await axios.get(`${API}/admin/bookings/${bookingId}/receipt`, createAuthHeader());
   return response.data;
 };
+
+export const createBookingDirect = async (bookingData) => {
+  const response = await axios.post(`${API}/admin/bookings`, bookingData, createAuthHeader());
+  return response.data;
+};
+
+// User Management
+export const getUsers = async () => {
+  const response = await axios.get(`${API}/admin/users`, createAuthHeader());
+  return response.data;
+};
+
+export const createUser = async (userData) => {
+  const response = await axios.post(`${API}/admin/users`, userData, createAuthHeader());
+  return response.data;
+};
+
+export const deleteUser = async (userId) => {
+  const response = await axios.delete(`${API}/admin/users/${userId}`, createAuthHeader());
+  return response.data;
+};
