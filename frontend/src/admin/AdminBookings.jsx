@@ -264,8 +264,18 @@ export const AdminBookings = () => {
             </SelectContent>
           </Select>
         </div>
+        )}
 
-        {/* Bookings List */}
+        {/* Calendar View */}
+        {viewMode === 'calendar' && (
+          <BookingCalendarView 
+            bookings={bookings} 
+            onDateClick={(booking) => handleEdit(booking)}
+          />
+        )}
+
+        {/* List View */}
+        {viewMode === 'list' && (
         <div className="bg-white rounded-lg shadow overflow-hidden">
           {isLoading ? (
             <div className="p-8 text-center">Loading bookings...</div>
