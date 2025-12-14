@@ -70,23 +70,28 @@ export const BookingCalendar = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone || !formData.eventType || !selectedDate) {
-      toast.error('Please fill all fields');
+    if (!formData.name || !formData.phone || !formData.eventType || !selectedDate || !formData.eventTimeFrom || !formData.eventTimeTo) {
+      toast.error('Please fill all fields including time');
       return;
     }
 
     setIsSubmitting(true);
     try {
       const enquiryData = {
-        ...formData,
-        eventDate: selectedDate.toISOString().split('T')[0]
+        name: formData.name,
+        phone: formData.phone,
+        eventType: formData.eventType,
+        eventDate: selectedDate.toISOString().split('T')[0],
+        eventTimeFrom: formData.eventTimeFrom,
+        eventTimeTo: formData.eventTimeTo
       };
       
       await createEnquiry(enquiryData);
-      toast.success('Booking request submitted successfully! We will contact you soon to confirm.');
+      toast.success('Booking request submitted successfully! We will contact you soon to confirm availability.');
       setIsDialogOpen(false);
-      setFormData({ name: '', phone: '', eventType: '' });
+      setFormData({ name: '', phone: '', eventType: '', eventTimeFrom: '', eventTimeTo: '' });
       setSelectedDate(null);
+      setTimeSlots([]);
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to submit request. Please try again.');
     } finally {
