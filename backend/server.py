@@ -201,13 +201,13 @@ async def delete_booking(
 @api_router.get("/admin/enquiries")
 async def get_all_enquiries(
     status: Optional[str] = None,
-    current_user: str = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user)
 ):
     query = {}
     if status:
         query['status'] = status
     
-    enquiries = await db.enquiries.find(query).sort('createdAt', -1).to_list(1000)
+    enquiries = await db.enquiries.find(query, {'_id': 0}).sort('createdAt', -1).to_list(1000)
     return {"enquiries": enquiries}
 
 # Update enquiry (admin)
