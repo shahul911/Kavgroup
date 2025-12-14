@@ -91,7 +91,7 @@ export const AdminDashboard = ({ children, currentPage }) => {
           <div className="flex items-center space-x-4">
             <div className="text-right hidden sm:block">
               <p className="text-sm font-medium text-gray-900">{adminUser}</p>
-              <p className="text-xs text-gray-500">Administrator</p>
+              <p className="text-xs text-gray-500">{adminRole === 'admin' ? 'Administrator' : 'Manager'}</p>
             </div>
             <Button
               onClick={handleLogout}
