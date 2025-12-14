@@ -203,7 +203,13 @@ export const AdminBookings = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">Bookings Management</h2>
-          <Button onClick={loadBookings} variant="outline">Refresh</Button>
+          <div className="flex gap-2">
+            <Button onClick={loadBookings} variant="outline">Refresh</Button>
+            <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-[#D4AF37] text-black hover:bg-[#C19B2E]">
+              <Calendar className="w-4 h-4 mr-2" />
+              Create Booking
+            </Button>
+          </div>
         </div>
 
         {/* Filters */}
