@@ -105,7 +105,6 @@ export const BookingCalendar = () => {
   };
 
   const modifiers = {
-    booked: bookedDates,
     available: (date) => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -114,7 +113,6 @@ export const BookingCalendar = () => {
   };
 
   const modifiersClassNames = {
-    booked: 'bg-red-100 text-red-900 line-through hover:bg-red-200',
     available: 'bg-green-50 hover:bg-green-100 text-green-900 font-semibold'
   };
 
