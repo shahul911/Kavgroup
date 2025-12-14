@@ -482,6 +482,57 @@ async def get_dashboard_stats(current_user: str = Depends(get_current_user)):
         "upcomingBookings": upcoming_bookings
     }
 
+# User Management (admin only)
+@api_router.get("/admin/users")
+async def get_all_users(current_user: dict = Depends(require_admin)):
+    users = await db.admin_users.find({}, {'password': 0, '_id': 0}).to_list(1000)
+    return {"users": users}
+
+@api_router.post("/admin/users")
+async def create_user(
+    user_data: AdminUserCreate,
+    current_user: dict = Depends(require_admin)
+):
+    # Check if username exists
+    existing = await db.admin_users.find_one({"username": user_data.username})
+    if existing:
+        raise HTTPException(status_code=400, detail="Username already exists")
+    
+    hashed_pw = hash_password(user_data.password)
+    new_user = AdminUser(
+        username=user_data.username,
+        password=hashed_pw,
+        role=user_data.role
+    )
+    
+    await db.admin_users.insert_one(new_user.dict())
+    
+    return {
+        "success": True,
+        "user": {
+            "id": new_user.id,
+            "username": new_user.username,
+            "role": new_user.role
+        }
+    }
+
+@api_router.delete("/admin/users/{user_id}")
+async def delete_user(
+    user_id: str,
+    current_user: dict = Depends(require_admin)
+):
+    # Don't allow deleting yourself
+    user_to_delete = await db.admin_users.find_one({"id": user_id})
+    if user_to_delete and user_to_delete['username'] == current_user['username']:
+        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+    
+    result = await db.admin_users.delete_one({"id": user_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {"success": True, "message": "User deleted"}
+
 # Include the router in the main app
 app.include_router(api_router)
 
