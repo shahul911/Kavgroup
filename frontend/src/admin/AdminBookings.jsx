@@ -361,6 +361,7 @@ export const AdminBookings = () => {
             </div>
           )}
         </div>
+        )}
       </div>
 
       <CreateBookingDialog
