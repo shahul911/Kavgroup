@@ -46,6 +46,8 @@ class Enquiry(BaseModel):
     phone: str
     eventDate: str
     eventType: str
+    eventTimeFrom: str = '07:00 AM'
+    eventTimeTo: str = '08:00 PM'
     status: str = 'new'  # new, contacted, follow-up, closed
     followUpDate: Optional[str] = None
     followUpReminder: bool = False
