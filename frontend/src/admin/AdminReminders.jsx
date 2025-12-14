@@ -185,7 +185,7 @@ export const AdminReminders = () => {
                                 </div>
                                 {doc.amount && (
                                   <div>
-                                    <span className="font-medium">Amount:</span> ₹{doc.amount.toLocaleString()}
+                                    <span className="font-medium">Amount:</span> Rs. {doc.amount.toLocaleString()}
                                   </div>
                                 )}
                                 {doc.notes && (
