@@ -103,99 +103,99 @@ export const AdminBookings = () => {
 
   return (
     <AdminDashboard currentPage="bookings">
-      <div className=\"space-y-6\">
-        <div className=\"flex items-center justify-between\">
-          <h2 className=\"text-2xl font-bold text-gray-900\">Bookings Management</h2>
-          <Button onClick={loadBookings} variant=\"outline\">Refresh</Button>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-gray-900">Bookings Management</h2>
+          <Button onClick={loadBookings} variant="outline">Refresh</Button>
         </div>
 
         {/* Filters */}
-        <div className=\"bg-white p-4 rounded-lg shadow space-y-4 md:space-y-0 md:flex md:items-center md:gap-4\">
-          <div className=\"flex-1\">
-            <div className=\"relative\">
-              <Search className=\"absolute left-3 top-3 h-4 w-4 text-gray-400\" />
+        <div className="bg-white p-4 rounded-lg shadow space-y-4 md:space-y-0 md:flex md:items-center md:gap-4">
+          <div className="flex-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
-                placeholder=\"Search by name, phone, or event type...\"
+                placeholder="Search by name, phone, or event type..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className=\"pl-10\"
+                className="pl-10"
               />
             </div>
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className=\"w-full md:w-48\">
-              <SelectValue placeholder=\"Filter by status\" />
+            <SelectTrigger className="w-full md:w-48">
+              <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value=\"all\">All Status</SelectItem>
-              <SelectItem value=\"pending\">Pending</SelectItem>
-              <SelectItem value=\"confirmed\">Confirmed</SelectItem>
-              <SelectItem value=\"cancelled\">Cancelled</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="confirmed">Confirmed</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {/* Bookings List */}
-        <div className=\"bg-white rounded-lg shadow overflow-hidden\">
+        <div className="bg-white rounded-lg shadow overflow-hidden">
           {isLoading ? (
-            <div className=\"p-8 text-center\">Loading bookings...</div>
+            <div className="p-8 text-center">Loading bookings...</div>
           ) : filteredBookings.length === 0 ? (
-            <div className=\"p-8 text-center text-gray-500\">No bookings found</div>
+            <div className="p-8 text-center text-gray-500">No bookings found</div>
           ) : (
-            <div className=\"overflow-x-auto\">
-              <table className=\"min-w-full divide-y divide-gray-200\">
-                <thead className=\"bg-gray-50\">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
                   <tr>
-                    <th className=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase\">Name</th>
-                    <th className=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase\">Phone</th>
-                    <th className=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase\">Event Date</th>
-                    <th className=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase\">Event Type</th>
-                    <th className=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase\">Status</th>
-                    <th className=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase\">Actions</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event Date</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event Type</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
-                <tbody className=\"bg-white divide-y divide-gray-200\">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {filteredBookings.map((booking) => (
-                    <tr key={booking.id} className=\"hover:bg-gray-50\">
-                      <td className=\"px-6 py-4 whitespace-nowrap\">
-                        <div className=\"font-medium text-gray-900\">{booking.name}</div>
+                    <tr key={booking.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="font-medium text-gray-900">{booking.name}</div>
                       </td>
-                      <td className=\"px-6 py-4 whitespace-nowrap\">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <button
                           onClick={() => handleCall(booking.phone)}
-                          className=\"flex items-center text-blue-600 hover:text-blue-800\"
+                          className="flex items-center text-blue-600 hover:text-blue-800"
                         >
-                          <Phone className=\"w-4 h-4 mr-1\" />
+                          <Phone className="w-4 h-4 mr-1" />
                           {booking.phone}
                         </button>
                       </td>
-                      <td className=\"px-6 py-4 whitespace-nowrap\">
-                        <div className=\"flex items-center text-gray-900\">
-                          <Calendar className=\"w-4 h-4 mr-2 text-gray-400\" />
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center text-gray-900">
+                          <Calendar className="w-4 h-4 mr-2 text-gray-400" />
                           {format(new Date(booking.eventDate), 'MMM dd, yyyy')}
                         </div>
                       </td>
-                      <td className=\"px-6 py-4 whitespace-nowrap text-gray-900\">{booking.eventType}</td>
-                      <td className=\"px-6 py-4 whitespace-nowrap\">
+                      <td className="px-6 py-4 whitespace-nowrap text-gray-900">{booking.eventType}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(booking.status)}`}>
                           {booking.status}
                         </span>
                       </td>
-                      <td className=\"px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2\">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                         <Button
                           onClick={() => handleEdit(booking)}
-                          variant=\"outline\"
-                          size=\"sm\"
+                          variant="outline"
+                          size="sm"
                         >
-                          <Edit className=\"w-4 h-4\" />
+                          <Edit className="w-4 h-4" />
                         </Button>
                         <Button
                           onClick={() => handleDelete(booking.id)}
-                          variant=\"outline\"
-                          size=\"sm\"
-                          className=\"text-red-600 hover:text-red-700\"
+                          variant="outline"
+                          size="sm"
+                          className="text-red-600 hover:text-red-700"
                         >
-                          <Trash2 className=\"w-4 h-4\" />
+                          <Trash2 className="w-4 h-4" />
                         </Button>
                       </td>
                     </tr>
@@ -216,34 +216,34 @@ export const AdminBookings = () => {
               Update booking status and add notes
             </DialogDescription>
           </DialogHeader>
-          <div className=\"space-y-4 mt-4\">
-            <div className=\"space-y-2\">
+          <div className="space-y-4 mt-4">
+            <div className="space-y-2">
               <Label>Status</Label>
               <Select value={editData.status} onValueChange={(value) => setEditData({ ...editData, status: value })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value=\"pending\">Pending</SelectItem>
-                  <SelectItem value=\"confirmed\">Confirmed</SelectItem>
-                  <SelectItem value=\"cancelled\">Cancelled</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="confirmed">Confirmed</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div className=\"space-y-2\">
+            <div className="space-y-2">
               <Label>Notes</Label>
               <Textarea
                 value={editData.notes}
                 onChange={(e) => setEditData({ ...editData, notes: e.target.value })}
-                placeholder=\"Add any notes...\"
+                placeholder="Add any notes..."
                 rows={4}
               />
             </div>
-            <div className=\"flex gap-3\">
-              <Button variant=\"outline\" onClick={() => setIsEditDialogOpen(false)} className=\"flex-1\">
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)} className="flex-1">
                 Cancel
               </Button>
-              <Button onClick={handleUpdate} className=\"flex-1 bg-[#D4AF37] text-black hover:bg-[#C19B2E]\">
+              <Button onClick={handleUpdate} className="flex-1 bg-[#D4AF37] text-black hover:bg-[#C19B2E]">
                 Update
               </Button>
             </div>
