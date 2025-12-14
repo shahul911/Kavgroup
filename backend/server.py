@@ -228,7 +228,7 @@ async def update_enquiry(
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Enquiry not found")
     
-    enquiry = await db.enquiries.find_one({"id": enquiry_id})
+    enquiry = await db.enquiries.find_one({"id": enquiry_id}, {'_id': 0})
     return {"success": True, "enquiry": enquiry}
 
 # Delete enquiry (admin)
