@@ -178,7 +178,30 @@ export const AdminEnquiries = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">Enquiries Management</h2>
-          <Button onClick={loadEnquiries} variant="outline">Refresh</Button>
+          <div className="flex gap-2">
+            {/* View Toggle */}
+            <div className="flex border rounded-lg">
+              <Button
+                variant={viewMode === 'list' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('list')}
+                className={viewMode === 'list' ? 'bg-[#D4AF37] text-black hover:bg-[#C19B2E]' : ''}
+              >
+                <List className="w-4 h-4 mr-2" />
+                List
+              </Button>
+              <Button
+                variant={viewMode === 'calendar' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('calendar')}
+                className={viewMode === 'calendar' ? 'bg-[#D4AF37] text-black hover:bg-[#C19B2E]' : ''}
+              >
+                <CalendarDays className="w-4 h-4 mr-2" />
+                Calendar
+              </Button>
+            </div>
+            <Button onClick={loadEnquiries} variant="outline">Refresh</Button>
+          </div>
         </div>
 
         {/* Filters */}
