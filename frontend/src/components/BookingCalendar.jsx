@@ -155,23 +155,23 @@ export const BookingCalendar = () => {
             </div>
 
             <div className="bg-gradient-to-r from-black via-gray-900 to-black p-8 rounded-2xl shadow-xl">
-              <h3 className="text-2xl font-semibold text-white mb-4">How to Book</h3>
+              <h3 className="text-2xl font-semibold text-white mb-4">How to Request Booking</h3>
               <ol className="space-y-3 text-gray-300">
                 <li className="flex items-start">
                   <span className="flex-shrink-0 w-6 h-6 bg-[#D4AF37] rounded-full flex items-center justify-center text-black font-bold text-sm mr-3 mt-0.5">1</span>
-                  <span>Select an available date from the calendar</span>
+                  <span>Check available dates in the calendar (green dates)</span>
                 </li>
                 <li className="flex items-start">
                   <span className="flex-shrink-0 w-6 h-6 bg-[#D4AF37] rounded-full flex items-center justify-center text-black font-bold text-sm mr-3 mt-0.5">2</span>
-                  <span>Fill in your details in the booking form</span>
+                  <span>Click on your preferred date to submit request</span>
                 </li>
                 <li className="flex items-start">
                   <span className="flex-shrink-0 w-6 h-6 bg-[#D4AF37] rounded-full flex items-center justify-center text-black font-bold text-sm mr-3 mt-0.5">3</span>
-                  <span>Submit your booking request</span>
+                  <span>Fill in your details and event information</span>
                 </li>
                 <li className="flex items-start">
                   <span className="flex-shrink-0 w-6 h-6 bg-[#D4AF37] rounded-full flex items-center justify-center text-black font-bold text-sm mr-3 mt-0.5">4</span>
-                  <span>We'll contact you to confirm your booking</span>
+                  <span>We'll call you to confirm and finalize your booking</span>
                 </li>
               </ol>
             </div>
