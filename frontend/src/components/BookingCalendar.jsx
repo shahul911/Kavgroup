@@ -184,10 +184,10 @@ export const BookingCalendar = () => {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-gray-900">
-              Book for {selectedDate && format(selectedDate, 'MMMM dd, yyyy')}
+              Request Booking for {selectedDate && format(selectedDate, 'MMMM dd, yyyy')}
             </DialogTitle>
             <DialogDescription>
-              Fill in your details to request a booking for this date
+              Submit your booking request. We'll contact you to confirm availability and details.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4 mt-4">
