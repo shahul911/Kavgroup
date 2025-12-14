@@ -31,16 +31,17 @@ export const EnquiryForm = () => {
     setIsSubmitting(true);
     try {
       const enquiryData = {
-        ...formData,
-        eventDate: formData.eventDate.toISOString(),
-        submittedAt: new Date().toISOString()
+        name: formData.name,
+        phone: formData.phone,
+        eventDate: formData.eventDate.toISOString().split('T')[0],
+        eventType: formData.eventType
       };
       
-      await submitEnquiry(enquiryData);
+      await createEnquiry(enquiryData);
       toast.success('Enquiry submitted successfully! We will contact you soon.');
       setFormData({ name: '', phone: '', eventDate: null, eventType: '' });
     } catch (error) {
-      toast.error('Failed to submit enquiry. Please try again.');
+      toast.error(error.response?.data?.detail || 'Failed to submit enquiry. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
