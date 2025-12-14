@@ -109,14 +109,26 @@ export const BookingCalendar = () => {
   };
 
   const modifiers = {
+    fullyBooked: (date) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return date >= today && getDateStatus(date) === 'fullyBooked';
+    },
+    partiallyBooked: (date) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return date >= today && getDateStatus(date) === 'partiallyBooked';
+    },
     available: (date) => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      return date >= today && isDateAvailable(date);
+      return date >= today && getDateStatus(date) === 'available';
     }
   };
 
   const modifiersClassNames = {
+    fullyBooked: 'bg-red-100 text-red-900 line-through hover:bg-red-200',
+    partiallyBooked: 'bg-orange-100 text-orange-900 hover:bg-orange-200 font-semibold',
     available: 'bg-green-50 hover:bg-green-100 text-green-900 font-semibold'
   };
 
