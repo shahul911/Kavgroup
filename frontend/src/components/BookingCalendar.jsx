@@ -53,16 +53,17 @@ export const BookingCalendar = () => {
   const handleDateSelect = async (date) => {
     if (date) {
       setSelectedDate(date);
+      setSelectedEndDate(null); // Reset end date
       setIsLoadingSlots(true);
       
       try {
         const dateStr = date.toISOString().split('T')[0];
-        const slotsData = await getDateTimeSlots(dateStr);
-        setTimeSlots(slotsData.bookedSlots || []);
+        const availability = await getDateTimeSlots(dateStr);
+        setAvailabilityData(availability);
         setIsDialogOpen(true);
       } catch (error) {
-        toast.error('Failed to load time slots');
-        setTimeSlots([]);
+        toast.error('Failed to load availability');
+        setAvailabilityData(null);
       } finally {
         setIsLoadingSlots(false);
       }
@@ -83,16 +84,19 @@ export const BookingCalendar = () => {
         phone: formData.phone,
         eventType: formData.eventType,
         eventDate: selectedDate.toISOString().split('T')[0],
+        eventEndDate: selectedEndDate ? selectedEndDate.toISOString().split('T')[0] : null,
         eventTimeFrom: formData.eventTimeFrom,
         eventTimeTo: formData.eventTimeTo
       };
       
       await createEnquiry(enquiryData);
-      toast.success('Booking request submitted successfully! We will contact you soon to confirm availability.');
+      const daysText = selectedEndDate ? ` (${selectedDate.toISOString().split('T')[0]} to ${selectedEndDate.toISOString().split('T')[0]})` : '';
+      toast.success(`Booking request submitted successfully${daysText}! We will contact you soon to confirm availability.`);
       setIsDialogOpen(false);
       setFormData({ name: '', phone: '', eventType: '', eventTimeFrom: '', eventTimeTo: '' });
       setSelectedDate(null);
-      setTimeSlots([]);
+      setSelectedEndDate(null);
+      setAvailabilityData(null);
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to submit request. Please try again.');
     } finally {
