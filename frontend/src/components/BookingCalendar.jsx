@@ -215,19 +215,54 @@ export const BookingCalendar = () => {
             </DialogDescription>
           </DialogHeader>
 
-          {/* Show booked time slots */}
-          {timeSlots.length > 0 && (
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
-              <h4 className="font-semibold text-orange-900 mb-2">⚠️ Already Booked Times:</h4>
-              <div className="space-y-2">
-                {timeSlots.map((slot, index) => (
-                  <div key={index} className="text-sm text-orange-800">
-                    <span className="font-medium">{slot.start} - {slot.end}</span>
-                    <span className="text-xs ml-2">({slot.eventType})</span>
+          {/* Show availability for selected date */}
+          {availabilityData && (
+            <div className="space-y-3 mb-4">
+              {/* Available Periods */}
+              {availabilityData.availablePeriods && availabilityData.availablePeriods.length > 0 && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-green-900 mb-2 flex items-center">
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    Available Time Slots:
+                  </h4>
+                  <div className="space-y-1">
+                    {availabilityData.availablePeriods.map((slot, index) => (
+                      <div key={index} className="text-sm text-green-800">
+                        <span className="font-medium">{slot.start} - {slot.end}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-              <p className="text-xs text-orange-700 mt-2">Please select different time slots for your event.</p>
+                </div>
+              )}
+              
+              {/* Booked Periods */}
+              {availabilityData.bookedPeriods && availabilityData.bookedPeriods.length > 0 && (
+                <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-orange-900 mb-2 flex items-center">
+                    <XCircle className="w-4 h-4 mr-2" />
+                    Already Booked Times:
+                  </h4>
+                  <div className="space-y-2">
+                    {availabilityData.bookedPeriods.map((slot, index) => (
+                      <div key={index} className="text-sm text-orange-800">
+                        <span className="font-medium">{slot.start} - {slot.end}</span>
+                        <span className="text-xs ml-2">({slot.eventType})</span>
+                        {slot.isMultiDay && (
+                          <span className="text-xs ml-2 italic">Multi-day event: {slot.eventDateRange}</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Fully Booked Warning */}
+              {availabilityData.isFullyBooked && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-red-900">⚠️ This date is fully booked</h4>
+                  <p className="text-sm text-red-700 mt-1">Please select a different date.</p>
+                </div>
+              )}
             </div>
           )}
 
