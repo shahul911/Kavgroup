@@ -54,6 +54,7 @@ function App() {
           <Route path="/admin-kav-Catlife41056/enquiries" element={<AdminEnquiries />} />
           <Route path="/admin-kav-Catlife41056/documents" element={<AdminDocuments />} />
           <Route path="/admin-kav-Catlife41056/reminders" element={<AdminReminders />} />
+          <Route path="/admin-kav-Catlife41056/users" element={<AdminUsers />} />
           
           {/* Catch all - redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
