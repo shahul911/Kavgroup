@@ -103,11 +103,50 @@ async def admin_login(login_data: AdminLogin):
         }
     }
 
-# Get all bookings (admin)
+# Create booking directly (admin/manager)
+@api_router.post("/admin/bookings")
+async def create_booking_direct(
+    booking_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    # Check if date is already booked
+    existing = await db.bookings.find_one({
+        "eventDate": booking_data['eventDate'],
+        "status": {"$in": ["pending", "confirmed"]}
+    })
+    
+    if existing:
+        raise HTTPException(status_code=400, detail="This date is already booked")
+    
+    # Generate invoice number
+    invoice_count = await db.bookings.count_documents({}) + 1
+    
+    booking = Booking(
+        name=booking_data['name'],
+        phone=booking_data['phone'],
+        eventDate=booking_data['eventDate'],
+        eventType=booking_data['eventType'],
+        status=booking_data.get('status', 'confirmed'),
+        notes=booking_data.get('notes', '')
+    )
+    
+    booking_dict = booking.dict()
+    booking_dict['invoiceNumber'] = f"{invoice_count:06d}"
+    booking_dict['amount'] = booking_data.get('amount', 0)
+    booking_dict['advancePaid'] = booking_data.get('advancePaid', 0)
+    booking_dict['balanceDue'] = booking_data.get('balanceDue', 0)
+    booking_dict['eventTimeFrom'] = booking_data.get('eventTimeFrom', '07:00 AM')
+    booking_dict['eventTimeTo'] = booking_data.get('eventTimeTo', '08:00 PM')
+    
+    await db.bookings.insert_one(booking_dict)
+    
+    return {"success": True, "booking": booking_dict}
+
+# Get all bookings (admin/manager)
 @api_router.get("/admin/bookings")
 async def get_all_bookings(
     status: Optional[str] = None,
-    current_user: str = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user)
 ):
     query = {}
     if status:
