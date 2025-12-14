@@ -307,6 +307,23 @@ export const BookingCalendar = () => {
               </Select>
             </div>
 
+            {/* Multi-Day Event Option */}
+            <div className="space-y-2">
+              <Label>Event End Date (Optional - for multi-day events)</Label>
+              <Calendar
+                mode="single"
+                selected={selectedEndDate}
+                onSelect={setSelectedEndDate}
+                disabled={(date) => date < selectedDate || date < new Date()}
+                className="rounded-md border"
+              />
+              {selectedEndDate && (
+                <p className="text-sm text-gray-600">
+                  Event duration: {selectedDate && format(selectedDate, 'MMM dd')} to {format(selectedEndDate, 'MMM dd, yyyy')}
+                </p>
+              )}
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="timeFrom">Event Start Time *</Label>
@@ -331,8 +348,8 @@ export const BookingCalendar = () => {
             </div>
 
             <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
-              <p className="font-medium mb-1">💡 Tip:</p>
-              <p>Events can span to the next day. For example: 4:00 PM to 2:00 PM next day.</p>
+              <p className="font-medium mb-1">💡 Multi-Day Events:</p>
+              <p>Select an end date above if your event spans multiple days. The start and end times will apply to the first and last days respectively.</p>
             </div>
             <div className="flex gap-3 pt-4">
               <Button
