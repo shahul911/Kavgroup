@@ -19,7 +19,31 @@ export const AdminBookings = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editData, setEditData] = useState({ status: '', notes: '' });
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [editData, setEditData] = useState({
+    status: '',
+    notes: '',
+    eventDate: null,
+    eventTimeFrom: '',
+    eventTimeTo: '',
+    amount: '',
+    advancePaid: '',
+    balanceDue: ''
+  });
+  const [createData, setCreateData] = useState({
+    name: '',
+    phone: '',
+    eventDate: null,
+    eventType: '',
+    eventTimeFrom: '07:00 AM',
+    eventTimeTo: '08:00 PM',
+    amount: '',
+    advancePaid: '',
+    balanceDue: '',
+    notes: ''
+  });
+
+  const adminRole = localStorage.getItem('adminRole');
 
   useEffect(() => {
     loadBookings();
