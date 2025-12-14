@@ -187,14 +187,16 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Public Booking Calendar - Time Slot Selection"
-    - "Admin Login Authentication"
     - "Admin Booking Creation with Time Slots"
     - "Time Conflict Detection System"
-  stuck_tasks: []
+    - "Enquiry to Booking Conversion"
+  stuck_tasks:
+    - "Admin Booking Creation with Time Slots"
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
     - agent: "testing"
       message: "Starting comprehensive testing of time-slot based booking system. Will test public calendar, admin authentication, booking creation, and time conflict detection as per review request."
+    - agent: "testing"
+      message: "TESTING COMPLETED - MIXED RESULTS: ✅ Public booking calendar and admin login work perfectly. ❌ Admin booking management has authentication issues (401 Unauthorized errors). Backend API is accessible but admin session management needs fixing. Time conflict detection cannot be tested until admin booking creation is resolved."
