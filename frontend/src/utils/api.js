@@ -14,8 +14,11 @@ const createAuthHeader = () => ({
 });
 
 // Public APIs
-export const getBookedDates = async () => {
-  const response = await axios.get(`${API}/bookings/availability`);
+export const getAvailabilityOverview = async (startDate, endDate) => {
+  const params = new URLSearchParams();
+  if (startDate) params.append('start_date', startDate);
+  if (endDate) params.append('end_date', endDate);
+  const response = await axios.get(`${API}/bookings/availability?${params.toString()}`);
   return response.data;
 };
 
