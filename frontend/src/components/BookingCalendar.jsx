@@ -200,16 +200,33 @@ export const BookingCalendar = () => {
 
       {/* Booking Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-gray-900">
               Request Booking for {selectedDate && format(selectedDate, 'MMMM dd, yyyy')}
             </DialogTitle>
             <DialogDescription>
-              Submit your booking request. We'll contact you to confirm availability and details.
+              Check available time slots and submit your booking request.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+
+          {/* Show booked time slots */}
+          {timeSlots.length > 0 && (
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+              <h4 className="font-semibold text-orange-900 mb-2">⚠️ Already Booked Times:</h4>
+              <div className="space-y-2">
+                {timeSlots.map((slot, index) => (
+                  <div key={index} className="text-sm text-orange-800">
+                    <span className="font-medium">{slot.start} - {slot.end}</span>
+                    <span className="text-xs ml-2">({slot.eventType})</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-orange-700 mt-2">Please select different time slots for your event.</p>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name *</Label>
               <Input
