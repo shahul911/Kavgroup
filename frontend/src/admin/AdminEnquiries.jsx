@@ -334,6 +334,7 @@ export const AdminEnquiries = () => {
             </div>
           )}
         </div>
+        )}
       </div>
 
       {/* Edit Dialog */}
