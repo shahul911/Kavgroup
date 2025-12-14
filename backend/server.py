@@ -372,13 +372,16 @@ async def convert_enquiry_to_booking(
     booking_dict['eventTimeFrom'] = booking_details.get('eventTimeFrom', '07:00 AM')
     booking_dict['eventTimeTo'] = booking_details.get('eventTimeTo', '08:00 PM')
     
-    await db.bookings.insert_one(booking_dict)
+    result = await db.bookings.insert_one(booking_dict)
     
     # Update enquiry status to closed
     await db.enquiries.update_one(
         {"id": enquiry_id},
         {"$set": {"status": "closed", "notes": "Converted to booking", "updatedAt": datetime.utcnow()}}
     )
+    
+    # Remove _id from dict before returning
+    booking_dict.pop('_id', None)
     
     return {"success": True, "booking": booking_dict}
 
