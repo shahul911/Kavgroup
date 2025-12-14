@@ -65,17 +65,17 @@ export const BookingCalendar = () => {
     try {
       const bookingData = {
         ...formData,
-        eventDate: selectedDate.toISOString(),
-        submittedAt: new Date().toISOString()
+        eventDate: selectedDate.toISOString().split('T')[0]
       };
       
-      await submitBooking(bookingData);
+      await createBooking(bookingData);
       toast.success('Booking request submitted successfully! We will contact you soon.');
       setIsDialogOpen(false);
       setFormData({ name: '', phone: '', eventType: '' });
       setSelectedDate(null);
+      loadBookedDates(); // Reload booked dates
     } catch (error) {
-      toast.error('Failed to submit booking. Please try again.');
+      toast.error(error.response?.data?.detail || 'Failed to submit booking. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
