@@ -245,7 +245,7 @@ export const BookingCalendar = () => {
                 className="flex-1 bg-[#D4AF37] text-black hover:bg-[#C19B2E]"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Booking'}
+                {isSubmitting ? 'Submitting...' : 'Submit Request'}
               </Button>
             </div>
           </form>
