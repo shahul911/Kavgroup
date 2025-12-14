@@ -281,6 +281,100 @@ async def delete_document(
     
     return {"success": True, "message": "Document deleted"}
 
+# Convert enquiry to booking (admin)
+@api_router.post("/admin/enquiries/{enquiry_id}/convert-to-booking")
+async def convert_enquiry_to_booking(
+    enquiry_id: str,
+    booking_details: dict,
+    current_user: str = Depends(get_current_user)
+):
+    # Get enquiry
+    enquiry = await db.enquiries.find_one({"id": enquiry_id})
+    if not enquiry:
+        raise HTTPException(status_code=404, detail="Enquiry not found")
+    
+    # Check if date is already booked
+    existing = await db.bookings.find_one({
+        "eventDate": enquiry['eventDate'],
+        "status": {"$in": ["pending", "confirmed"]}
+    })
+    
+    if existing:
+        raise HTTPException(status_code=400, detail="This date is already booked")
+    
+    # Create booking from enquiry
+    booking = Booking(
+        name=enquiry['name'],
+        phone=enquiry['phone'],
+        eventDate=enquiry['eventDate'],
+        eventType=enquiry['eventType'],
+        status='confirmed',
+        notes=booking_details.get('notes', '')
+    )
+    
+    # Add invoice number and payment details
+    invoice_count = await db.bookings.count_documents({}) + 1
+    booking_dict = booking.dict()
+    booking_dict['invoiceNumber'] = f"{invoice_count:06d}"
+    booking_dict['amount'] = booking_details.get('amount', 0)
+    booking_dict['advancePaid'] = booking_details.get('advancePaid', 0)
+    booking_dict['balanceDue'] = booking_details.get('balanceDue', 0)
+    booking_dict['eventTimeFrom'] = booking_details.get('eventTimeFrom', '07:00 AM')
+    booking_dict['eventTimeTo'] = booking_details.get('eventTimeTo', '08:00 PM')
+    
+    await db.bookings.insert_one(booking_dict)
+    
+    # Update enquiry status to closed
+    await db.enquiries.update_one(
+        {"id": enquiry_id},
+        {"$set": {"status": "closed", "notes": "Converted to booking", "updatedAt": datetime.utcnow()}}
+    )
+    
+    return {"success": True, "booking": booking_dict}
+
+# Generate receipt PDF (admin)
+@api_router.get("/admin/bookings/{booking_id}/receipt")
+async def generate_receipt(
+    booking_id: str,
+    current_user: str = Depends(get_current_user)
+):
+    from receipt_generator import generate_receipt_pdf
+    
+    booking = await db.bookings.find_one({"id": booking_id})
+    if not booking:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    
+    # Prepare receipt data
+    receipt_data = {
+        'invoice_number': booking.get('invoiceNumber', '000000'),
+        'customer_name': booking['name'],
+        'customer_phone': booking['phone'],
+        'customer_email': booking.get('email', ''),
+        'event_date': booking['eventDate'],
+        'event_time_from': booking.get('eventTimeFrom', '07:00 AM'),
+        'event_time_to': booking.get('eventTimeTo', '08:00 PM'),
+        'event_type': booking['eventType'],
+        'amount': booking.get('amount', 0),
+        'advance_paid': booking.get('advancePaid', 0),
+        'balance_due': booking.get('balanceDue', 0)
+    }
+    
+    # Generate PDF
+    receipt_dir = UPLOAD_DIR.parent / 'receipts'
+    receipt_dir.mkdir(parents=True, exist_ok=True)
+    
+    receipt_filename = f"receipt_{booking['invoiceNumber']}_{booking['name'].replace(' ', '_')}.pdf"
+    receipt_path = receipt_dir / receipt_filename
+    
+    generate_receipt_pdf(receipt_data, str(receipt_path))
+    
+    # Return file URL
+    return {
+        "success": True,
+        "receiptUrl": f"/uploads/receipts/{receipt_filename}",
+        "receiptPath": str(receipt_path)
+    }
+
 # Get reminders (admin)
 @api_router.get("/admin/reminders")
 async def get_reminders(current_user: str = Depends(get_current_user)):
