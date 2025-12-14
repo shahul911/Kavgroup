@@ -151,6 +151,7 @@ async def create_booking_direct(
         name=booking_data['name'],
         phone=booking_data['phone'],
         eventDate=booking_data['eventDate'],
+        eventEndDate=booking_data.get('eventEndDate'),
         eventType=booking_data['eventType'],
         status=booking_data.get('status', 'confirmed'),
         notes=booking_data.get('notes', '')
