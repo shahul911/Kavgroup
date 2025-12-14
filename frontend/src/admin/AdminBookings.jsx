@@ -329,49 +329,22 @@ export const AdminBookings = () => {
         </div>
       </div>
 
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Booking</DialogTitle>
-            <DialogDescription>
-              Update booking status and add notes
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label>Status</Label>
-              <Select value={editData.status} onValueChange={(value) => setEditData({ ...editData, status: value })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="confirmed">Confirmed</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Notes</Label>
-              <Textarea
-                value={editData.notes}
-                onChange={(e) => setEditData({ ...editData, notes: e.target.value })}
-                placeholder="Add any notes..."
-                rows={4}
-              />
-            </div>
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)} className="flex-1">
-                Cancel
-              </Button>
-              <Button onClick={handleUpdate} className="flex-1 bg-[#D4AF37] text-black hover:bg-[#C19B2E]">
-                Update
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <CreateBookingDialog
+        isOpen={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+        createData={createData}
+        setCreateData={setCreateData}
+        handleCreate={handleCreate}
+      />
+
+      <EditBookingDialog
+        isOpen={isEditDialogOpen}
+        onClose={() => setIsEditDialogOpen(false)}
+        booking={selectedBooking}
+        editData={editData}
+        setEditData={setEditData}
+        handleUpdate={handleUpdate}
+      />
     </AdminDashboard>
   );
 };
