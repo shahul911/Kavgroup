@@ -181,7 +181,7 @@ async def update_booking(
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Booking not found")
     
-    booking = await db.bookings.find_one({"id": booking_id})
+    booking = await db.bookings.find_one({"id": booking_id}, {'_id': 0})
     return {"success": True, "booking": booking}
 
 # Delete booking (admin only)
