@@ -161,9 +161,9 @@ def generate_receipt_pdf(booking_data, output_path):
     balance = booking_data.get('balance_due', 0)
     
     summary_data = [
-        ['', '', Paragraph('<b>Total Amount</b>', value_style), Paragraph(f"<b>₹{amount:,.2f}</b>", value_style)],
-        ['', '', Paragraph('<b>Advance Paid</b>', value_style), Paragraph(f"<b>₹{advance:,.2f}</b>", value_style)],
-        ['', '', Paragraph('<b>Balance Due</b>', value_style), Paragraph(f"<b>₹{balance:,.2f}</b>", value_style)],
+        ['', '', Paragraph('<b>Total Amount</b>', value_style), Paragraph(f"<b>Rs. {amount:,.2f}</b>", value_style)],
+        ['', '', Paragraph('<b>Advance Paid</b>', value_style), Paragraph(f"<b>Rs. {advance:,.2f}</b>", value_style)],
+        ['', '', Paragraph('<b>Balance Due</b>', value_style), Paragraph(f"<b>Rs. {balance:,.2f}</b>", value_style)],
     ]
     
     summary_table = Table(summary_data, colWidths=[2.5*inch, 1.75*inch, 1.75*inch, 1*inch])
