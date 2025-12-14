@@ -152,7 +152,7 @@ async def get_all_bookings(
     if status:
         query['status'] = status
     
-    bookings = await db.bookings.find(query).sort('eventDate', 1).to_list(1000)
+    bookings = await db.bookings.find(query, {'_id': 0}).sort('eventDate', 1).to_list(1000)
     return {"bookings": bookings}
 
 # Update booking (admin only)
