@@ -9,7 +9,7 @@ import { Textarea } from '../components/ui/textarea';
 import { Calendar } from '../components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { Switch } from '../components/ui/switch';
-import { getEnquiries, updateEnquiry, deleteEnquiry } from '../utils/api';
+import { getEnquiries, updateEnquiry, deleteEnquiry, convertEnquiryToBooking } from '../utils/api';
 import { toast } from 'sonner';
 import { Phone, Calendar as CalendarIcon, Trash2, Edit, Search, Bell } from 'lucide-react';
 import { format } from 'date-fns';
