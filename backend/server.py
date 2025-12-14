@@ -53,19 +53,31 @@ async def get_booked_dates():
 # Get time slots for a specific date
 @api_router.get("/bookings/availability/{date}")
 async def get_date_availability(date: str):
-    """Get booked time slots for a specific date"""
+    """Get available and booked time slots for a specific date"""
+    # Get all bookings that might affect this date (including multi-day events)
     bookings = await db.bookings.find({
-        "eventDate": date,
         "status": {"$in": ["pending", "confirmed"]}
     }, {'_id': 0}).to_list(1000)
     
-    booked_slots = get_available_slots(bookings, date)
+    # Filter bookings that overlap with this date
+    relevant_bookings = []
+    for booking in bookings:
+        start_date = booking.get('eventDate')
+        end_date = booking.get('eventEndDate') or start_date
+        
+        # Check if this date falls within the booking range
+        if start_date <= date <= end_date:
+            relevant_bookings.append(booking)
+    
+    # Get detailed availability for this date
+    availability = get_daily_availability(date, relevant_bookings)
     
     return {
         "date": date,
-        "isFullyBooked": False,  # Can always check remaining slots
-        "bookedSlots": booked_slots,
-        "availableForBooking": True
+        "isFullyBooked": availability['isFullyBooked'],
+        "bookedPeriods": availability['bookedPeriods'],
+        "availablePeriods": availability['availablePeriods'],
+        "availableForBooking": not availability['isFullyBooked']
     }
 
 # Create a new booking (enquiry/request)
