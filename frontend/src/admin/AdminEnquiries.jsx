@@ -373,6 +373,114 @@ export const AdminEnquiries = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Convert to Booking Dialog */}
+      <Dialog open={isConvertDialogOpen} onOpenChange={setIsConvertDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Convert Enquiry to Booking</DialogTitle>
+            <DialogDescription>
+              Enter booking details to confirm this enquiry
+            </DialogDescription>
+          </DialogHeader>
+          {selectedEnquiry && (
+            <div className="space-y-4 mt-4">
+              <div className="p-3 bg-gray-50 rounded">
+                <p className="text-sm"><b>Customer:</b> {selectedEnquiry.name}</p>
+                <p className="text-sm"><b>Phone:</b> {selectedEnquiry.phone}</p>
+                <p className="text-sm"><b>Event:</b> {selectedEnquiry.eventType}</p>
+                <p className="text-sm"><b>Date:</b> {format(new Date(selectedEnquiry.eventDate), 'MMM dd, yyyy')}</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Event Time From</Label>
+                  <Input
+                    type="time"
+                    value={bookingData.eventTimeFrom}
+                    onChange={(e) => setBookingData({ ...bookingData, eventTimeFrom: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Event Time To</Label>
+                  <Input
+                    type="time"
+                    value={bookingData.eventTimeTo}
+                    onChange={(e) => setBookingData({ ...bookingData, eventTimeTo: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Total Amount (Rs.) *</Label>
+                <Input
+                  type="number"
+                  placeholder="Enter total amount"
+                  value={bookingData.amount}
+                  onChange={(e) => {
+                    const amount = e.target.value;
+                    const advance = bookingData.advancePaid || 0;
+                    setBookingData({
+                      ...bookingData,
+                      amount: amount,
+                      balanceDue: (parseFloat(amount) - parseFloat(advance)).toString()
+                    });
+                  }}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Advance Paid (Rs.) *</Label>
+                <Input
+                  type="number"
+                  placeholder="Enter advance paid"
+                  value={bookingData.advancePaid}
+                  onChange={(e) => {
+                    const advance = e.target.value;
+                    const amount = bookingData.amount || 0;
+                    setBookingData({
+                      ...bookingData,
+                      advancePaid: advance,
+                      balanceDue: (parseFloat(amount) - parseFloat(advance)).toString()
+                    });
+                  }}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Balance Due (Rs.)</Label>
+                <Input
+                  type="number"
+                  value={bookingData.balanceDue}
+                  disabled
+                  className="bg-gray-100"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Notes</Label>
+                <Textarea
+                  value={bookingData.notes}
+                  onChange={(e) => setBookingData({ ...bookingData, notes: e.target.value })}
+                  placeholder="Add booking notes..."
+                  rows={3}
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setIsConvertDialogOpen(false)} className="flex-1">
+                  Cancel
+                </Button>
+                <Button onClick={handleConvert} className="flex-1 bg-green-600 hover:bg-green-700 text-white">
+                  Confirm Booking
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </AdminDashboard>
   );
 };
