@@ -53,9 +53,16 @@ def get_available_slots(bookings, date):
     
     for booking in bookings:
         if booking['status'] in ['confirmed', 'pending']:
+            start_time = booking.get('eventTimeFrom', '07:00 AM')
+            end_time = booking.get('eventTimeTo', '08:00 PM')
+            
+            # Convert to 12-hour format for display if needed
+            start_time = format_time_12hr(start_time)
+            end_time = format_time_12hr(end_time)
+            
             booked_slots.append({
-                'start': booking.get('eventTimeFrom', '07:00 AM'),
-                'end': booking.get('eventTimeTo', '08:00 PM'),
+                'start': start_time,
+                'end': end_time,
                 'customer': booking['name'],
                 'eventType': booking['eventType']
             })
