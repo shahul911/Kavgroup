@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { getBookedDates, createEnquiry } from '../utils/api';
+import { getBookedDates, createEnquiry, getDateTimeSlots } from '../utils/api';
 import { eventTypes } from '../mock';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
