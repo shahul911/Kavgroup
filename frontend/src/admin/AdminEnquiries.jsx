@@ -204,7 +204,8 @@ export const AdminEnquiries = () => {
           </div>
         </div>
 
-        {/* Filters */}
+        {/* Filters - Only show in list view */}
+        {viewMode === 'list' && (
         <div className="bg-white p-4 rounded-lg shadow space-y-4 md:space-y-0 md:flex md:items-center md:gap-4">
           <div className="flex-1">
             <div className="relative">
