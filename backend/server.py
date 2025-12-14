@@ -122,14 +122,24 @@ async def create_booking_direct(
     booking_data: dict,
     current_user: dict = Depends(get_current_user)
 ):
-    # Check if date is already booked
-    existing = await db.bookings.find_one({
+    # Check for time conflicts on the same date
+    existing_bookings = await db.bookings.find({
         "eventDate": booking_data['eventDate'],
         "status": {"$in": ["pending", "confirmed"]}
-    })
+    }, {'_id': 0}).to_list(1000)
     
-    if existing:
-        raise HTTPException(status_code=400, detail="This date is already booked")
+    new_start = booking_data.get('eventTimeFrom', '07:00 AM')
+    new_end = booking_data.get('eventTimeTo', '08:00 PM')
+    
+    for existing in existing_bookings:
+        existing_start = existing.get('eventTimeFrom', '07:00 AM')
+        existing_end = existing.get('eventTimeTo', '08:00 PM')
+        
+        if times_overlap(new_start, new_end, existing_start, existing_end):
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Time conflict with existing booking: {existing_start} - {existing_end}"
+            )
     
     # Generate invoice number
     invoice_count = await db.bookings.count_documents({}) + 1
