@@ -42,4 +42,10 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Security(
     """Dependency to get current authenticated user"""
     token = credentials.credentials
     payload = decode_jwt_token(token)
-    return payload['username']
+    return {'username': payload['username'], 'role': payload.get('role', 'manager')}
+
+async def require_admin(user: dict = Depends(get_current_user)):
+    """Dependency to require admin role"""
+    if user['role'] != 'admin':
+        raise HTTPException(status_code=403, detail='Admin access required')
+    return user
