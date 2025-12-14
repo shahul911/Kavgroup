@@ -19,6 +19,11 @@ export const getBookedDates = async () => {
   return response.data;
 };
 
+export const getDateTimeSlots = async (date) => {
+  const response = await axios.get(`${API}/bookings/availability/${date}`);
+  return response.data;
+};
+
 export const createBooking = async (bookingData) => {
   const response = await axios.post(`${API}/bookings`, bookingData);
   return response.data;
