@@ -21,6 +21,7 @@ export const AdminLogin = () => {
       const response = await adminLogin(credentials);
       localStorage.setItem('adminToken', response.token);
       localStorage.setItem('adminUser', response.user.username);
+      localStorage.setItem('adminRole', response.user.role);
       toast.success('Login successful!');
       navigate('/admin-kav-Catlife41056/dashboard');
     } catch (error) {
