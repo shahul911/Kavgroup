@@ -172,15 +172,22 @@ export const BookingCalendar = () => {
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 bg-green-100 rounded border-2 border-green-500"></div>
                   <div>
-                    <p className="font-medium text-gray-900">Available Dates</p>
-                    <p className="text-sm text-gray-600">Click to book</p>
+                    <p className="font-medium text-gray-900">Fully Available</p>
+                    <p className="text-sm text-gray-600">Click to book any time</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-orange-100 rounded border-2 border-orange-500"></div>
+                  <div>
+                    <p className="font-medium text-gray-900">Partially Booked</p>
+                    <p className="text-sm text-gray-600">Some time slots available</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 bg-red-100 rounded border-2 border-red-500"></div>
                   <div>
-                    <p className="font-medium text-gray-900">Booked Dates</p>
-                    <p className="text-sm text-gray-600">Not available</p>
+                    <p className="font-medium text-gray-900">Fully Booked</p>
+                    <p className="text-sm text-gray-600">No availability</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
