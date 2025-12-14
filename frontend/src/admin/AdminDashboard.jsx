@@ -47,11 +47,11 @@ export const AdminDashboard = ({ children, currentPage }) => {
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminUser');
+    localStorage.removeItem('adminRole');
     navigate('/admin-kav-Catlife41056');
     toast.success('Logged out successfully');
   };
 
-  const adminUser = localStorage.getItem('adminUser');
   const adminRole = localStorage.getItem('adminRole');
 
   const menuItems = [
