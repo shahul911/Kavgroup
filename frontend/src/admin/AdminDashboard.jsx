@@ -51,6 +51,9 @@ export const AdminDashboard = ({ children, currentPage }) => {
     toast.success('Logged out successfully');
   };
 
+  const adminUser = localStorage.getItem('adminUser');
+  const adminRole = localStorage.getItem('adminRole');
+
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: Users, path: '/admin-kav-Catlife41056/dashboard' },
     { id: 'bookings', label: 'Bookings', icon: Calendar, path: '/admin-kav-Catlife41056/bookings' },
@@ -58,6 +61,11 @@ export const AdminDashboard = ({ children, currentPage }) => {
     { id: 'documents', label: 'Documents', icon: FileText, path: '/admin-kav-Catlife41056/documents' },
     { id: 'reminders', label: 'Reminders', icon: Bell, path: '/admin-kav-Catlife41056/reminders' }
   ];
+
+  // Add Users menu only for admin
+  if (adminRole === 'admin') {
+    menuItems.push({ id: 'users', label: 'Users', icon: Users, path: '/admin-kav-Catlife41056/users' });
+  }
 
   const totalReminders = (reminders?.enquiryReminders?.length || 0) + (reminders?.documentReminders?.length || 0);
 
