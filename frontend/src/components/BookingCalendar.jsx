@@ -16,10 +16,14 @@ export const BookingCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [timeSlots, setTimeSlots] = useState([]);
+  const [isLoadingSlots, setIsLoadingSlots] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    eventType: ''
+    eventType: '',
+    eventTimeFrom: '',
+    eventTimeTo: ''
   });
 
   useEffect(() => {
