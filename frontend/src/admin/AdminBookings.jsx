@@ -96,6 +96,7 @@ export const AdminBookings = () => {
       status: booking.status,
       notes: booking.notes || '',
       eventDate: booking.eventDate ? new Date(booking.eventDate) : null,
+      eventEndDate: booking.eventEndDate ? new Date(booking.eventEndDate) : null,
       eventTimeFrom: booking.eventTimeFrom || '07:00 AM',
       eventTimeTo: booking.eventTimeTo || '08:00 PM',
       amount: booking.amount || '',
