@@ -19,10 +19,11 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password against a hash"""
     return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
-def create_jwt_token(username: str) -> str:
+def create_jwt_token(username: str, role: str) -> str:
     """Create a JWT token"""
     payload = {
         'username': username,
+        'role': role,
         'exp': datetime.utcnow() + timedelta(days=7)  # Token expires in 7 days
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
