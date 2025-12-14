@@ -390,7 +390,7 @@ async def generate_receipt(
 ):
     from receipt_generator import generate_receipt_pdf
     
-    booking = await db.bookings.find_one({"id": booking_id})
+    booking = await db.bookings.find_one({"id": booking_id}, {'_id': 0})
     if not booking:
         raise HTTPException(status_code=404, detail="Booking not found")
     
