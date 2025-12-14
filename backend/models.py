@@ -8,6 +8,7 @@ class BookingCreate(BaseModel):
     name: str
     phone: str
     eventDate: str
+    eventEndDate: Optional[str] = None  # For multi-day events
     eventType: str
 
 class Booking(BaseModel):
@@ -15,6 +16,7 @@ class Booking(BaseModel):
     name: str
     phone: str
     eventDate: str
+    eventEndDate: Optional[str] = None  # For multi-day events
     eventType: str
     status: str = 'pending'  # pending, confirmed, cancelled
     notes: Optional[str] = None
@@ -25,6 +27,7 @@ class BookingUpdate(BaseModel):
     status: Optional[str] = None
     notes: Optional[str] = None
     eventDate: Optional[str] = None
+    eventEndDate: Optional[str] = None
     eventTimeFrom: Optional[str] = None
     eventTimeTo: Optional[str] = None
     amount: Optional[float] = None
@@ -36,6 +39,7 @@ class EnquiryCreate(BaseModel):
     name: str
     phone: str
     eventDate: str
+    eventEndDate: Optional[str] = None  # For multi-day events
     eventType: str
     eventTimeFrom: Optional[str] = '07:00 AM'
     eventTimeTo: Optional[str] = '08:00 PM'
@@ -45,6 +49,7 @@ class Enquiry(BaseModel):
     name: str
     phone: str
     eventDate: str
+    eventEndDate: Optional[str] = None  # For multi-day events
     eventType: str
     eventTimeFrom: str = '07:00 AM'
     eventTimeTo: str = '08:00 PM'
