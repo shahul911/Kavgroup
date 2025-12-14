@@ -46,9 +46,27 @@ async def root():
 # Get all booked dates
 @api_router.get("/bookings/availability")
 async def get_booked_dates():
-    bookings = await db.bookings.find({"status": {"$in": ["pending", "confirmed"]}}).to_list(1000)
+    bookings = await db.bookings.find({"status": {"$in": ["pending", "confirmed"]}}, {'_id': 0}).to_list(1000)
     booked_dates = [booking['eventDate'] for booking in bookings]
     return {"bookedDates": booked_dates}
+
+# Get time slots for a specific date
+@api_router.get("/bookings/availability/{date}")
+async def get_date_availability(date: str):
+    """Get booked time slots for a specific date"""
+    bookings = await db.bookings.find({
+        "eventDate": date,
+        "status": {"$in": ["pending", "confirmed"]}
+    }, {'_id': 0}).to_list(1000)
+    
+    booked_slots = get_available_slots(bookings, date)
+    
+    return {
+        "date": date,
+        "isFullyBooked": False,  # Can always check remaining slots
+        "bookedSlots": booked_slots,
+        "availableForBooking": True
+    }
 
 # Create a new booking
 @api_router.post("/bookings")
