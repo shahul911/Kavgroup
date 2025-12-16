@@ -58,6 +58,8 @@ export const AdminDashboard = ({ children, currentPage }) => {
     { id: 'overview', label: 'Overview', icon: Users, path: '/admin-kav-Catlife41056/dashboard' },
     { id: 'bookings', label: 'Bookings', icon: Calendar, path: '/admin-kav-Catlife41056/bookings' },
     { id: 'enquiries', label: 'Enquiries', icon: MessageSquare, path: '/admin-kav-Catlife41056/enquiries', badge: stats?.newEnquiries },
+    { id: 'gallery', label: 'Gallery', icon: Image, path: '/admin-kav-Catlife41056/gallery' },
+    { id: 'testimonials', label: 'Testimonials', icon: Quote, path: '/admin-kav-Catlife41056/testimonials' },
     { id: 'documents', label: 'Documents', icon: FileText, path: '/admin-kav-Catlife41056/documents' },
     { id: 'reminders', label: 'Reminders', icon: Bell, path: '/admin-kav-Catlife41056/reminders' }
   ];
