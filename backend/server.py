@@ -439,12 +439,12 @@ async def convert_enquiry_to_booking(
     if has_conflict:
         raise HTTPException(status_code=400, detail=conflict_msg)
     
-    # Create booking from enquiry
+    # Create booking from enquiry - use provided dates or fall back to enquiry dates
     booking = Booking(
         name=enquiry['name'],
         phone=enquiry['phone'],
-        eventDate=enquiry['eventDate'],
-        eventEndDate=enquiry.get('eventEndDate') or booking_details.get('eventEndDate'),
+        eventDate=booking_details.get('eventDate', enquiry['eventDate']),
+        eventEndDate=booking_details.get('eventEndDate') or enquiry.get('eventEndDate'),
         eventType=enquiry['eventType'],
         status='confirmed',
         notes=booking_details.get('notes', '')
