@@ -327,45 +327,97 @@ export const BookingCalendar = () => {
               </Select>
             </div>
 
-            {/* Date Selection */}
-            <div className="col-span-2 space-y-2">
-              <Label>Event Dates</Label>
-              <div className="grid grid-cols-2 gap-4">
+            {/* Date Selection - User Friendly */}
+            <div className="col-span-2 space-y-3">
+              <Label className="text-lg font-semibold">Select Event Dates</Label>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Start Date */}
                 <div className="space-y-2">
-                  <Label className="text-sm text-gray-600">Start Date</Label>
-                  <div className="p-3 bg-gray-50 rounded border">
-                    <p className="font-medium text-gray-900">
-                      {selectedDate ? format(selectedDate, 'MMM dd, yyyy') : 'Selected when you clicked calendar'}
-                    </p>
+                  <Label className="text-sm font-medium text-gray-700">Check-in Date</Label>
+                  <div className="p-4 bg-gradient-to-br from-[#D4AF37]/10 to-gray-50 rounded-lg border-2 border-[#D4AF37]/30">
+                    <div className="flex items-center space-x-3">
+                      <CalendarIcon className="w-5 h-5 text-[#D4AF37]" />
+                      <div>
+                        <p className="text-xs text-gray-500 uppercase">Start Date</p>
+                        <p className="font-semibold text-gray-900">
+                          {selectedDate ? format(selectedDate, 'EEE, MMM dd, yyyy') : 'Select a date from calendar'}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                {/* End Date */}
                 <div className="space-y-2">
-                  <Label className="text-sm text-gray-600">End Date (Optional)</Label>
-                  <Calendar
-                    mode="single"
-                    selected={selectedEndDate}
-                    onSelect={setSelectedEndDate}
-                    disabled={(date) => !selectedDate || date < selectedDate}
-                    className="rounded-md border text-sm scale-90 origin-top-left"
-                  />
-                  {selectedEndDate && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSelectedEndDate(null)}
-                      className="text-xs"
-                    >
-                      Clear end date (single day event)
-                    </Button>
-                  )}
+                  <Label className="text-sm font-medium text-gray-700">Check-out Date (Optional)</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        className="w-full p-4 h-auto justify-start bg-gradient-to-br from-[#D4AF37]/10 to-gray-50 border-2 border-[#D4AF37]/30 hover:border-[#D4AF37]/50"
+                      >
+                        <div className="flex items-center space-x-3 w-full">
+                          <CalendarIcon className="w-5 h-5 text-[#D4AF37]" />
+                          <div className="text-left">
+                            <p className="text-xs text-gray-500 uppercase">End Date</p>
+                            <p className="font-semibold text-gray-900">
+                              {selectedEndDate ? format(selectedEndDate, 'EEE, MMM dd, yyyy') : 'Same day event'}
+                            </p>
+                          </div>
+                        </div>
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={selectedEndDate}
+                        onSelect={setSelectedEndDate}
+                        disabled={(date) => !selectedDate || date < selectedDate}
+                        initialFocus
+                      />
+                      {selectedEndDate && (
+                        <div className="p-3 border-t">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSelectedEndDate(null)}
+                            className="w-full"
+                          >
+                            Clear (Single day event)
+                          </Button>
+                        </div>
+                      )}
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </div>
+
+              {/* Duration Display */}
               {selectedEndDate && (
-                <div className="bg-blue-50 border border-blue-200 rounded p-2 text-sm text-blue-800">
-                  <p><strong>Multi-day event:</strong> {format(selectedDate, 'MMM dd')} to {format(selectedEndDate, 'MMM dd, yyyy')}</p>
+                <div className="bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-lg p-3">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-2xl">📅</span>
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Multi-day Event</p>
+                      <p className="text-sm text-gray-600">
+                        {format(selectedDate, 'MMM dd')} - {format(selectedEndDate, 'MMM dd, yyyy')} 
+                        <span className="ml-2 text-[#D4AF37] font-semibold">
+                          ({Math.ceil((selectedEndDate - selectedDate) / (1000 * 60 * 60 * 24)) + 1} days)
+                        </span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
+
+              {/* Business Hours Info */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-sm text-blue-800">
+                  <strong>🕒 Operating Hours:</strong> All bookings are from 9:00 AM to 10:00 PM
+                </p>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
