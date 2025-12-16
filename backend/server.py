@@ -509,10 +509,10 @@ async def generate_receipt(
     
     generate_receipt_pdf(receipt_data, str(receipt_path))
     
-    # Return file URL
+    # Return file URL - using /api prefix for proper routing
     return {
         "success": True,
-        "receiptUrl": f"/uploads/receipts/{receipt_filename}",
+        "receiptUrl": f"/api/uploads/receipts/{receipt_filename}",
         "receiptPath": str(receipt_path)
     }
 
