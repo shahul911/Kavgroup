@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Star, Quote } from 'lucide-react';
+import { getTestimonials } from '../utils/api';
 
 export const Testimonials = () => {
-  const testimonials = [
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Default placeholder testimonials if none in database
+  const defaultTestimonials = [
     {
       id: 1,
       name: 'Rajesh Kumar',
@@ -53,6 +58,26 @@ export const Testimonials = () => {
     }
   ];
 
+  useEffect(() => {
+    fetchTestimonials();
+  }, []);
+
+  const fetchTestimonials = async () => {
+    try {
+      const data = await getTestimonials();
+      if (data.testimonials && data.testimonials.length > 0) {
+        setTestimonials(data.testimonials);
+      } else {
+        setTestimonials(defaultTestimonials);
+      }
+    } catch (error) {
+      console.error('Failed to load testimonials:', error);
+      setTestimonials(defaultTestimonials);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, index) => (
       <Star
@@ -75,35 +100,43 @@ export const Testimonials = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={testimonial.id}
-              className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[#D4AF37] relative"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <div className="absolute top-4 right-4 text-[#D4AF37] opacity-20">
-                <Quote className="w-12 h-12" />
-              </div>
-              
-              <div className="relative z-10">
-                <div className="flex items-center gap-1 mb-4">
-                  {renderStars(testimonial.rating)}
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D4AF37]"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={testimonial.id}
+                className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[#D4AF37] relative"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className="absolute top-4 right-4 text-[#D4AF37] opacity-20">
+                  <Quote className="w-12 h-12" />
                 </div>
                 
-                <p className="text-gray-700 mb-6 italic leading-relaxed">
-                  "{testimonial.text}"
-                </p>
-                
-                <div className="border-t border-gray-200 pt-4">
-                  <p className="font-semibold text-gray-900 text-lg">{testimonial.name}</p>
-                  <p className="text-sm text-[#D4AF37] font-medium">{testimonial.event}</p>
-                  <p className="text-xs text-gray-500 mt-1">{testimonial.date}</p>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-1 mb-4">
+                    {renderStars(testimonial.rating)}
+                  </div>
+                  
+                  <p className="text-gray-700 mb-6 italic leading-relaxed">
+                    "{testimonial.text}"
+                  </p>
+                  
+                  <div className="border-t border-gray-200 pt-4">
+                    <p className="font-semibold text-gray-900 text-lg">{testimonial.name}</p>
+                    <p className="text-sm text-[#D4AF37] font-medium">{testimonial.event}</p>
+                    {testimonial.date && (
+                      <p className="text-xs text-gray-500 mt-1">{testimonial.date}</p>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         <div className="mt-16 bg-gradient-to-r from-black via-gray-900 to-black p-8 md:p-12 rounded-2xl text-center shadow-xl">
           <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
