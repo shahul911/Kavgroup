@@ -179,8 +179,12 @@ def check_multiday_conflict(new_booking, existing_bookings):
 def get_daily_availability(date_str, bookings):
     """
     Get available and booked time slots for a specific date.
-    Returns list of available and booked periods.
+    Returns list of available and booked periods within business hours (9 AM - 10 PM).
     """
+    # Business hours constraints
+    BUSINESS_START = parse_time('09:00 AM')
+    BUSINESS_END = parse_time('10:00 PM')
+    
     booked_periods = []
     
     for booking in bookings:
@@ -197,25 +201,36 @@ def get_daily_availability(date_str, bookings):
         # Determine effective time for this specific date
         is_start = (date_str == start_date)
         is_end = (date_str == end_date)
-        start_time = booking.get('eventTimeFrom', '07:00 AM')
-        end_time = booking.get('eventTimeTo', '11:00 PM')
+        start_time = booking.get('eventTimeFrom', '09:00 AM')
+        end_time = booking.get('eventTimeTo', '10:00 PM')
         
         if is_start and is_end:
             effective_start = start_time
             effective_end = end_time
         elif is_start:
             effective_start = start_time
-            effective_end = '11:59 PM'
+            effective_end = '10:00 PM'  # Business hours end
         elif is_end:
-            effective_start = '12:00 AM'
+            effective_start = '09:00 AM'  # Business hours start
             effective_end = end_time
         else:
-            effective_start = '12:00 AM'
-            effective_end = '11:59 PM'
+            # Middle day - fully booked during business hours
+            effective_start = '09:00 AM'
+            effective_end = '10:00 PM'
         
         # Convert to 12-hour format
         effective_start = format_time_12hr(effective_start)
         effective_end = format_time_12hr(effective_end)
+        
+        # Only include if within business hours
+        start_parsed = parse_time(effective_start)
+        end_parsed = parse_time(effective_end)
+        
+        # Adjust to business hours if needed
+        if start_parsed and start_parsed < BUSINESS_START:
+            effective_start = '09:00 AM'
+        if end_parsed and end_parsed > BUSINESS_END:
+            effective_end = '10:00 PM'
         
         booked_periods.append({
             'start': effective_start,
@@ -229,10 +244,9 @@ def get_daily_availability(date_str, bookings):
     # Sort by start time
     booked_periods.sort(key=lambda x: parse_time(x['start']) or time(0, 0))
     
-    # Calculate available periods
+    # Calculate available periods within business hours
     available_periods = []
-    last_end = parse_time('12:00 AM')
-    day_end = parse_time('11:59 PM')
+    last_end = BUSINESS_START
     
     for period in booked_periods:
         period_start = parse_time(period['start'])
@@ -248,15 +262,22 @@ def get_daily_availability(date_str, bookings):
         if period_end and (not last_end or period_end > last_end):
             last_end = period_end
     
-    # Add remaining time at end of day if available
-    if last_end and last_end < day_end:
+    # Add remaining time until business hours end if available
+    if last_end and last_end < BUSINESS_END:
         available_periods.append({
             'start': format_time_12hr(last_end.strftime('%H:%M')),
-            'end': '11:59 PM'
+            'end': '10:00 PM'
         })
+    
+    # Check if fully booked within business hours
+    is_fully_booked = len(available_periods) == 0 or (
+        len(booked_periods) > 0 and 
+        parse_time(booked_periods[0]['start']) <= BUSINESS_START and
+        parse_time(booked_periods[-1]['end']) >= BUSINESS_END
+    )
     
     return {
         'bookedPeriods': booked_periods,
         'availablePeriods': available_periods,
-        'isFullyBooked': len(available_periods) == 0
+        'isFullyBooked': is_fully_booked
     }
