@@ -136,3 +136,55 @@ export const deleteUser = async (userId) => {
   const response = await axios.delete(`${API}/admin/users/${userId}`, createAuthHeader());
   return response.data;
 };
+
+// Gallery Management
+export const getGallery = async () => {
+  const response = await axios.get(`${API}/gallery`);
+  return response.data;
+};
+
+export const getAdminGallery = async () => {
+  const response = await axios.get(`${API}/admin/gallery`, createAuthHeader());
+  return response.data;
+};
+
+export const createGalleryImage = async (imageData) => {
+  const response = await axios.post(`${API}/admin/gallery`, imageData, createAuthHeader());
+  return response.data;
+};
+
+export const updateGalleryImage = async (imageId, imageData) => {
+  const response = await axios.put(`${API}/admin/gallery/${imageId}`, imageData, createAuthHeader());
+  return response.data;
+};
+
+export const deleteGalleryImage = async (imageId) => {
+  const response = await axios.delete(`${API}/admin/gallery/${imageId}`, createAuthHeader());
+  return response.data;
+};
+
+// Testimonial Management
+export const getTestimonials = async () => {
+  const response = await axios.get(`${API}/testimonials`);
+  return response.data;
+};
+
+export const getAdminTestimonials = async () => {
+  const response = await axios.get(`${API}/admin/testimonials`, createAuthHeader());
+  return response.data;
+};
+
+export const createTestimonial = async (testimonialData) => {
+  const response = await axios.post(`${API}/admin/testimonials`, testimonialData, createAuthHeader());
+  return response.data;
+};
+
+export const updateTestimonial = async (testimonialId, testimonialData) => {
+  const response = await axios.put(`${API}/admin/testimonials/${testimonialId}`, testimonialData, createAuthHeader());
+  return response.data;
+};
+
+export const deleteTestimonial = async (testimonialId) => {
+  const response = await axios.delete(`${API}/admin/testimonials/${testimonialId}`, createAuthHeader());
+  return response.data;
+};
