@@ -518,19 +518,19 @@ async def generate_receipt(
 async def get_reminders(current_user: str = Depends(get_current_user)):
     today = datetime.utcnow().date().isoformat()
     
-    # Enquiry follow-ups (today or overdue)
+    # Enquiry follow-ups (today or overdue) - with projection
     enquiry_reminders = await db.enquiries.find({
         "followUpReminder": True,
         "followUpDate": {"$lte": today},
         "status": {"$ne": "closed"}
-    }).to_list(1000)
+    }, {'_id': 0, 'id': 1, 'name': 1, 'phone': 1, 'eventDate': 1, 'followUpDate': 1, 'notes': 1}).limit(100).to_list(100)
     
-    # Document reminders (within next 7 days)
+    # Document reminders (within next 7 days) - with projection
     next_week = (datetime.utcnow().date() + timedelta(days=7)).isoformat()
     document_reminders = await db.documents.find({
         "reminderEnabled": True,
         "reminderDate": {"$lte": next_week, "$gte": today}
-    }).to_list(1000)
+    }, {'_id': 0, 'id': 1, 'documentType': 1, 'fileName': 1, 'reminderDate': 1, 'notes': 1}).limit(100).to_list(100)
     
     return {
         "enquiryReminders": enquiry_reminders,
