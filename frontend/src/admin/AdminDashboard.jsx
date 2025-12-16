@@ -134,6 +134,11 @@ export const AdminDashboard = ({ children, currentPage }) => {
                       {totalReminders}
                     </span>
                   )}
+                  {item.badge > 0 && (
+                    <span className="ml-auto bg-blue-500 text-white text-xs rounded-full px-2 py-1 animate-pulse">
+                      {item.badge}
+                    </span>
+                  )}
                 </button>
               );
             })}
