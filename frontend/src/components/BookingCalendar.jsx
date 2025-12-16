@@ -23,9 +23,7 @@ export const BookingCalendar = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    eventType: '',
-    eventTimeFrom: '',
-    eventTimeTo: ''
+    eventType: ''
   });
 
   useEffect(() => {
@@ -76,8 +74,8 @@ export const BookingCalendar = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone || !formData.eventType || !selectedDate || !formData.eventTimeFrom || !formData.eventTimeTo) {
-      toast.error('Please fill all fields including time');
+    if (!formData.name || !formData.phone || !formData.eventType || !selectedDate) {
+      toast.error('Please fill all required fields');
       return;
     }
 
@@ -89,15 +87,15 @@ export const BookingCalendar = () => {
         eventType: formData.eventType,
         eventDate: selectedDate.toISOString().split('T')[0],
         eventEndDate: selectedEndDate ? selectedEndDate.toISOString().split('T')[0] : null,
-        eventTimeFrom: formData.eventTimeFrom,
-        eventTimeTo: formData.eventTimeTo
+        eventTimeFrom: '09:00 AM',  // Default business hours start
+        eventTimeTo: '10:00 PM'     // Default business hours end
       };
       
       await createEnquiry(enquiryData);
       const daysText = selectedEndDate ? ` (${selectedDate.toISOString().split('T')[0]} to ${selectedEndDate.toISOString().split('T')[0]})` : '';
       toast.success(`Booking request submitted successfully${daysText}! We will contact you soon to confirm availability.`);
       setIsDialogOpen(false);
-      setFormData({ name: '', phone: '', eventType: '', eventTimeFrom: '', eventTimeTo: '' });
+      setFormData({ name: '', phone: '', eventType: '' });
       setSelectedDate(null);
       setSelectedEndDate(null);
       setAvailabilityData(null);
