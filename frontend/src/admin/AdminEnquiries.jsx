@@ -433,13 +433,81 @@ export const AdminEnquiries = () => {
           </DialogHeader>
           {selectedEnquiry && (
             <div className="space-y-4 mt-4">
-              <div className="p-3 bg-gray-50 rounded">
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded">
+                <p className="text-sm font-semibold text-blue-900 mb-1">Original Enquiry Details:</p>
                 <p className="text-sm"><b>Customer:</b> {selectedEnquiry.name}</p>
                 <p className="text-sm"><b>Phone:</b> {selectedEnquiry.phone}</p>
                 <p className="text-sm"><b>Event:</b> {selectedEnquiry.eventType}</p>
-                <p className="text-sm"><b>Date:</b> {format(new Date(selectedEnquiry.eventDate), 'MMM dd, yyyy')}</p>
+                <p className="text-sm"><b>Requested Date:</b> {format(new Date(selectedEnquiry.eventDate), 'MMM dd, yyyy')}</p>
               </div>
 
+              <div className="p-3 bg-yellow-50 border border-yellow-300 rounded">
+                <p className="text-sm text-yellow-800">
+                  <b>💡 Tip:</b> You can adjust dates and times based on customer needs (e.g., add preparation days)
+                </p>
+              </div>
+
+              {/* Date Selection */}
+              <div className="space-y-3">
+                <Label className="text-base font-semibold">Booking Dates *</Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Event Start Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full justify-start">
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {bookingData.eventDate ? format(bookingData.eventDate, 'PPP') : 'Select date'}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={bookingData.eventDate}
+                          onSelect={(date) => setBookingData({ ...bookingData, eventDate: date })}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Event End Date (Optional)</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="w-full justify-start">
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {bookingData.eventEndDate ? format(bookingData.eventEndDate, 'PPP') : 'Same day'}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={bookingData.eventEndDate}
+                          onSelect={(date) => setBookingData({ ...bookingData, eventEndDate: date })}
+                          disabled={(date) => bookingData.eventDate && date < bookingData.eventDate}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </div>
+                {bookingData.eventEndDate && (
+                  <div className="flex items-center justify-between p-2 bg-green-50 rounded">
+                    <p className="text-sm text-green-800">
+                      <b>Multi-day:</b> {format(bookingData.eventDate, 'MMM dd')} - {format(bookingData.eventEndDate, 'MMM dd, yyyy')}
+                    </p>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setBookingData({ ...bookingData, eventEndDate: null })}
+                      className="text-xs"
+                    >
+                      Clear
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Time Selection */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Event Time From</Label>
@@ -458,6 +526,7 @@ export const AdminEnquiries = () => {
                   />
                 </div>
               </div>
+              <p className="text-xs text-gray-500">Business hours: 9:00 AM - 10:00 PM</p>
 
               <div className="space-y-2">
                 <Label>Total Amount (Rs.) *</Label>
