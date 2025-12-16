@@ -129,7 +129,8 @@ export const AdminGallery = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <AdminDashboard currentPage="gallery">
+      <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
