@@ -134,7 +134,7 @@ export const BookingCalendarView = ({ bookings, onDateClick }) => {
               onSelect={(date) => date && setSelectedDate(date)}
               onMonthChange={setCurrentMonth}
               modifiers={modifiers}
-              modifiersClassNames={modifiersClassNames}
+              modifiersStyles={modifiersStyles}
               className="rounded-md border"
             />
             <div className="mt-4 p-3 bg-gray-50 rounded space-y-2">
