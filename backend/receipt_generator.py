@@ -1,16 +1,21 @@
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image, HRFlowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
+from reportlab.graphics.shapes import Drawing, Rect, Line
+from reportlab.graphics import renderPDF
 from datetime import datetime
 from pathlib import Path
 import os
 
+# Get the assets directory
+ASSETS_DIR = Path(__file__).parent / 'assets'
+
 def generate_receipt_pdf(booking_data, output_path):
     """
-    Generate a receipt PDF for a confirmed booking
+    Generate a professional, elegant receipt PDF for a confirmed booking
     
     booking_data should contain:
     - invoice_number
@@ -25,10 +30,15 @@ def generate_receipt_pdf(booking_data, output_path):
     - balance_due
     """
     
-    # Create the PDF
-    doc = SimpleDocTemplate(output_path, pagesize=letter,
-                           rightMargin=0.5*inch, leftMargin=0.5*inch,
-                           topMargin=0.5*inch, bottomMargin=0.5*inch)
+    # Create the PDF with custom margins
+    doc = SimpleDocTemplate(
+        output_path, 
+        pagesize=letter,
+        rightMargin=0.6*inch, 
+        leftMargin=0.6*inch,
+        topMargin=0.4*inch, 
+        bottomMargin=0.4*inch
+    )
     
     # Container for elements
     elements = []
@@ -36,183 +46,310 @@ def generate_receipt_pdf(booking_data, output_path):
     # Styles
     styles = getSampleStyleSheet()
     
+    # Color palette - Gold and Black theme
+    GOLD = colors.HexColor('#D4AF37')
+    DARK_GOLD = colors.HexColor('#B8860B')
+    BLACK = colors.HexColor('#1a1a1a')
+    LIGHT_GRAY = colors.HexColor('#f5f5f5')
+    MEDIUM_GRAY = colors.HexColor('#666666')
+    
     # Custom styles
-    title_style = ParagraphStyle(
-        'CustomTitle',
+    company_name_style = ParagraphStyle(
+        'CompanyName',
         parent=styles['Heading1'],
-        fontSize=24,
-        textColor=colors.HexColor('#D4AF37'),
-        spaceAfter=6,
+        fontSize=28,
+        textColor=GOLD,
+        spaceAfter=2,
         alignment=TA_CENTER,
-        fontName='Helvetica-Bold'
+        fontName='Helvetica-Bold',
+        leading=32
     )
     
-    header_style = ParagraphStyle(
-        'Header',
+    tagline_style = ParagraphStyle(
+        'Tagline',
         parent=styles['Normal'],
         fontSize=10,
         alignment=TA_CENTER,
-        textColor=colors.black
+        textColor=MEDIUM_GRAY,
+        fontName='Helvetica-Oblique',
+        spaceAfter=6
+    )
+    
+    contact_style = ParagraphStyle(
+        'Contact',
+        parent=styles['Normal'],
+        fontSize=9,
+        alignment=TA_CENTER,
+        textColor=BLACK,
+        leading=14
     )
     
     receipt_title_style = ParagraphStyle(
         'ReceiptTitle',
         parent=styles['Normal'],
-        fontSize=14,
+        fontSize=18,
         alignment=TA_CENTER,
-        textColor=colors.grey,
-        spaceAfter=12
+        textColor=BLACK,
+        fontName='Helvetica-Bold',
+        spaceBefore=15,
+        spaceAfter=15
+    )
+    
+    section_header_style = ParagraphStyle(
+        'SectionHeader',
+        parent=styles['Normal'],
+        fontSize=11,
+        textColor=GOLD,
+        fontName='Helvetica-Bold',
+        spaceBefore=12,
+        spaceAfter=6
     )
     
     label_style = ParagraphStyle(
         'Label',
         parent=styles['Normal'],
         fontSize=10,
-        textColor=colors.grey
+        textColor=MEDIUM_GRAY
     )
     
     value_style = ParagraphStyle(
         'Value',
         parent=styles['Normal'],
         fontSize=10,
-        textColor=colors.black,
+        textColor=BLACK,
         fontName='Helvetica-Bold'
     )
     
-    # Header - Company Name
-    elements.append(Paragraph("K.A.V AUDITORIUM", title_style))
+    # ============ HEADER WITH LOGO ============
+    # Add logo if exists
+    logo_path = ASSETS_DIR / 'kav_logo.png'
+    if logo_path.exists():
+        # Create a centered logo
+        logo = Image(str(logo_path), width=1.2*inch, height=1.2*inch)
+        logo.hAlign = 'CENTER'
+        elements.append(logo)
+        elements.append(Spacer(1, 8))
+    
+    # Company Name
+    elements.append(Paragraph("K.A.V AUDITORIUM", company_name_style))
+    
+    # Tagline
+    elements.append(Paragraph("Your Perfect Venue for Memorable Events", tagline_style))
+    
     elements.append(Spacer(1, 6))
     
-    # Address and contact
+    # Contact Information
     contact_info = """
     Near Telephone Exchange, Mundur - I, Kerala 678592<br/>
-    Phone: (+91) 82811 42276, 95679 41222 | Email: Shahul.kav@gmail.com
+    📞 (+91) 82811 42276, 95679 41222 &nbsp;&nbsp;|&nbsp;&nbsp; ✉ Shahul.kav@gmail.com
     """
-    elements.append(Paragraph(contact_info, header_style))
-    elements.append(Spacer(1, 20))
+    elements.append(Paragraph(contact_info, contact_style))
     
-    # Receipt/Invoice title
-    elements.append(Paragraph("Receipt / Invoice", receipt_title_style))
+    # Gold decorative line
     elements.append(Spacer(1, 12))
+    elements.append(HRFlowable(width="100%", thickness=2, color=GOLD, spaceBefore=0, spaceAfter=0))
+    elements.append(Spacer(1, 4))
+    elements.append(HRFlowable(width="100%", thickness=0.5, color=GOLD, spaceBefore=0, spaceAfter=0))
     
-    # Invoice details (Invoice No and Date)
-    invoice_data = [
-        [Paragraph(f"<b>Invoice No :</b> {booking_data.get('invoice_number', 'N/A')}", value_style),
-         Paragraph(f"<b>Date:</b> {datetime.now().strftime('%B %d, %Y')}", value_style)]
+    # ============ RECEIPT TITLE ============
+    elements.append(Paragraph("BOOKING RECEIPT", receipt_title_style))
+    
+    # Invoice and Date row
+    invoice_date_data = [
+        [
+            Paragraph(f"<b>Invoice No:</b> #{booking_data.get('invoice_number', '000000')}", value_style),
+            Paragraph(f"<b>Date:</b> {datetime.now().strftime('%B %d, %Y')}", value_style)
+        ]
     ]
-    invoice_table = Table(invoice_data, colWidths=[4*inch, 3*inch])
+    invoice_table = Table(invoice_date_data, colWidths=[3.5*inch, 3.5*inch])
     invoice_table.setStyle(TableStyle([
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('ALIGN', (0, 0), (0, 0), 'LEFT'),
+        ('ALIGN', (1, 0), (1, 0), 'RIGHT'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 0), (-1, -1), 8),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
     ]))
     elements.append(invoice_table)
-    elements.append(Spacer(1, 20))
     
-    # Bill To section
-    elements.append(Paragraph("<b>Bill To :</b>", value_style))
-    elements.append(Spacer(1, 6))
-    bill_to_data = [
-        [Paragraph(booking_data.get('customer_name', 'N/A'), value_style)],
-        [Paragraph(f"{booking_data.get('customer_phone', 'N/A')}", label_style)],
-        [Paragraph(f"{booking_data.get('customer_email', '')}", label_style)]
+    elements.append(Spacer(1, 10))
+    
+    # ============ CUSTOMER DETAILS ============
+    elements.append(Paragraph("CUSTOMER DETAILS", section_header_style))
+    
+    customer_data = [
+        [Paragraph("Name", label_style), Paragraph(booking_data.get('customer_name', 'N/A'), value_style)],
+        [Paragraph("Phone", label_style), Paragraph(booking_data.get('customer_phone', 'N/A'), value_style)],
     ]
-    bill_to_table = Table(bill_to_data, colWidths=[7*inch])
-    bill_to_table.setStyle(TableStyle([
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-    ]))
-    elements.append(bill_to_table)
-    elements.append(Spacer(1, 20))
+    if booking_data.get('customer_email'):
+        customer_data.append([Paragraph("Email", label_style), Paragraph(booking_data.get('customer_email', ''), value_style)])
     
-    # Booking details table
-    booking_details_data = [
-        [Paragraph('<b>DESCRIPTION</b>', value_style),
-         Paragraph('<b>FROM</b>', value_style),
-         Paragraph('<b>TO</b>', value_style),
-         Paragraph('<b>AMOUNT</b>', value_style)],
+    customer_table = Table(customer_data, colWidths=[1.2*inch, 5.8*inch])
+    customer_table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (0, -1), 'LEFT'),
+        ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('BACKGROUND', (0, 0), (-1, -1), LIGHT_GRAY),
+        ('TOPPADDING', (0, 0), (-1, -1), 8),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+        ('LEFTPADDING', (0, 0), (-1, -1), 12),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 12),
+        ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#e0e0e0')),
+    ]))
+    elements.append(customer_table)
+    
+    elements.append(Spacer(1, 15))
+    
+    # ============ EVENT DETAILS TABLE ============
+    elements.append(Paragraph("EVENT DETAILS", section_header_style))
+    
+    event_details_data = [
         [
-            Paragraph(f"Auditorium Booking (Event)<br/>{booking_data.get('event_type', '')}", label_style),
-            Paragraph(f"Date: {booking_data.get('event_date', 'N/A')}<br/>Time: {booking_data.get('event_time_from', '07:00 AM')}", label_style),
-            Paragraph(f"Date: {booking_data.get('event_date', 'N/A')}<br/>Time: {booking_data.get('event_time_to', '08:00 PM')}", label_style),
-            Paragraph(f"{booking_data.get('amount', 0):,.2f}", value_style)
+            Paragraph('<b>DESCRIPTION</b>', value_style),
+            Paragraph('<b>DATE & TIME</b>', value_style),
+            Paragraph('<b>AMOUNT</b>', value_style)
+        ],
+        [
+            Paragraph(f"Auditorium Booking<br/><font size='9' color='#666666'>{booking_data.get('event_type', 'Event')}</font>", value_style),
+            Paragraph(f"{booking_data.get('event_date', 'N/A')}<br/><font size='9' color='#666666'>{booking_data.get('event_time_from', '09:00 AM')} - {booking_data.get('event_time_to', '10:00 PM')}</font>", value_style),
+            Paragraph(f"₹ {booking_data.get('amount', 0):,.2f}", value_style)
         ]
     ]
     
-    booking_table = Table(booking_details_data, colWidths=[2.5*inch, 1.75*inch, 1.75*inch, 1*inch])
-    booking_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#F5F5F5')),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('ALIGN', (-1, 0), (-1, -1), 'RIGHT'),
+    event_table = Table(event_details_data, colWidths=[3*inch, 2.5*inch, 1.5*inch])
+    event_table.setStyle(TableStyle([
+        # Header row styling
+        ('BACKGROUND', (0, 0), (-1, 0), BLACK),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, -1), 9),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('TOPPADDING', (0, 1), (-1, -1), 12),
-        ('BOTTOMPADDING', (0, 1), (-1, -1), 12),
-        ('GRID', (0, 0), (-1, -1), 1, colors.grey),
-        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('ALIGN', (0, 0), (-1, 0), 'LEFT'),
+        ('ALIGN', (-1, 0), (-1, -1), 'RIGHT'),
+        
+        # Data rows
+        ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+        ('FONTSIZE', (0, 1), (-1, -1), 10),
+        ('ALIGN', (0, 1), (1, -1), 'LEFT'),
+        
+        # Padding
+        ('TOPPADDING', (0, 0), (-1, -1), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+        ('LEFTPADDING', (0, 0), (-1, -1), 10),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 10),
+        
+        # Grid
+        ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#e0e0e0')),
+        ('LINEBELOW', (0, 0), (-1, 0), 2, GOLD),
+        
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
     ]))
-    elements.append(booking_table)
-    elements.append(Spacer(1, 20))
+    elements.append(event_table)
     
-    # Financial summary
+    elements.append(Spacer(1, 15))
+    
+    # ============ PAYMENT SUMMARY ============
+    elements.append(Paragraph("PAYMENT SUMMARY", section_header_style))
+    
     amount = booking_data.get('amount', 0)
     advance = booking_data.get('advance_paid', 0)
     balance = booking_data.get('balance_due', 0)
     
-    summary_data = [
-        ['', '', Paragraph('<b>Total Amount</b>', value_style), Paragraph(f"<b>Rs. {amount:,.2f}</b>", value_style)],
-        ['', '', Paragraph('<b>Advance Paid</b>', value_style), Paragraph(f"<b>Rs. {advance:,.2f}</b>", value_style)],
-        ['', '', Paragraph('<b>Balance Due</b>', value_style), Paragraph(f"<b>Rs. {balance:,.2f}</b>", value_style)],
+    payment_data = [
+        [Paragraph('Total Amount', label_style), Paragraph(f"₹ {amount:,.2f}", value_style)],
+        [Paragraph('Advance Paid', label_style), Paragraph(f"<font color='#22c55e'>₹ {advance:,.2f}</font>", value_style)],
+        [Paragraph('<b>Balance Due</b>', value_style), Paragraph(f"<b><font color='#dc2626'>₹ {balance:,.2f}</font></b>", value_style)],
     ]
     
-    summary_table = Table(summary_data, colWidths=[2.5*inch, 1.75*inch, 1.75*inch, 1*inch])
-    summary_table.setStyle(TableStyle([
-        ('ALIGN', (-2, 0), (-1, -1), 'RIGHT'),
-        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, -1), 10),
-        ('TOPPADDING', (0, 0), (-1, -1), 6),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    payment_table = Table(payment_data, colWidths=[5.5*inch, 1.5*inch])
+    payment_table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 15),
+        ('LEFTPADDING', (0, 0), (-1, -1), 15),
+        ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#fef3c7')),  # Light gold for balance row
+        ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#e0e0e0')),
+        ('LINEABOVE', (0, -1), (-1, -1), 2, GOLD),
     ]))
-    elements.append(summary_table)
+    elements.append(payment_table)
+    
+    elements.append(Spacer(1, 25))
+    
+    # ============ SIGNATURE SECTION ============
+    sig_data = [
+        [
+            Paragraph('Customer Signature', label_style),
+            Paragraph('', label_style),
+            Paragraph('Authorized Signature', label_style)
+        ],
+        [
+            '_' * 25,
+            '',
+            '_' * 25
+        ]
+    ]
+    sig_table = Table(sig_data, colWidths=[2.5*inch, 2*inch, 2.5*inch])
+    sig_table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'BOTTOM'),
+        ('TOPPADDING', (0, 0), (-1, 0), 0),
+        ('BOTTOMPADDING', (0, 1), (-1, 1), 0),
+        ('TOPPADDING', (0, 1), (-1, 1), 30),
+        ('FONTSIZE', (0, 1), (-1, 1), 10),
+        ('TEXTCOLOR', (0, 1), (-1, 1), MEDIUM_GRAY),
+    ]))
+    elements.append(sig_table)
+    
     elements.append(Spacer(1, 30))
     
-    # Authorization section
-    auth_data = [
-        [Paragraph('<b>Authorized Signature :</b>', value_style), Paragraph('<b>Date :</b>', value_style)],
-        ['', ''],
-        ['', '']
-    ]
-    auth_table = Table(auth_data, colWidths=[4*inch, 3*inch])
-    auth_table.setStyle(TableStyle([
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-        ('LINEABOVE', (0, 1), (0, 1), 1, colors.black),
-        ('LINEABOVE', (1, 1), (1, 1), 1, colors.black),
-    ]))
-    elements.append(auth_table)
-    elements.append(Spacer(1, 40))
+    # ============ FOOTER ============
+    # Decorative lines
+    elements.append(HRFlowable(width="100%", thickness=0.5, color=GOLD, spaceBefore=0, spaceAfter=0))
+    elements.append(Spacer(1, 4))
+    elements.append(HRFlowable(width="100%", thickness=2, color=GOLD, spaceBefore=0, spaceAfter=0))
     
-    # Footer
-    footer_style = ParagraphStyle(
-        'Footer',
+    elements.append(Spacer(1, 12))
+    
+    # Thank you message
+    thank_you_style = ParagraphStyle(
+        'ThankYou',
         parent=styles['Normal'],
-        fontSize=10,
+        fontSize=12,
         alignment=TA_CENTER,
-        textColor=colors.black
+        textColor=BLACK,
+        fontName='Helvetica-Bold',
+        spaceAfter=6
     )
+    elements.append(Paragraph("Thank You for Choosing K.A.V Auditorium!", thank_you_style))
     
-    elements.append(Paragraph("Thank you for choosing K.A.V Auditorium for your event.", footer_style))
-    elements.append(Spacer(1, 10))
-    
+    # Website
     website_style = ParagraphStyle(
         'Website',
         parent=styles['Normal'],
-        fontSize=8,
+        fontSize=9,
         alignment=TA_CENTER,
-        textColor=colors.grey
+        textColor=GOLD,
+        fontName='Helvetica-Bold'
     )
-    elements.append(Paragraph("www.kavgroup.in", website_style))
+    elements.append(Paragraph("🌐 www.kavgroup.in", website_style))
+    
+    elements.append(Spacer(1, 10))
+    
+    # Terms note
+    terms_style = ParagraphStyle(
+        'Terms',
+        parent=styles['Normal'],
+        fontSize=7,
+        alignment=TA_CENTER,
+        textColor=MEDIUM_GRAY,
+        leading=10
+    )
+    elements.append(Paragraph(
+        "This is a computer-generated receipt. | Advance payment is non-refundable. | "
+        "Please carry this receipt on the day of the event.",
+        terms_style
+    ))
     
     # Build PDF
     doc.build(elements)
