@@ -3,84 +3,91 @@ The user requested a modern, minimalistic website for K.A.V Auditorium with a go
 
 **PRODUCT REQUIREMENTS:**
 - **Public Website:**
-    - Display auditorium details: amenities (550 seating, 1000 floating capacity, dining hall, parking, etc.), address, and contact information.
-    - A gallery section for photos (using placeholders for now).
-    - A section for client testimonials (using sample testimonials).
-    - An interactive calendar for customers to view date and time-slot availability and submit booking requests.
+    - Display auditorium details (amenities, address, contact info).
+    - A gallery and client testimonials section.
+    - An interactive calendar for customers to view date availability and submit booking requests (without specifying time).
     - An enquiry form for general questions.
 
 - **Admin Panel:**
     - Accessible via a secret URL: .
-    - **Role-Based Access Control:**
-        - **Admin** ( / ): Full control, can manage users, bookings, enquiries, and documents. Can edit and delete all entries.
-        - **Manager**: Restricted access, can view data but cannot edit/delete bookings or manage users.
+    - **Role-Based Access Control:** Admin () has full control; Manager has restricted view-only access.
     - **Booking & Enquiry Management:**
-        - View bookings and enquiries in both a list and a calendar view.
-        - Admins can create bookings directly, edit existing bookings (dates, times, details), and delete them.
-        - Customer booking requests arrive as enquiries, which an admin must confirm and convert into a formal booking.
-    - **Document Management:**
-        - A section to upload and manage documents (e.g., tax receipts, bills) with an associated reminder system for due dates.
-    - **Receipt Generation:**
-        - After a booking is confirmed and payment details are entered, the admin can generate a PDF receipt to send to the customer.
-    - **User Management:**
-        - Admins can create new user accounts (e.g., for a manager) and assign roles.
+        - View bookings and enquiries in both list and calendar formats.
+        - Admins can create/edit/delete bookings.
+        - Customer requests are enquiries that admins convert to bookings. Admins can edit dates and times during conversion.
+    - **Document Management:** Upload and manage documents with reminders.
+    - **Receipt Generation:** Generate PDF receipts for confirmed bookings.
+    - **User Management:** Admins can create and manage user accounts.
 
-- **Time-Slot Booking:**
-    - The system must support multiple bookings on the same day if the time slots do not overlap.
-    - The public-facing calendar should show available time slots for a selected day.
+- **Booking Logic:**
+    - The system must support multi-day events.
+    - The public calendar should visually indicate if a date is fully booked, partially booked, or available.
+    - All bookings and availability checks are restricted to business hours (9 AM to 10 PM).
 
 **User's preferred language**: English
 
 **what currently exists?**
-A complete full-stack application has been developed using React for the frontend and FastAPI for the backend, with MongoDB as the database. The application includes a public-facing website and a comprehensive, feature-rich admin panel that meets all the specified requirements. All core functionalities, including user roles, the enquiry-to-booking conversion workflow, PDF receipt generation, and time-slot management, have been implemented.
+A full-stack application using React, FastAPI, and MongoDB. It includes the public website and a comprehensive admin panel. Core features like user roles, multi-day bookings, enquiry-to-booking conversion, PDF receipts, and business hour restrictions are implemented. The backend logic is robust and has been tested. However, there are some persistent UI bugs in the admin panel.
 
 **Last working item**:
-- **Last item agent was working:** Implementing the time-slot based booking system. The goal was to allow multiple events to be booked on the same day by managing non-overlapping time slots.
+- **Last item agent was working:** The user reported that a calendar control is still visible in the list view of the booking management page, specifically when adding or editing a booking. The agent was attempting to remove it and replace it with a simple text display.
 - **Status:** IN PROGRESS
-- **Agent Testing Done:** Y (A basic UI test was performed via screenshot, which confirmed that the time selection inputs are visible in the booking dialog).
-- **Which testing method agent to use?** both. A full end-to-end test is required.
-  - **Backend**: Use  to test the  endpoint and verify the time conflict logic when creating/converting bookings.
-  - **Frontend**: Use the  to simulate a user selecting a date, viewing available time slots, submitting a request for a specific time, and then verifying that the time slot is correctly marked as booked for subsequent users.
-- **User Testing Done:** N
+- **Agent Testing Done:** N (Previous attempts to fix it failed).
+- **Which testing method agent to use?** Frontend testing agent or screenshot tool to verify the UI of the  component and its associated  and  components.
+- **User Testing Done:** Y (User confirmed the issue persists).
 
 **All Pending/In progress Issue list**:
-  - **Issue 1:** P0 - Full verification of the time-slot booking feature is pending.
+  - **Issue 1:** P0 - A calendar date picker appears in the create/edit booking dialogs within the admin List View, and there might be a duplicate calendar in the Calendar View.
+  - **Issue 2:** P1 - The calendar's visual indicators for partially booked (orange) and fully booked (red) dates are not rendering in the UI for either the customer or admin views, despite the backend API providing the correct status.
 
   **Issues Detail:**
   - **Issue 1:**
-     - **Attempted fixes:** The agent implemented the backend logic for time conflict checking and updated the frontend UI to include time selection. A basic screenshot test was done.
+     - **Attempted fixes:** The agent made multiple attempts to remove the calendar components from  using , but the changes were either incorrect or incomplete, leading to the user reporting the issue again.
      - **Next debug checklist:**
-        1.  **Frontend:** Manually test or use the frontend testing agent to complete the entire user flow: select a date, see available times, book a slot, then re-select the same date to ensure the booked slot is no longer available. Check for edge cases like multi-day events or bookings that cross midnight.
-        2.  **Backend:** Write a  or  script to directly hit the API: create a booking for a specific time, then attempt to create another booking with an overlapping time on the same day. The second request should fail with a conflict error.
-     - **Why fix this issue and what will be achieved with the fix?** This is a core business requirement to maximize the auditorium's utilization. A bug-free implementation will prevent double-bookings and ensure a smooth operational flow.
-     - **Status:** USER VERIFICATION PENDING
+        1. Inspect  and identify which component is rendering the unwanted calendar in the list view. The user mentioned it appears when adding a booking, so the trigger is likely the Add Booking button.
+        2. Check the  and  components in . These dialogs are used for creating and editing bookings and are the source of the unwanted calendar picker.
+        3. Remove the calendar component from the dialog that appears in the list view. Ensure the Calendar View remains functional and does not show a duplicate calendar.
+     - **Why fix this issue and what will be achieved with the fix?** It clutters the UI and is confusing for the user, who expects a clean list-based interface.
+     - **Status:** IN PROGRESS
+     - **Is recurring issue?** Y
+     - **Should Test frontend/backend/both after fix?** Frontend
+     - **Blocked on other issue:** None
+  - **Issue 2:**
+     - **Attempted fixes:** The agent created a backend endpoint  that correctly returns  and  statuses. The frontend code in  and  was updated to fetch this data and apply . However, the colors do not appear.
+     - **Next debug checklist:**
+        1. Verify that the  in  and  are correctly targeting the  and  modifiers.
+        2. Check for CSS conflicts. The TailwindCSS classes for red () and orange () might be overridden by default  styles.
+        3. Use browser developer tools to inspect the calendar day cells and see if the custom classes are being applied at all.
+     - **Why fix this issue and what will be achieved with the fix?** This is a core UX requirement for the user to quickly see availability at a glance.
+     - **Status:** NOT STARTED
      - **Is recurring issue?** N
-     - **Should Test frontend/backend/both after fix?** Both
+     - **Should Test frontend/backend/both after fix?** Frontend
      - **Blocked on other issue:** None
 
 **In progress Task List**:
-- There are no partially completed tasks. The last task (time-slot booking) was implemented but awaits testing.
+- None.
 
 **Upcoming and Future Tasks**
-- There are no new feature requests from the user at this time. All initial and subsequent requests have been implemented.
+- **Upcoming Tasks:**
+    - P1: Resolve the two pending UI issues (unwanted calendar and color-coded availability).
+- **Future Tasks:**
+    - P2: Refactor  by splitting the code into multiple  files for better maintainability.
+    - P2: Refactor complex admin components (, ) into smaller, focused components and use custom hooks for state management.
 
 **Completed work in this session**
-- **Public Website:** Built all sections (Hero, About, Amenities, Gallery, Testimonials, Contact).
-- **Booking System:** Implemented a booking calendar where customers can view availability and submit booking requests with specific time slots.
-- **Admin Panel:**
-  - Created a secure admin area with login ().
-  - Implemented role-based access (Admin/Manager).
-  - Built management modules for Bookings, Enquiries, Documents, Reminders, and Users.
-  - Added a toggle for  and  views for bookings and enquiries.
-- **Core Backend Logic:**
-  - Developed the entire FastAPI backend with CRUD APIs for all modules.
-  - Implemented the enquiry-to-booking conversion flow.
-  - Integrated a PDF receipt generation system using .
-  - Implemented robust time-slot conflict checking.
-- **Bug Fixes:** Resolved multiple critical backend errors related to MongoDB  serialization that were preventing data from loading in the admin panel. Fixed an API routing issue where user management endpoints were inaccessible.
+- **Multi-Day Bookings:** Implemented and tested end-to-end multi-day event booking functionality.
+- **Business Hours:** Restricted all booking and availability logic to a 9 AM - 10 PM window.
+- **Timezone Bug Fixes:** Resolved a critical, recurring bug where dates were being shifted by one day due to incorrect timezone handling. All date submissions are now standardized to  format to prevent UTC conversion issues.
+- **Admin UI/UX Improvements:**
+    - Allowed admins to edit dates/times when converting an enquiry to a booking.
+    - Added scroll functionality to long dialogs.
+    - Improved z-index of date pickers to prevent them from being hidden.
+- **Customer UI Simplification:** Removed time selection fields from the customer-facing booking form, simplifying it to a date-range request.
+- **Deployment Readiness:** Fixed several production-critical issues identified by a health check, including missing environment variables and unoptimized database queries.
+- **Code Cleanup:** Removed a duplicate calendar from the admin calendar view.
 
 **Earlier issues found/mentioned but not fixed**
-   - None. All issues raised by the user during the session were addressed and fixed by the agent.
+   - **Issue 1:** The visual color-coding for calendar availability status (, ) is not rendering on the UI. The backend and frontend logic is implemented, but the styling is not being applied correctly.
 
 **Known issue recurrence from previous fork**
   - N/A
@@ -89,11 +96,11 @@ A complete full-stack application has been developed using React for the fronten
 
 
 **Key Technical Concepts**
-- **Frontend:** React, React Router, TailwindCSS, Shadcn UI
+- **Frontend:** React, React Router, TailwindCSS, Shadcn UI, , 
 - **Backend:** FastAPI, Motor (async MongoDB driver), Pydantic
 - **Database:** MongoDB
 - **Authentication:** JWT (JSON Web Tokens) with role-based authorization.
-- **File Handling:** Backend PDF generation with  and serving of static files (uploads and receipts).
+- **Date Handling:** Standardized on  strings for all frontend-to-backend communication to avoid timezone issues.
 
 **key DB schema**
   - **users**: 
@@ -103,52 +110,56 @@ A complete full-stack application has been developed using React for the fronten
   - **reminders**: 
 
 **changes in tech stack**
-  - Added  and  to the backend for PDF generation.
+  -  added to backend to manage environment variables.
 
 **All files of reference**
-- : Contains all API logic, including the recently added time-slot endpoints and fixes for  issues.
-- : The public-facing component updated to handle time-slot selection.
-- : A new utility file containing the logic for checking time-slot conflicts.
-- : Admin component for managing bookings, including create/edit/delete functionality.
-- : Admin component for managing enquiries and converting them to bookings.
+- : The source of the UI bugs. Contains the list/calendar view toggle and renders the dialogs.
+- : Contains the  and  components where the unwanted calendar exists.
+- : The public-facing calendar, which needs the color-coding fix.
+- : The admin-facing calendar, which also needs the color-coding fix.
+- : Contains all backend logic, including the new monthly availability endpoint.
+- : Contains the core logic for calculating daily and monthly availability based on business hours.
 
 **Areas that need refactoring**:
--  has grown very large. It should be broken down into multiple routers using  for better organization (e.g., , ).
-- The frontend admin components, particularly  and , are complex and manage a lot of state. They could be refactored into smaller, more focused components with custom hooks to manage logic.
+-  is very large and should be broken into multiple routers using .
+- Admin components like  and  are complex and could be simplified with custom hooks.
 
 **key api endpoints**
 - : User authentication.
-- : Get available time slots for a given date.
+- : **New.** Get monthly availability status (fully/partially booked).
 - : Customer submits a booking request.
-- : Admin converts an enquiry to a booking.
-- : Generate and download a booking receipt.
-- : Get a list of all users (admin only).
-- : Serve the generated PDF file.
+- : Admin converts an enquiry to a booking (now accepts date/time overrides).
+- : Admin creates a new booking.
 
 **Critical Info for New Agent**
-- The application has a two-tiered user system:  and . The main admin user is **Shahul**. The admin password is . Managers have read-only access to most data and cannot perform destructive actions.
-- The booking process is indirect: customers submit **enquiries** (requests), which an admin must manually review and **convert** to a confirmed **booking**.
-- Time-slot conflict checking is a critical new feature. It must be thoroughly tested to ensure no double-bookings occur.
+- **Date Handling is CRITICAL:** To prevent timezone bugs, all dates sent from the frontend to the backend **must** be formatted as  strings using . The previous agent fixed this issue multiple times. Do not deviate from this pattern.
+- **UI Bugs:** The user is focused on fixing UI presentation issues. The backend logic is stable. Prioritize fixing the visual bugs in the admin panel.
+- **Admin Credentials:** The admin login is  / .
 
 **documents created in this job**
-  - 
+  - None.
 
 **Last 10 User Messages and any pending user messages**
-1.  **User (ID 339):** pdf booking receipt is not generating, not able to download the receipt - **Status: RESOLVED**
-2.  **User (ID 386):** error showing failed to load users in admin page - **Status: RESOLVED**
-3.  **User (ID 429):** failed to convert enquirey error in admin page - **Status: RESOLVED**
-4.  **User (ID 450):** Requested time-slot based booking. - **Status: IMPLEMENTED, PENDING VERIFICATION**
-All other messages were agent responses. The last user request was for the time-slot feature, which is the current focus.
+- **User:** A calendar is still visible on the booking management list view. **Status: PENDING**
+- **User:** The calendar view shows two calendars. **Status: RESOLVED**
+- **User:** The list view still has a calendar date selector. **Status: PENDING**
+- **User:** Wrong information is showing on both customer and admin calendars. **Status: RESOLVED** (This was a timezone bug).
+- **User:** Requested date is different on the admin page (e.g., booked 25th, shows 24th). **Status: RESOLVED** (This was the root timezone bug).
+- **User:** Admin calendar view is showing wrong dates. **Status: RESOLVED**
+- **User:** Date selector is behind the event date text in the admin booking list view. **Status: RESOLVED**
+- **User:** Partially booked status is not showing in the admin calendar. **Status: PENDING**
+- **User:** Add a scrollbar to the convert-to-booking popup. **Status: RESOLVED**
+- **User:** Allow editing dates/times when converting an enquiry to a booking. **Status: RESOLVED**
 
 **Project Health Check:**
-- **Broken:** None. All reported user issues have been fixed. The latest feature needs verification.
-- **Mocked:** Gallery images and Testimonials are using placeholder content as requested by the user.
+- **Broken:** The admin UI has two persistent visual bugs related to calendar display and styling.
+- **Mocked:** Gallery images and Testimonials use placeholder content.
 
 **3rd Party Integrations**
 - None.
 
 **Testing status**
-  - **Testing agent used after significant changes:** NO (Agent used manual  and  tests).
+  - **Testing agent used after significant changes:** NO
   - **Troubleshoot agent used after agent stuck in loop:** NO
   - **Test files created:** None.
   - **Known regressions:** None.
@@ -159,5 +170,5 @@ All other messages were agent responses. The last user request was for the time-
 - **Password:** 
 
 **What agent forgot to execute**
-- The agent did not perform a thorough end-to-end test of the newly implemented time-slot booking feature. Only a basic UI check was done.
-- A minor code cleanup:  contains a leftover commented-out line for the Users menu item, which should be removed.</analysis>
+- The agent failed to correctly identify and remove the calendar component from the create/edit dialogs in the admin list view, leading to a recurring user complaint.
+- The agent implemented the logic for color-coding calendar dates based on availability but did not debug why the styles were not visually rendering in the browser.</analysis>
