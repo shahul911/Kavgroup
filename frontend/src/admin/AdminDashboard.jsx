@@ -89,6 +89,19 @@ export const AdminDashboard = ({ children, currentPage }) => {
             <h1 className="text-xl font-bold text-gray-900 hidden sm:block">Admin Panel</h1>
           </div>
           <div className="flex items-center space-x-4">
+            {/* Notification Bell */}
+            {stats?.newEnquiries > 0 && (
+              <button
+                onClick={() => navigate('/admin-kav-Catlife41056/enquiries')}
+                className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+                title={`${stats.newEnquiries} new booking request${stats.newEnquiries > 1 ? 's' : ''}`}
+              >
+                <Bell className="w-6 h-6 text-blue-600" />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                  {stats.newEnquiries}
+                </span>
+              </button>
+            )}
             <div className="text-right hidden sm:block">
               <p className="text-sm font-medium text-gray-900">{adminUser}</p>
               <p className="text-xs text-gray-500">{adminRole === 'admin' ? 'Administrator' : 'Manager'}</p>
