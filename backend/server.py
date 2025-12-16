@@ -360,7 +360,7 @@ async def upload_document(
     document_data = DocumentCreate(
         documentType=documentType,
         fileName=file.filename,
-        fileUrl=f"/uploads/documents/{file_name}",
+        fileUrl=f"/api/uploads/documents/{file_name}",
         fileSize=file_size,
         billDate=billDate,
         dueDate=dueDate,
