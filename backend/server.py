@@ -222,7 +222,8 @@ async def get_all_bookings(
     if status:
         query['status'] = status
     
-    bookings = await db.bookings.find(query, {'_id': 0}).sort('eventDate', 1).to_list(1000)
+    # Note: For admin panel, fetching all bookings. In production, consider adding pagination with skip/limit parameters
+    bookings = await db.bookings.find(query, {'_id': 0}).sort('eventDate', 1).to_list(None)
     return {"bookings": bookings}
 
 # Update booking (admin only)
@@ -277,7 +278,8 @@ async def get_all_enquiries(
     if status:
         query['status'] = status
     
-    enquiries = await db.enquiries.find(query, {'_id': 0}).sort('createdAt', -1).to_list(1000)
+    # Note: For admin panel, fetching all enquiries. In production, consider adding pagination with skip/limit parameters
+    enquiries = await db.enquiries.find(query, {'_id': 0}).sort('createdAt', -1).to_list(None)
     return {"enquiries": enquiries}
 
 # Update enquiry (admin)
@@ -377,7 +379,8 @@ async def get_all_documents(
     if documentType:
         query['documentType'] = documentType
     
-    documents = await db.documents.find(query, {'_id': 0}).sort('uploadDate', -1).to_list(1000)
+    # Note: For admin panel, fetching all documents. In production, consider adding pagination with skip/limit parameters
+    documents = await db.documents.find(query, {'_id': 0}).sort('uploadDate', -1).to_list(None)
     return {"documents": documents}
 
 # Delete document (admin)
