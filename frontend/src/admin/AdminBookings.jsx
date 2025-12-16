@@ -160,9 +160,20 @@ export const AdminBookings = () => {
         notes: editData.notes
       };
 
+      // Format dates in local timezone to avoid timezone conversion issues
+      const formatDateLocal = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+
       // Include date and payment fields if changed
       if (editData.eventDate) {
-        updatePayload.eventDate = editData.eventDate.toISOString().split('T')[0];
+        updatePayload.eventDate = formatDateLocal(editData.eventDate);
+      }
+      if (editData.eventEndDate) {
+        updatePayload.eventEndDate = formatDateLocal(editData.eventEndDate);
       }
       if (editData.eventTimeFrom) updatePayload.eventTimeFrom = editData.eventTimeFrom;
       if (editData.eventTimeTo) updatePayload.eventTimeTo = editData.eventTimeTo;
