@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Calendar, FileText, MessageSquare, Bell, LogOut, Menu, X,
-  Users, CheckCircle, Clock, FileSpreadsheet
+  Users, CheckCircle, Clock, FileSpreadsheet, Image, Quote
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
