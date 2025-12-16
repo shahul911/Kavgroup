@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { AdminDashboard } from './AdminDashboard';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -7,7 +8,7 @@ import { Textarea } from '../components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
 import { Switch } from '../components/ui/switch';
 import { Plus, Pencil, Trash2, Image, GripVertical, Eye, EyeOff } from 'lucide-react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { getAdminGallery, createGalleryImage, updateGalleryImage, deleteGalleryImage } from '../utils/api';
 
 export const AdminGallery = () => {
