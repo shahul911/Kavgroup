@@ -1,27 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar } from '../components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { format, isSameDay } from 'date-fns';
 import { Phone, Clock } from 'lucide-react';
+import { getAvailabilityOverview } from '../utils/api';
 
 export const BookingCalendarView = ({ bookings, onDateClick }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [dateStatusMap, setDateStatusMap] = useState({});
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  // Load availability status for calendar month
+  useEffect(() => {
+    loadAvailabilityForMonth(currentMonth);
+  }, [currentMonth, bookings]); // Reload when bookings change
+
+  const loadAvailabilityForMonth = async (monthDate) => {
+    try {
+      const firstDay = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
+      const lastDay = new Date(monthDate.getFullYear(), monthDate.getMonth() + 2, 0);
+      
+      const startDate = firstDay.toISOString().split('T')[0];
+      const endDate = lastDay.toISOString().split('T')[0];
+      
+      const response = await getAvailabilityOverview(startDate, endDate);
+      setDateStatusMap(response.dateStatus || {});
+    } catch (error) {
+      console.error('Failed to load availability:', error);
+    }
+  };
+
+  const getDateStatus = (date) => {
+    const dateStr = date.toISOString().split('T')[0];
+    return dateStatusMap[dateStr] || 'unknown';
+  };
 
   // Get bookings for selected date
   const bookingsForDate = bookings.filter(booking => 
     isSameDay(new Date(booking.eventDate), selectedDate)
   );
 
-  // Get all booked dates
-  const bookedDates = bookings.map(b => new Date(b.eventDate));
-
   const modifiers = {
-    booked: bookedDates
+    fullyBooked: (date) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return date >= today && getDateStatus(date) === 'fullyBooked';
+    },
+    partiallyBooked: (date) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return date >= today && getDateStatus(date) === 'partiallyBooked';
+    },
+    available: (date) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return date >= today && getDateStatus(date) === 'available';
+    }
   };
 
   const modifiersClassNames = {
-    booked: 'bg-[#D4AF37] text-black font-bold'
+    fullyBooked: 'bg-red-100 text-red-900 line-through hover:bg-red-200',
+    partiallyBooked: 'bg-orange-100 text-orange-900 hover:bg-orange-200 font-semibold',
+    available: 'bg-green-50 hover:bg-green-100 text-green-900 font-semibold'
   };
 
   const getStatusColor = (status) => {
@@ -46,15 +87,24 @@ export const BookingCalendarView = ({ bookings, onDateClick }) => {
               mode="single"
               selected={selectedDate}
               onSelect={(date) => date && setSelectedDate(date)}
+              onMonthChange={setCurrentMonth}
               modifiers={modifiers}
               modifiersClassNames={modifiersClassNames}
               className="rounded-md border"
             />
-            <div className="mt-4 p-3 bg-gray-50 rounded">
-              <p className="text-sm font-medium mb-2">Legend:</p>
-              <div className="flex items-center gap-2 text-sm">
-                <div className="w-6 h-6 rounded bg-[#D4AF37]"></div>
-                <span>Booked Dates</span>
+            <div className="mt-4 p-3 bg-gray-50 rounded space-y-2">
+              <p className="text-sm font-semibold mb-2">Legend:</p>
+              <div className="flex items-center gap-2 text-xs">
+                <div className="w-5 h-5 rounded bg-green-100 border border-green-500"></div>
+                <span>Fully Available</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs">
+                <div className="w-5 h-5 rounded bg-orange-100 border border-orange-500"></div>
+                <span>Partially Booked</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs">
+                <div className="w-5 h-5 rounded bg-red-100 border border-red-500"></div>
+                <span>Fully Booked</span>
               </div>
             </div>
           </CardContent>
