@@ -195,7 +195,7 @@ export const BookingCalendar = () => {
                 onSelect={handleDateSelect}
                 onMonthChange={setCurrentMonth}
                 modifiers={modifiers}
-                modifiersClassNames={modifiersClassNames}
+                modifiersStyles={modifiersStyles}
                 disabled={(date) => date < new Date()}
                 className="rounded-xl border-2 border-[#D4AF37]/20 p-4"
               />
