@@ -20,6 +20,8 @@ import { AdminEnquiries } from './admin/AdminEnquiries';
 import { AdminDocuments } from './admin/AdminDocuments';
 import { AdminReminders } from './admin/AdminReminders';
 import { AdminUsers } from './admin/AdminUsers';
+import { AdminGallery } from './admin/AdminGallery';
+import { AdminTestimonials } from './admin/AdminTestimonials';
 
 const HomePage = () => {
   return (
