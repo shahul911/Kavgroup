@@ -335,7 +335,7 @@ export const BookingCalendar = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Start Date */}
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">Check-in Date</Label>
+                  <Label className="text-sm font-medium text-gray-700">Event Start Date</Label>
                   <div className="p-4 bg-gradient-to-br from-[#D4AF37]/10 to-gray-50 rounded-lg border-2 border-[#D4AF37]/30">
                     <div className="flex items-center space-x-3">
                       <CalendarIcon className="w-5 h-5 text-[#D4AF37]" />
@@ -351,7 +351,7 @@ export const BookingCalendar = () => {
 
                 {/* End Date */}
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-gray-700">Check-out Date (Optional)</Label>
+                  <Label className="text-sm font-medium text-gray-700">Event End Date (Optional)</Label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button 
