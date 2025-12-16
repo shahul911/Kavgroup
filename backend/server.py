@@ -627,8 +627,8 @@ async def delete_user(
 # Include the router in the main app
 app.include_router(api_router)
 
-# Serve uploaded files
-app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR.parent)), name="uploads")
+# Serve uploaded files - mounted under /api to ensure it goes through backend
+app.mount("/api/uploads", StaticFiles(directory=str(UPLOAD_DIR.parent)), name="uploads")
 
 app.add_middleware(
     CORSMiddleware,
