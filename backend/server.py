@@ -635,6 +635,110 @@ async def delete_user(
     
     return {"success": True, "message": "User deleted"}
 
+# ==================== GALLERY ENDPOINTS ====================
+
+# Get all gallery images (public)
+@api_router.get("/gallery")
+async def get_gallery():
+    images = await db.gallery.find({"isActive": True}, {"_id": 0}).sort("order", 1).to_list(100)
+    return {"images": images}
+
+# Admin: Get all gallery images including inactive
+@api_router.get("/admin/gallery")
+async def get_admin_gallery(current_user: dict = Depends(get_current_user)):
+    images = await db.gallery.find({}, {"_id": 0}).sort("order", 1).to_list(100)
+    return {"images": images}
+
+# Admin: Create gallery image
+@api_router.post("/admin/gallery")
+async def create_gallery_image(
+    image_data: GalleryImageCreate,
+    current_user: dict = Depends(require_admin)
+):
+    image = GalleryImage(**image_data.dict())
+    await db.gallery.insert_one(image.dict())
+    return {"success": True, "image": image.dict()}
+
+# Admin: Update gallery image
+@api_router.put("/admin/gallery/{image_id}")
+async def update_gallery_image(
+    image_id: str,
+    image_data: GalleryImageUpdate,
+    current_user: dict = Depends(require_admin)
+):
+    update_dict = {k: v for k, v in image_data.dict().items() if v is not None}
+    if update_dict:
+        update_dict['updatedAt'] = datetime.now(timezone.utc)
+        await db.gallery.update_one({"id": image_id}, {"$set": update_dict})
+    
+    updated = await db.gallery.find_one({"id": image_id}, {"_id": 0})
+    if not updated:
+        raise HTTPException(status_code=404, detail="Gallery image not found")
+    return {"success": True, "image": updated}
+
+# Admin: Delete gallery image
+@api_router.delete("/admin/gallery/{image_id}")
+async def delete_gallery_image(
+    image_id: str,
+    current_user: dict = Depends(require_admin)
+):
+    result = await db.gallery.delete_one({"id": image_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Gallery image not found")
+    return {"success": True, "message": "Gallery image deleted"}
+
+# ==================== TESTIMONIAL ENDPOINTS ====================
+
+# Get all testimonials (public)
+@api_router.get("/testimonials")
+async def get_testimonials():
+    testimonials = await db.testimonials.find({"isActive": True}, {"_id": 0}).sort("createdAt", -1).to_list(100)
+    return {"testimonials": testimonials}
+
+# Admin: Get all testimonials including inactive
+@api_router.get("/admin/testimonials")
+async def get_admin_testimonials(current_user: dict = Depends(get_current_user)):
+    testimonials = await db.testimonials.find({}, {"_id": 0}).sort("createdAt", -1).to_list(100)
+    return {"testimonials": testimonials}
+
+# Admin: Create testimonial
+@api_router.post("/admin/testimonials")
+async def create_testimonial(
+    testimonial_data: TestimonialCreate,
+    current_user: dict = Depends(require_admin)
+):
+    testimonial = Testimonial(**testimonial_data.dict())
+    await db.testimonials.insert_one(testimonial.dict())
+    return {"success": True, "testimonial": testimonial.dict()}
+
+# Admin: Update testimonial
+@api_router.put("/admin/testimonials/{testimonial_id}")
+async def update_testimonial(
+    testimonial_id: str,
+    testimonial_data: TestimonialUpdate,
+    current_user: dict = Depends(require_admin)
+):
+    update_dict = {k: v for k, v in testimonial_data.dict().items() if v is not None}
+    if update_dict:
+        update_dict['updatedAt'] = datetime.now(timezone.utc)
+        await db.testimonials.update_one({"id": testimonial_id}, {"$set": update_dict})
+    
+    updated = await db.testimonials.find_one({"id": testimonial_id}, {"_id": 0})
+    if not updated:
+        raise HTTPException(status_code=404, detail="Testimonial not found")
+    return {"success": True, "testimonial": updated}
+
+# Admin: Delete testimonial
+@api_router.delete("/admin/testimonials/{testimonial_id}")
+async def delete_testimonial(
+    testimonial_id: str,
+    current_user: dict = Depends(require_admin)
+):
+    result = await db.testimonials.delete_one({"id": testimonial_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Testimonial not found")
+    return {"success": True, "message": "Testimonial deleted"}
+
 # Include the router in the main app
 app.include_router(api_router)
 
