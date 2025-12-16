@@ -150,10 +150,24 @@ export const BookingCalendar = () => {
     }
   };
 
-  const modifiersClassNames = {
-    fullyBooked: 'bg-red-100 text-red-900 line-through hover:bg-red-200',
-    partiallyBooked: 'bg-orange-100 text-orange-900 hover:bg-orange-200 font-semibold',
-    available: 'bg-green-50 hover:bg-green-100 text-green-900 font-semibold'
+  // Use inline styles to override the default button styles
+  const modifiersStyles = {
+    fullyBooked: { 
+      backgroundColor: '#fee2e2', 
+      color: '#7f1d1d', 
+      textDecoration: 'line-through',
+      fontWeight: 'bold'
+    },
+    partiallyBooked: { 
+      backgroundColor: '#ffedd5', 
+      color: '#9a3412', 
+      fontWeight: 'bold'
+    },
+    available: { 
+      backgroundColor: '#f0fdf4', 
+      color: '#166534', 
+      fontWeight: 'bold'
+    }
   };
 
   return (
