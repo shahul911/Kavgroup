@@ -11,8 +11,7 @@ import { Textarea } from '../components/ui/textarea';
 import { getBookings, updateBooking, deleteBooking, generateReceipt, createBookingDirect } from '../utils/api';
 import { toast } from 'sonner';
 import { Phone, Calendar as CalendarIcon, Trash2, Edit, Search, FileText, Plus, List, CalendarDays } from 'lucide-react';
-import { Calendar } from '../components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
+// Calendar and Popover imports removed - not needed in list view
 import { format } from 'date-fns';
 
 export const AdminBookings = () => {
