@@ -79,11 +79,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: true
           agent: "main"
           comment: "Fixed receipt URL to use /api/uploads prefix for proper routing through Kubernetes ingress. Receipt generates correctly (verified via curl). Content-type is now application/pdf."
+        - working: true
+          agent: "testing"
+          comment: "TESTED: Receipt buttons are present for confirmed bookings. Receipt generation endpoint is working correctly with proper URL format /api/uploads/receipts/receipt_*.pdf. Minor: PDF opening in new tab needs user interaction due to browser popup blocking."
 
 frontend:
   - task: "Admin Bookings List View - Calendar Bug Fix"
@@ -92,7 +95,7 @@ frontend:
     file: "/app/frontend/src/admin/AdminBookings.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "user"
@@ -100,6 +103,9 @@ frontend:
         - working: true
           agent: "main"
           comment: "Fixed bug - was using Calendar component instead of CalendarIcon. Removed unused Calendar and Popover imports. List view now shows just calendar icon + date text."
+        - working: true
+          agent: "testing"
+          comment: "TESTED: ✅ Event Date column shows calendar ICONS (not full calendar widgets). ✅ Create Booking dialog uses 2 standard HTML date inputs. List view displays correctly with calendar icons next to dates like 'Jan 15, 2025'."
 
   - task: "Admin Notifications for New Booking Requests"
     implemented: true
@@ -107,11 +113,14 @@ frontend:
     file: "/app/frontend/src/admin/AdminDashboard.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: true
           agent: "main"
           comment: "Added notification bell in header with red badge showing count of new enquiries. Added blue badge to Enquiries menu item in sidebar with pulsing animation."
+        - working: true
+          agent: "testing"
+          comment: "TESTED: ✅ Notification bell in header shows red badge with count '1'. ✅ Enquiries menu in sidebar shows blue badge with count '1' and pulsing animation. All notification features working correctly."
 
   - task: "Calendar Color-Coding for Availability"
     implemented: true
@@ -119,7 +128,7 @@ frontend:
     file: "/app/frontend/src/components/BookingCalendar.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "user"
@@ -127,6 +136,9 @@ frontend:
         - working: true
           agent: "main"
           comment: "Fixed by switching from modifiersClassNames to modifiersStyles with inline styles. Default shadcn Calendar button styles were overriding CSS classes. Now uses inline backgroundColor/color."
+        - working: true
+          agent: "testing"
+          comment: "TESTED: ✅ January 15, 2026 shows RED/PINK background (rgb(254, 226, 226)) with strikethrough text for fully booked dates. ✅ Other dates show light green background (rgb(240, 253, 244)) for available dates. Color-coding working perfectly with inline styles."
 
   - task: "Admin Calendar View Color-Coding"
     implemented: true
@@ -134,11 +146,14 @@ frontend:
     file: "/app/frontend/src/admin/BookingCalendarView.jsx"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: true
           agent: "main"
           comment: "Applied same fix as public calendar - using modifiersStyles instead of modifiersClassNames"
+        - working: true
+          agent: "testing"
+          comment: "TESTED: ✅ Admin calendar view accessible via Calendar toggle button. ✅ Color-coding applied using same modifiersStyles approach as public calendar. Admin calendar shows color-coded dates correctly."
 
 metadata:
   created_by: "main_agent"
