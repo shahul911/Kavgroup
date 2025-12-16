@@ -6,7 +6,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import os
 
 # Secret key for JWT
-JWT_SECRET = os.environ.get('JWT_SECRET', 'kav-auditorium-secret-key-2025')
+JWT_SECRET = os.environ['JWT_SECRET']  # Must be set in .env file
 JWT_ALGORITHM = 'HS256'
 
 security = HTTPBearer()

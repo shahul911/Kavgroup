@@ -639,10 +639,13 @@ logger = logging.getLogger(__name__)
 @app.on_event("startup")
 async def startup_event():
     # Create default admin user if not exists
-    admin = await db.admin_users.find_one({"username": "Shahul"})
+    admin_username = os.environ.get('ADMIN_USERNAME', 'Shahul')
+    admin_password = os.environ.get('ADMIN_PASSWORD', '110076@Catlife')
+    
+    admin = await db.admin_users.find_one({"username": admin_username})
     if not admin:
-        hashed_pw = hash_password("110076@Catlife")
-        admin_user = AdminUser(username="Shahul", password=hashed_pw, role="admin")
+        hashed_pw = hash_password(admin_password)
+        admin_user = AdminUser(username=admin_username, password=hashed_pw, role="admin")
         await db.admin_users.insert_one(admin_user.dict())
         logger.info("Default admin user created")
 
