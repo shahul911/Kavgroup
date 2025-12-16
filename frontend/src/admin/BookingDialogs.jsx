@@ -37,38 +37,48 @@ export const CreateBookingDialog = ({ isOpen, onClose, createData, setCreateData
             />
           </div>
           <div className="space-y-2">
-            <Label>Event Start Date *</Label>
-            <Popover>
+            <Label className="text-sm font-semibold">Event Start Date *</Label>
+            <Popover modal={true}>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full justify-start">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {createData.eventDate ? format(createData.eventDate, 'PPP') : 'Select start date'}
+                <Button variant="outline" className="w-full justify-start h-11 text-left font-normal border-2 hover:border-[#D4AF37]">
+                  <CalendarIcon className="mr-2 h-5 w-5 text-[#D4AF37]" />
+                  {createData.eventDate ? (
+                    <span className="font-semibold">{format(createData.eventDate, 'EEE, MMM dd, yyyy')}</span>
+                  ) : (
+                    <span className="text-gray-500">Select start date</span>
+                  )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              <PopoverContent className="w-auto p-0" align="start" side="bottom" sideOffset={5}>
                 <Calendar
                   mode="single"
                   selected={createData.eventDate}
                   onSelect={(date) => setCreateData({ ...createData, eventDate: date })}
+                  initialFocus
                 />
               </PopoverContent>
             </Popover>
           </div>
           <div className="space-y-2">
-            <Label>Event End Date (Optional - for multi-day)</Label>
-            <Popover>
+            <Label className="text-sm font-semibold">Event End Date (Optional - for multi-day)</Label>
+            <Popover modal={true}>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full justify-start">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {createData.eventEndDate ? format(createData.eventEndDate, 'PPP') : 'Same as start date'}
+                <Button variant="outline" className="w-full justify-start h-11 text-left font-normal border-2 hover:border-[#D4AF37]">
+                  <CalendarIcon className="mr-2 h-5 w-5 text-[#D4AF37]" />
+                  {createData.eventEndDate ? (
+                    <span className="font-semibold">{format(createData.eventEndDate, 'EEE, MMM dd, yyyy')}</span>
+                  ) : (
+                    <span className="text-gray-500">Same as start date</span>
+                  )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              <PopoverContent className="w-auto p-0" align="start" side="bottom" sideOffset={5}>
                 <Calendar
                   mode="single"
                   selected={createData.eventEndDate}
                   onSelect={(date) => setCreateData({ ...createData, eventEndDate: date })}
                   disabled={(date) => createData.eventDate && date < createData.eventDate}
+                  initialFocus
                 />
               </PopoverContent>
             </Popover>
@@ -77,9 +87,9 @@ export const CreateBookingDialog = ({ isOpen, onClose, createData, setCreateData
                 variant="ghost"
                 size="sm"
                 onClick={() => setCreateData({ ...createData, eventEndDate: null })}
-                className="text-xs"
+                className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
               >
-                Clear end date
+                ✕ Clear end date
               </Button>
             )}
           </div>
@@ -189,41 +199,61 @@ export const EditBookingDialog = ({ isOpen, onClose, booking, editData, setEditD
               <p className="text-sm"><b>Invoice:</b> {booking.invoiceNumber}</p>
             </div>
             <div className="space-y-2">
-              <Label>Event Start Date</Label>
-              <Popover>
+              <Label className="text-sm font-semibold">Event Start Date</Label>
+              <Popover modal={true}>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start">
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {editData.eventDate ? format(editData.eventDate, 'PPP') : 'Select date'}
+                  <Button variant="outline" className="w-full justify-start h-11 text-left font-normal border-2 hover:border-[#D4AF37]">
+                    <CalendarIcon className="mr-2 h-5 w-5 text-[#D4AF37]" />
+                    {editData.eventDate ? (
+                      <span className="font-semibold">{format(editData.eventDate, 'EEE, MMM dd, yyyy')}</span>
+                    ) : (
+                      <span className="text-gray-500">Select date</span>
+                    )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
+                <PopoverContent className="w-auto p-0" align="start" side="bottom" sideOffset={5}>
                   <Calendar
                     mode="single"
                     selected={editData.eventDate}
                     onSelect={(date) => setEditData({ ...editData, eventDate: date })}
+                    initialFocus
                   />
                 </PopoverContent>
               </Popover>
             </div>
             <div className="space-y-2">
-              <Label>Event End Date (Multi-day)</Label>
-              <Popover>
+              <Label className="text-sm font-semibold">Event End Date (Multi-day)</Label>
+              <Popover modal={true}>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start">
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {editData.eventEndDate ? format(editData.eventEndDate, 'PPP') : 'Same as start'}
+                  <Button variant="outline" className="w-full justify-start h-11 text-left font-normal border-2 hover:border-[#D4AF37]">
+                    <CalendarIcon className="mr-2 h-5 w-5 text-[#D4AF37]" />
+                    {editData.eventEndDate ? (
+                      <span className="font-semibold">{format(editData.eventEndDate, 'EEE, MMM dd, yyyy')}</span>
+                    ) : (
+                      <span className="text-gray-500">Same as start</span>
+                    )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
+                <PopoverContent className="w-auto p-0" align="start" side="bottom" sideOffset={5}>
                   <Calendar
                     mode="single"
                     selected={editData.eventEndDate}
                     onSelect={(date) => setEditData({ ...editData, eventEndDate: date })}
                     disabled={(date) => editData.eventDate && date < editData.eventDate}
+                    initialFocus
                   />
                 </PopoverContent>
               </Popover>
+              {editData.eventEndDate && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setEditData({ ...editData, eventEndDate: null })}
+                  className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  ✕ Clear end date
+                </Button>
+              )}
             </div>
             <div className="space-y-2">
               <Label>Status</Label>

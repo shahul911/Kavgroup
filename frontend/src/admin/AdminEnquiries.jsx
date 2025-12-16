@@ -424,7 +424,7 @@ export const AdminEnquiries = () => {
 
       {/* Convert to Booking Dialog */}
       <Dialog open={isConvertDialogOpen} onOpenChange={setIsConvertDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Convert Enquiry to Booking</DialogTitle>
             <DialogDescription>
@@ -432,7 +432,7 @@ export const AdminEnquiries = () => {
             </DialogDescription>
           </DialogHeader>
           {selectedEnquiry && (
-            <div className="space-y-4 mt-4">
+            <div className="space-y-4 mt-4 pb-4">
               <div className="p-3 bg-blue-50 border border-blue-200 rounded">
                 <p className="text-sm font-semibold text-blue-900 mb-1">Original Enquiry Details:</p>
                 <p className="text-sm"><b>Customer:</b> {selectedEnquiry.name}</p>
