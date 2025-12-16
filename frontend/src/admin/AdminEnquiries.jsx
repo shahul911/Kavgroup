@@ -153,10 +153,18 @@ export const AdminEnquiries = () => {
     }
 
     try {
+      // Format dates in local timezone to avoid timezone conversion issues
+      const formatDateLocal = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+
       const balanceDue = parseFloat(bookingData.amount) - parseFloat(bookingData.advancePaid);
       const convertData = {
-        eventDate: bookingData.eventDate.toISOString().split('T')[0],
-        eventEndDate: bookingData.eventEndDate ? bookingData.eventEndDate.toISOString().split('T')[0] : null,
+        eventDate: formatDateLocal(bookingData.eventDate),
+        eventEndDate: bookingData.eventEndDate ? formatDateLocal(bookingData.eventEndDate) : null,
         eventTimeFrom: bookingData.eventTimeFrom,
         eventTimeTo: bookingData.eventTimeTo,
         amount: parseFloat(bookingData.amount),

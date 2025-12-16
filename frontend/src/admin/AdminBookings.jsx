@@ -289,14 +289,6 @@ export const AdminBookings = () => {
         </div>
         )}
 
-        {/* Calendar View */}
-        {viewMode === 'calendar' && (
-          <BookingCalendarView 
-            bookings={bookings} 
-            onDateClick={(booking) => handleEdit(booking)}
-          />
-        )}
-
         {/* List View */}
         {viewMode === 'list' && (
         <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -384,6 +376,14 @@ export const AdminBookings = () => {
             </div>
           )}
         </div>
+        )}
+
+        {/* Calendar View */}
+        {viewMode === 'calendar' && (
+          <BookingCalendarView
+            bookings={bookings}
+            onDateClick={handleEdit}
+          />
         )}
       </div>
 

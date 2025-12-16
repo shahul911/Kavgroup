@@ -21,8 +21,16 @@ export const BookingCalendarView = ({ bookings, onDateClick }) => {
       const firstDay = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
       const lastDay = new Date(monthDate.getFullYear(), monthDate.getMonth() + 2, 0);
       
-      const startDate = firstDay.toISOString().split('T')[0];
-      const endDate = lastDay.toISOString().split('T')[0];
+      // Format dates in local timezone
+      const formatDateLocal = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+      
+      const startDate = formatDateLocal(firstDay);
+      const endDate = formatDateLocal(lastDay);
       
       const response = await getAvailabilityOverview(startDate, endDate);
       setDateStatusMap(response.dateStatus || {});
@@ -32,14 +40,24 @@ export const BookingCalendarView = ({ bookings, onDateClick }) => {
   };
 
   const getDateStatus = (date) => {
-    const dateStr = date.toISOString().split('T')[0];
+    // Format date in local timezone
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
     return dateStatusMap[dateStr] || 'unknown';
   };
 
   // Get bookings for selected date (including multi-day events)
   const bookingsForDate = bookings.filter(booking => {
-    const startDate = new Date(booking.eventDate);
-    const endDate = booking.eventEndDate ? new Date(booking.eventEndDate) : startDate;
+    // Parse dates correctly to avoid timezone issues
+    const parseLocalDate = (dateStr) => {
+      const [year, month, day] = dateStr.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    };
+    
+    const startDate = parseLocalDate(booking.eventDate);
+    const endDate = booking.eventEndDate ? parseLocalDate(booking.eventEndDate) : startDate;
     
     // Check if selected date falls within the booking range
     const selectedDateOnly = new Date(selectedDate);
