@@ -401,7 +401,9 @@ async def delete_document(
         raise HTTPException(status_code=404, detail="Document not found")
     
     # Delete file from filesystem
-    file_path = ROOT_DIR / document['fileUrl'].lstrip('/')
+    # Remove /api prefix when converting URL to file path
+    file_url = document['fileUrl'].replace('/api/', '/')
+    file_path = ROOT_DIR / file_url.lstrip('/')
     if file_path.exists():
         file_path.unlink()
     
