@@ -438,7 +438,20 @@ export const AdminEnquiries = () => {
                 <p className="text-sm"><b>Customer:</b> {selectedEnquiry.name}</p>
                 <p className="text-sm"><b>Phone:</b> {selectedEnquiry.phone}</p>
                 <p className="text-sm"><b>Event:</b> {selectedEnquiry.eventType}</p>
-                <p className="text-sm"><b>Requested Date:</b> {format(new Date(selectedEnquiry.eventDate), 'MMM dd, yyyy')}</p>
+                <p className="text-sm"><b>Requested Date:</b> {(() => {
+                  const dateStr = selectedEnquiry.eventDate;
+                  const [year, month, day] = dateStr.split('-').map(Number);
+                  const localDate = new Date(year, month - 1, day);
+                  return format(localDate, 'MMM dd, yyyy');
+                })()}</p>
+                {selectedEnquiry.eventEndDate && (
+                  <p className="text-sm"><b>End Date:</b> {(() => {
+                    const dateStr = selectedEnquiry.eventEndDate;
+                    const [year, month, day] = dateStr.split('-').map(Number);
+                    const localDate = new Date(year, month - 1, day);
+                    return format(localDate, 'MMM dd, yyyy');
+                  })()}</p>
+                )}
               </div>
 
               <div className="p-3 bg-yellow-50 border border-yellow-300 rounded">

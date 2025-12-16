@@ -36,10 +36,23 @@ export const BookingCalendarView = ({ bookings, onDateClick }) => {
     return dateStatusMap[dateStr] || 'unknown';
   };
 
-  // Get bookings for selected date
-  const bookingsForDate = bookings.filter(booking => 
-    isSameDay(new Date(booking.eventDate), selectedDate)
-  );
+  // Get bookings for selected date (including multi-day events)
+  const bookingsForDate = bookings.filter(booking => {
+    const startDate = new Date(booking.eventDate);
+    const endDate = booking.eventEndDate ? new Date(booking.eventEndDate) : startDate;
+    
+    // Check if selected date falls within the booking range
+    const selectedDateOnly = new Date(selectedDate);
+    selectedDateOnly.setHours(0, 0, 0, 0);
+    
+    const startDateOnly = new Date(startDate);
+    startDateOnly.setHours(0, 0, 0, 0);
+    
+    const endDateOnly = new Date(endDate);
+    endDateOnly.setHours(0, 0, 0, 0);
+    
+    return selectedDateOnly >= startDateOnly && selectedDateOnly <= endDateOnly;
+  });
 
   const modifiers = {
     fullyBooked: (date) => {

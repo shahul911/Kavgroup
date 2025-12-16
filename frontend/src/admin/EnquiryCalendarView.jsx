@@ -8,10 +8,13 @@ import { Phone, Bell } from 'lucide-react';
 export const EnquiryCalendarView = ({ enquiries, onDateClick }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  // Get enquiries for selected date
-  const enquiriesForDate = enquiries.filter(enquiry => 
-    isSameDay(new Date(enquiry.eventDate), selectedDate)
-  );
+  // Get enquiries for selected date (handle timezone correctly)
+  const enquiriesForDate = enquiries.filter(enquiry => {
+    const dateStr = enquiry.eventDate;
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const enquiryDate = new Date(year, month - 1, day);
+    return isSameDay(enquiryDate, selectedDate);
+  });
 
   // Get all enquiry dates
   const enquiryDates = enquiries.map(e => new Date(e.eventDate));
