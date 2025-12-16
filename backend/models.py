@@ -111,3 +111,54 @@ class Document(BaseModel):
     notes: Optional[str] = None
     createdAt: datetime = Field(default_factory=datetime.utcnow)
     updatedAt: datetime = Field(default_factory=datetime.utcnow)
+
+# Gallery Model
+class GalleryImageCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    imageUrl: str
+    order: int = 0
+
+class GalleryImage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: Optional[str] = None
+    imageUrl: str
+    order: int = 0
+    isActive: bool = True
+    createdAt: datetime = Field(default_factory=datetime.utcnow)
+    updatedAt: datetime = Field(default_factory=datetime.utcnow)
+
+class GalleryImageUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    imageUrl: Optional[str] = None
+    order: Optional[int] = None
+    isActive: Optional[bool] = None
+
+# Testimonial Model
+class TestimonialCreate(BaseModel):
+    name: str
+    event: str
+    rating: int = 5
+    text: str
+    date: Optional[str] = None
+
+class Testimonial(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    event: str
+    rating: int = 5
+    text: str
+    date: Optional[str] = None
+    isActive: bool = True
+    createdAt: datetime = Field(default_factory=datetime.utcnow)
+    updatedAt: datetime = Field(default_factory=datetime.utcnow)
+
+class TestimonialUpdate(BaseModel):
+    name: Optional[str] = None
+    event: Optional[str] = None
+    rating: Optional[int] = None
+    text: Optional[str] = None
+    date: Optional[str] = None
+    isActive: Optional[bool] = None
