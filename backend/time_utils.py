@@ -107,8 +107,8 @@ def check_multiday_conflict(new_booking, existing_bookings):
     """
     new_start_date = new_booking.get('eventDate')
     new_end_date = new_booking.get('eventEndDate') or new_start_date
-    new_start_time = new_booking.get('eventTimeFrom', '07:00 AM')
-    new_end_time = new_booking.get('eventTimeTo', '11:00 PM')
+    new_start_time = new_booking.get('eventTimeFrom', '09:00 AM')
+    new_end_time = new_booking.get('eventTimeTo', '10:00 PM')
     
     # Get all dates covered by the new booking
     new_dates = get_date_range(new_start_date, new_end_date)
@@ -116,8 +116,8 @@ def check_multiday_conflict(new_booking, existing_bookings):
     for existing in existing_bookings:
         existing_start_date = existing.get('eventDate')
         existing_end_date = existing.get('eventEndDate') or existing_start_date
-        existing_start_time = existing.get('eventTimeFrom', '07:00 AM')
-        existing_end_time = existing.get('eventTimeTo', '11:00 PM')
+        existing_start_time = existing.get('eventTimeFrom', '09:00 AM')
+        existing_end_time = existing.get('eventTimeTo', '10:00 PM')
         
         # Get all dates covered by existing booking
         existing_dates = get_date_range(existing_start_date, existing_end_date)
@@ -143,17 +143,17 @@ def check_multiday_conflict(new_booking, existing_bookings):
                 new_effective_start = new_start_time
                 new_effective_end = new_end_time
             elif is_new_start:
-                # Start day of multi-day event
+                # Start day of multi-day event (within business hours)
                 new_effective_start = new_start_time
-                new_effective_end = '11:59 PM'
+                new_effective_end = '10:00 PM'  # Business hours end
             elif is_new_end:
-                # End day of multi-day event
-                new_effective_start = '12:00 AM'
+                # End day of multi-day event (within business hours)
+                new_effective_start = '09:00 AM'  # Business hours start
                 new_effective_end = new_end_time
             else:
-                # Middle day - fully booked
-                new_effective_start = '12:00 AM'
-                new_effective_end = '11:59 PM'
+                # Middle day - fully booked during business hours
+                new_effective_start = '09:00 AM'
+                new_effective_end = '10:00 PM'
             
             # For existing booking
             if is_existing_start and is_existing_end:
@@ -161,13 +161,13 @@ def check_multiday_conflict(new_booking, existing_bookings):
                 existing_effective_end = existing_end_time
             elif is_existing_start:
                 existing_effective_start = existing_start_time
-                existing_effective_end = '11:59 PM'
+                existing_effective_end = '10:00 PM'  # Business hours end
             elif is_existing_end:
-                existing_effective_start = '12:00 AM'
+                existing_effective_start = '09:00 AM'  # Business hours start
                 existing_effective_end = existing_end_time
             else:
-                existing_effective_start = '12:00 AM'
-                existing_effective_end = '11:59 PM'
+                existing_effective_start = '09:00 AM'
+                existing_effective_end = '10:00 PM'
             
             # Check if times overlap
             if times_overlap(new_effective_start, new_effective_end, 
