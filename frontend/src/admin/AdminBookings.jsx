@@ -325,7 +325,7 @@ export const AdminBookings = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center text-gray-900">
-                          <Calendar className="w-4 h-4 mr-2 text-gray-400" />
+                          <CalendarIcon className="w-4 h-4 mr-2 text-gray-400" />
                           {format(new Date(booking.eventDate), 'MMM dd, yyyy')}
                         </div>
                       </td>
