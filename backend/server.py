@@ -21,6 +21,7 @@ from models import (
 )
 from auth import hash_password, verify_password, create_jwt_token, get_current_user, require_admin
 from time_utils import times_overlap, get_available_slots, check_multiday_conflict, get_daily_availability
+from email_service import send_booking_notification
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
