@@ -60,8 +60,11 @@ async def get_availability_overview(start_date: str = None, end_date: str = None
         next_month = today.replace(day=28) + timedelta(days=4)
         end_date = (next_month.replace(day=1) + timedelta(days=32)).replace(day=1).strftime('%Y-%m-%d')
     
-    # Get all bookings
-    bookings = await db.bookings.find({"status": {"$in": ["pending", "confirmed"]}}, {'_id': 0}).to_list(1000)
+    # Get all bookings with projection (only needed fields)
+    bookings = await db.bookings.find(
+        {"status": {"$in": ["pending", "confirmed"]}}, 
+        {'_id': 0, 'eventDate': 1, 'eventEndDate': 1, 'eventTimeFrom': 1, 'eventTimeTo': 1, 'name': 1, 'eventType': 1, 'status': 1}
+    ).to_list(None)
     
     # Generate date range
     dates_to_check = get_date_range(start_date, end_date)
@@ -96,7 +99,7 @@ async def get_date_availability(date: str):
     # Get all bookings that might affect this date (including multi-day events)
     bookings = await db.bookings.find({
         "status": {"$in": ["pending", "confirmed"]}
-    }, {'_id': 0}).to_list(1000)
+    }, {'_id': 0, 'eventDate': 1, 'eventEndDate': 1, 'eventTimeFrom': 1, 'eventTimeTo': 1, 'name': 1, 'eventType': 1, 'status': 1}).to_list(None)
     
     # Filter bookings that overlap with this date
     relevant_bookings = []
@@ -173,10 +176,10 @@ async def create_booking_direct(
     booking_data: dict,
     current_user: dict = Depends(get_current_user)
 ):
-    # Get all existing bookings to check for conflicts
+    # Get all existing bookings to check for conflicts (with projection)
     existing_bookings = await db.bookings.find({
         "status": {"$in": ["pending", "confirmed"]}
-    }, {'_id': 0}).to_list(1000)
+    }, {'_id': 0, 'eventDate': 1, 'eventEndDate': 1, 'eventTimeFrom': 1, 'eventTimeTo': 1}).to_list(None)
     
     # Check for multi-day conflicts
     has_conflict, conflict_msg = check_multiday_conflict(booking_data, existing_bookings)
@@ -424,10 +427,10 @@ async def convert_enquiry_to_booking(
         'eventTimeTo': booking_details.get('eventTimeTo', '08:00 PM')
     }
     
-    # Get all existing bookings and check for conflicts
+    # Get all existing bookings and check for conflicts (with projection)
     existing_bookings = await db.bookings.find({
         "status": {"$in": ["pending", "confirmed"]}
-    }, {'_id': 0}).to_list(1000)
+    }, {'_id': 0, 'eventDate': 1, 'eventEndDate': 1, 'eventTimeFrom': 1, 'eventTimeTo': 1}).to_list(None)
     
     has_conflict, conflict_msg = check_multiday_conflict(new_booking_data, existing_bookings)
     if has_conflict:
