@@ -147,6 +147,12 @@ async def create_enquiry(enquiry_data: EnquiryCreate):
     enquiry = Enquiry(**enquiry_data.dict())
     await db.enquiries.insert_one(enquiry.dict())
     
+    # Send email notification to admin (non-blocking)
+    try:
+        send_booking_notification(enquiry.dict())
+    except Exception as e:
+        logger.error(f"Failed to send booking notification email: {e}")
+    
     return {
         "success": True,
         "message": "Enquiry submitted successfully",
