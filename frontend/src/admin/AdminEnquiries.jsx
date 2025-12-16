@@ -147,13 +147,22 @@ export const AdminEnquiries = () => {
       return;
     }
 
+    if (!bookingData.eventDate) {
+      toast.error('Please select event start date');
+      return;
+    }
+
     try {
       const balanceDue = parseFloat(bookingData.amount) - parseFloat(bookingData.advancePaid);
       const convertData = {
-        ...bookingData,
+        eventDate: bookingData.eventDate.toISOString().split('T')[0],
+        eventEndDate: bookingData.eventEndDate ? bookingData.eventEndDate.toISOString().split('T')[0] : null,
+        eventTimeFrom: bookingData.eventTimeFrom,
+        eventTimeTo: bookingData.eventTimeTo,
         amount: parseFloat(bookingData.amount),
         advancePaid: parseFloat(bookingData.advancePaid),
-        balanceDue: balanceDue
+        balanceDue: balanceDue,
+        notes: bookingData.notes
       };
 
       await convertEnquiryToBooking(selectedEnquiry.id, convertData);
