@@ -420,28 +420,7 @@ export const BookingCalendar = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="timeFrom">Event Start Time *</Label>
-                <Input
-                  id="timeFrom"
-                  type="time"
-                  value={formData.eventTimeFrom}
-                  onChange={(e) => setFormData({ ...formData, eventTimeFrom: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="timeTo">Event End Time *</Label>
-                <Input
-                  id="timeTo"
-                  type="time"
-                  value={formData.eventTimeTo}
-                  onChange={(e) => setFormData({ ...formData, eventTimeTo: e.target.value })}
-                  required
-                />
-              </div>
-            </div>
+            {/* Time inputs removed - using default business hours 9 AM - 10 PM */}
 
             <div className="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
               <p className="font-medium mb-1">💡 Multi-Day Events:</p>
