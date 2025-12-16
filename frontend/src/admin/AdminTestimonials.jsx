@@ -340,6 +340,6 @@ export const AdminTestimonials = () => {
           </form>
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminDashboard>
   );
 };
