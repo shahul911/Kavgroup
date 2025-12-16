@@ -315,6 +315,7 @@ export const AdminGallery = () => {
           </form>
         </DialogContent>
       </Dialog>
+      </div>
     </AdminDashboard>
   );
 };
