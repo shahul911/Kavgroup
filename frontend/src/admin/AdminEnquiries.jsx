@@ -129,11 +129,13 @@ export const AdminEnquiries = () => {
   const handleConvertToBooking = (enquiry) => {
     setSelectedEnquiry(enquiry);
     setBookingData({
+      eventDate: enquiry.eventDate ? new Date(enquiry.eventDate) : null,
+      eventEndDate: enquiry.eventEndDate ? new Date(enquiry.eventEndDate) : null,
       amount: '',
       advancePaid: '',
       balanceDue: '',
-      eventTimeFrom: '07:00 AM',
-      eventTimeTo: '08:00 PM',
+      eventTimeFrom: enquiry.eventTimeFrom || '09:00 AM',
+      eventTimeTo: enquiry.eventTimeTo || '10:00 PM',
       notes: ''
     });
     setIsConvertDialogOpen(true);
