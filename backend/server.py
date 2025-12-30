@@ -2,9 +2,11 @@ from dotenv import load_dotenv
 # Load environment variables FIRST before any other imports that might use them
 load_dotenv()
 
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, UploadFile, File, Form
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, UploadFile, File, Form, Request
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
@@ -25,6 +27,10 @@ from models import (
 from auth import hash_password, verify_password, create_jwt_token, get_current_user, require_admin
 from time_utils import times_overlap, get_available_slots, check_multiday_conflict, get_daily_availability
 from email_service import send_booking_notification
+from security import (
+    limiter, rate_limit_exceeded_handler, SecurityMiddleware,
+    ip_blocker, InputValidator, validate_request_body, RATE_LIMITS
+)
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
