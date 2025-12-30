@@ -96,8 +96,31 @@ export const BookingCalendar = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Bot detection - honeypot check
+    if (formData.website || formData.company_website) {
+      // Silently reject bot submissions
+      toast.success('Thank you for your submission!');
+      setIsDialogOpen(false);
+      return;
+    }
+    
+    // Rate limiting - prevent rapid submissions
+    const now = Date.now();
+    if (now - lastSubmitTime < 30000) { // 30 seconds between submissions
+      toast.error('Please wait a moment before submitting another request.');
+      return;
+    }
+    
     if (!formData.name || !formData.phone || !formData.eventType || !selectedDate) {
       toast.error('Please fill all required fields');
+      return;
+    }
+    
+    // Basic phone validation
+    const phoneRegex = /^[\d\s\-\+\(\)]{10,15}$/;
+    if (!phoneRegex.test(formData.phone.replace(/\s/g, ''))) {
+      toast.error('Please enter a valid phone number');
       return;
     }
 
@@ -112,20 +135,24 @@ export const BookingCalendar = () => {
       };
 
       const enquiryData = {
-        name: formData.name,
-        phone: formData.phone,
+        name: formData.name.trim(),
+        phone: formData.phone.trim(),
         eventType: formData.eventType,
         eventDate: formatDateLocal(selectedDate),
         eventEndDate: selectedEndDate ? formatDateLocal(selectedEndDate) : null,
         eventTimeFrom: '09:00 AM',  // Default business hours start
-        eventTimeTo: '10:00 PM'     // Default business hours end
+        eventTimeTo: '10:00 PM',    // Default business hours end
+        // Include honeypot fields (should be empty)
+        website: formData.website,
+        company_website: formData.company_website
       };
       
       await createEnquiry(enquiryData);
+      setLastSubmitTime(Date.now());
       const daysText = selectedEndDate ? ` (${selectedDate.toISOString().split('T')[0]} to ${selectedEndDate.toISOString().split('T')[0]})` : '';
       toast.success(`Booking request submitted successfully${daysText}! We will contact you soon to confirm availability.`);
       setIsDialogOpen(false);
-      setFormData({ name: '', phone: '', eventType: '' });
+      setFormData({ name: '', phone: '', eventType: '', website: '', company_website: '' });
       setSelectedDate(null);
       setSelectedEndDate(null);
       setAvailabilityData(null);
