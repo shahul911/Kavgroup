@@ -165,9 +165,28 @@ async def create_booking(booking_data: BookingCreate):
         "booking": booking.dict()
     }
 
-# Create a new enquiry
+# Create a new enquiry (rate limited to prevent spam)
 @api_router.post("/enquiries")
-async def create_enquiry(enquiry_data: EnquiryCreate):
+@limiter.limit("5/minute")  # Max 5 enquiries per minute per IP
+async def create_enquiry(request: Request, enquiry_data: EnquiryCreate):
+    ip = request.client.host
+    
+    # Validate input for malicious content
+    data_dict = enquiry_data.dict()
+    is_valid, error = await validate_request_body(request, data_dict)
+    if not is_valid:
+        ip_blocker.record_failed_attempt(ip, error)
+        raise HTTPException(status_code=400, detail=error)
+    
+    # Validate phone number
+    if not InputValidator.validate_phone(enquiry_data.phone):
+        ip_blocker.record_failed_attempt(ip, "Invalid phone number")
+        raise HTTPException(status_code=400, detail="Invalid phone number format")
+    
+    # Sanitize inputs
+    enquiry_data.name = InputValidator.sanitize_string(enquiry_data.name)
+    enquiry_data.eventType = InputValidator.sanitize_string(enquiry_data.eventType)
+    
     enquiry = Enquiry(**enquiry_data.dict())
     await db.enquiries.insert_one(enquiry.dict())
     
