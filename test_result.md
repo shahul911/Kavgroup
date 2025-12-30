@@ -145,10 +145,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Receipt PDF Generation"
-    - "Admin Bookings List View - Calendar Bug Fix"
-    - "Admin Notifications for New Booking Requests"
-    - "Calendar Color-Coding for Availability"
+    - "Admin Gallery Management"
+    - "Admin Testimonials Management"
+    - "Public Gallery Display"
+    - "Public Testimonials Display"
   stuck_tasks: []
   test_all: true
   test_priority: "high_first"
