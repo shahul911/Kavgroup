@@ -153,16 +153,16 @@ export const AdminTestimonials = () => {
 
   return (
     <AdminDashboard currentPage="testimonials">
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Testimonials Management</h1>
-          <p className="text-gray-500 mt-1">Manage client testimonials displayed on the website</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Testimonials Management</h1>
+          <p className="text-sm text-gray-500 mt-1">Manage client testimonials displayed on the website</p>
         </div>
         <Button 
           onClick={() => handleOpenDialog()}
-          className="bg-[#D4AF37] hover:bg-[#B8960C] text-black"
+          className="bg-[#D4AF37] hover:bg-[#B8960C] text-black w-full sm:w-auto"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Testimonial
@@ -172,10 +172,10 @@ export const AdminTestimonials = () => {
       {/* Testimonials Grid */}
       {testimonials.length === 0 ? (
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Quote className="w-16 h-16 text-gray-300 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No testimonials yet</h3>
-            <p className="text-gray-500 mb-4">Add your first client testimonial to get started</p>
+          <CardContent className="flex flex-col items-center justify-center py-8 sm:py-12">
+            <Quote className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mb-4" />
+            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">No testimonials yet</h3>
+            <p className="text-sm text-gray-500 mb-4 text-center">Add your first client testimonial to get started</p>
             <Button 
               onClick={() => handleOpenDialog()}
               className="bg-[#D4AF37] hover:bg-[#B8960C] text-black"
@@ -186,7 +186,7 @@ export const AdminTestimonials = () => {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {testimonials.map((testimonial) => (
             <Card key={testimonial.id} className={`relative ${!testimonial.isActive ? 'opacity-60 bg-gray-50' : ''}`}>
               <CardContent className="p-6">
