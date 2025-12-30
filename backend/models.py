@@ -43,6 +43,9 @@ class EnquiryCreate(BaseModel):
     eventType: str
     eventTimeFrom: Optional[str] = '07:00 AM'
     eventTimeTo: Optional[str] = '08:00 PM'
+    # Honeypot fields (should be empty - bots fill these)
+    website: Optional[str] = None
+    company_website: Optional[str] = None
 
 class Enquiry(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
