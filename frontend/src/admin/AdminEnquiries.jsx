@@ -194,51 +194,53 @@ export const AdminEnquiries = () => {
 
   return (
     <AdminDashboard currentPage="enquiries">
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">Enquiries Management</h2>
-          <div className="flex gap-2">
+      <div className="space-y-4 sm:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Enquiries Management</h2>
+          <div className="flex flex-wrap gap-2">
             {/* View Toggle */}
             <div className="flex border rounded-lg">
               <Button
                 variant={viewMode === 'list' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('list')}
-                className={viewMode === 'list' ? 'bg-[#D4AF37] text-black hover:bg-[#C19B2E]' : ''}
+                className={`text-xs sm:text-sm ${viewMode === 'list' ? 'bg-[#D4AF37] text-black hover:bg-[#C19B2E]' : ''}`}
               >
-                <List className="w-4 h-4 mr-2" />
-                List
+                <List className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">List</span>
               </Button>
               <Button
                 variant={viewMode === 'calendar' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('calendar')}
-                className={viewMode === 'calendar' ? 'bg-[#D4AF37] text-black hover:bg-[#C19B2E]' : ''}
+                className={`text-xs sm:text-sm ${viewMode === 'calendar' ? 'bg-[#D4AF37] text-black hover:bg-[#C19B2E]' : ''}`}
               >
-                <CalendarDays className="w-4 h-4 mr-2" />
-                Calendar
+                <CalendarDays className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Calendar</span>
               </Button>
             </div>
-            <Button onClick={loadEnquiries} variant="outline">Refresh</Button>
+            <Button onClick={loadEnquiries} variant="outline" size="sm" className="text-xs sm:text-sm">
+              Refresh
+            </Button>
           </div>
         </div>
 
         {/* Filters - Only show in list view */}
         {viewMode === 'list' && (
-        <div className="bg-white p-4 rounded-lg shadow space-y-4 md:space-y-0 md:flex md:items-center md:gap-4">
+        <div className="bg-white p-3 sm:p-4 rounded-lg shadow space-y-3 sm:space-y-0 sm:flex sm:items-center sm:gap-4">
           <div className="flex-1">
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search by name, phone, or event type..."
+                placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 text-sm"
               />
             </div>
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full md:w-48">
+            <SelectTrigger className="w-full sm:w-48 text-sm">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -260,7 +262,7 @@ export const AdminEnquiries = () => {
           />
         )}
 
-        {/* List View */}
+        {/* List View - Mobile Cards / Desktop Table */}
         {viewMode === 'list' && (
         <div className="bg-white rounded-lg shadow overflow-hidden">
           {isLoading ? (
@@ -268,89 +270,153 @@ export const AdminEnquiries = () => {
           ) : filteredEnquiries.length === 0 ? (
             <div className="p-8 text-center text-gray-500">No enquiries found</div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event Type</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Follow-up</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredEnquiries.map((enquiry) => (
-                    <tr key={enquiry.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="font-medium text-gray-900">{enquiry.name}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+            <>
+              {/* Mobile Card View */}
+              <div className="block sm:hidden divide-y divide-gray-200">
+                {filteredEnquiries.map((enquiry) => (
+                  <div key={enquiry.id} className="p-4 space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="font-medium text-gray-900">{enquiry.name}</p>
                         <button
                           onClick={() => handleCall(enquiry.phone)}
-                          className="flex items-center text-blue-600 hover:text-blue-800"
+                          className="flex items-center text-blue-600 text-sm"
                         >
-                          <Phone className="w-4 h-4 mr-1" />
+                          <Phone className="w-3 h-3 mr-1" />
                           {enquiry.phone}
                         </button>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center text-gray-900">
-                          <CalendarIcon className="w-4 h-4 mr-2 text-gray-400" />
-                          {format(new Date(enquiry.eventDate), 'MMM dd, yyyy')}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-gray-900">{enquiry.eventType}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(enquiry.status)}`}>
-                          {enquiry.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {enquiry.followUpReminder && enquiry.followUpDate ? (
-                          <div className="flex items-center text-orange-600">
-                            <Bell className="w-4 h-4 mr-1" />
-                            <span className="text-xs">{format(new Date(enquiry.followUpDate), 'MMM dd')}</span>
-                          </div>
-                        ) : (
-                          <span className="text-gray-400 text-xs">None</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex gap-2">
-                          {enquiry.status !== 'closed' && (
-                            <Button
-                              onClick={() => handleConvertToBooking(enquiry)}
-                              size="sm"
-                              className="bg-green-600 hover:bg-green-700 text-white"
-                            >
-                              Convert
-                            </Button>
-                          )}
-                          <Button
-                            onClick={() => handleEdit(enquiry)}
-                            variant="outline"
-                            size="sm"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            onClick={() => handleDelete(enquiry.id)}
-                            variant="outline"
-                            size="sm"
-                            className="text-red-600 hover:text-red-700"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </td>
+                      </div>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(enquiry.status)}`}>
+                        {enquiry.status}
+                      </span>
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <CalendarIcon className="w-3 h-3 mr-1" />
+                      {format(new Date(enquiry.eventDate), 'MMM dd, yyyy')} • {enquiry.eventType}
+                    </div>
+                    {enquiry.followUpReminder && enquiry.followUpDate && (
+                      <div className="flex items-center text-sm text-orange-600">
+                        <Bell className="w-3 h-3 mr-1" />
+                        Follow-up: {format(new Date(enquiry.followUpDate), 'MMM dd')}
+                      </div>
+                    )}
+                    <div className="flex gap-2 pt-2">
+                      {enquiry.status !== 'closed' && (
+                        <Button
+                          onClick={() => handleConvertToBooking(enquiry)}
+                          size="sm"
+                          className="bg-green-600 hover:bg-green-700 text-white text-xs flex-1"
+                        >
+                          Convert
+                        </Button>
+                      )}
+                      <Button
+                        onClick={() => handleEdit(enquiry)}
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 text-xs"
+                      >
+                        <Edit className="w-3 h-3 mr-1" />
+                        Edit
+                      </Button>
+                      <Button
+                        onClick={() => handleDelete(enquiry.id)}
+                        variant="outline"
+                        size="sm"
+                        className="text-red-600 hover:text-red-700 text-xs"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop Table View */}
+              <div className="hidden sm:block overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event Date</th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event Type</th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Follow-up</th>
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredEnquiries.map((enquiry) => (
+                      <tr key={enquiry.id} className="hover:bg-gray-50">
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                          <div className="font-medium text-gray-900 text-sm">{enquiry.name}</div>
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                          <button
+                            onClick={() => handleCall(enquiry.phone)}
+                            className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
+                          >
+                            <Phone className="w-4 h-4 mr-1" />
+                            {enquiry.phone}
+                          </button>
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center text-gray-900 text-sm">
+                            <CalendarIcon className="w-4 h-4 mr-2 text-gray-400" />
+                            {format(new Date(enquiry.eventDate), 'MMM dd, yyyy')}
+                          </div>
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-gray-900 text-sm">{enquiry.eventType}</td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(enquiry.status)}`}>
+                            {enquiry.status}
+                          </span>
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                          {enquiry.followUpReminder && enquiry.followUpDate ? (
+                            <div className="flex items-center text-orange-600">
+                              <Bell className="w-4 h-4 mr-1" />
+                              <span className="text-xs">{format(new Date(enquiry.followUpDate), 'MMM dd')}</span>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400 text-xs">None</span>
+                          )}
+                        </td>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <div className="flex gap-2">
+                            {enquiry.status !== 'closed' && (
+                              <Button
+                                onClick={() => handleConvertToBooking(enquiry)}
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700 text-white"
+                              >
+                                Convert
+                              </Button>
+                            )}
+                            <Button
+                              onClick={() => handleEdit(enquiry)}
+                              variant="outline"
+                              size="sm"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              onClick={() => handleDelete(enquiry.id)}
+                              variant="outline"
+                              size="sm"
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </div>
         )}
