@@ -204,15 +204,22 @@ async def create_enquiry(request: Request, enquiry_data: EnquiryCreate):
 
 # ============= ADMIN ENDPOINTS =============
 
-# Admin login
+# Admin login (rate limited to prevent brute force)
 @api_router.post("/admin/login")
-async def admin_login(login_data: AdminLogin):
+@limiter.limit("5/minute")  # Max 5 login attempts per minute per IP
+async def admin_login(request: Request, login_data: AdminLogin):
+    ip = request.client.host
+    
     admin = await db.admin_users.find_one({"username": login_data.username})
     
     if not admin or not verify_password(login_data.password, admin['password']):
+        # Record failed attempt for IP blocking
+        ip_blocker.record_failed_attempt(ip, f"Failed login for user: {login_data.username}")
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     token = create_jwt_token(admin['username'], admin.get('role', 'manager'))
+    
+    logger.info(f"Successful login for user: {admin['username']} from IP: {ip}")
     
     return {
         "success": True,
