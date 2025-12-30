@@ -398,6 +398,28 @@ export const BookingCalendar = () => {
               </Select>
             </div>
 
+            {/* Honeypot fields - hidden from users, bots fill these */}
+            <div style={{ position: 'absolute', left: '-9999px', opacity: 0, height: 0, overflow: 'hidden' }} aria-hidden="true">
+              <label>Website (leave empty)</label>
+              <input
+                type="text"
+                name="website"
+                value={formData.website}
+                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+              <label>Company Website (leave empty)</label>
+              <input
+                type="text"
+                name="company_website"
+                value={formData.company_website}
+                onChange={(e) => setFormData({ ...formData, company_website: e.target.value })}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
+
             {/* Date Selection - User Friendly */}
             <div className="col-span-2 space-y-3">
               <Label className="text-lg font-semibold">Select Event Dates</Label>
