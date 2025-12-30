@@ -216,16 +216,16 @@ export const AdminGallery = () => {
 
   return (
     <AdminDashboard currentPage="gallery">
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Gallery Management</h1>
-            <p className="text-gray-500 mt-1">Manage photos displayed on the website</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Gallery Management</h1>
+            <p className="text-sm text-gray-500 mt-1">Manage photos displayed on the website</p>
           </div>
           <Button 
             onClick={() => handleOpenDialog()}
-            className="bg-[#D4AF37] hover:bg-[#B8960C] text-black"
+            className="bg-[#D4AF37] hover:bg-[#B8960C] text-black w-full sm:w-auto"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Image
