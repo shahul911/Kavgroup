@@ -235,10 +235,10 @@ export const AdminGallery = () => {
         {/* Gallery Grid */}
         {images.length === 0 ? (
           <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <Image className="w-16 h-16 text-gray-300 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No images yet</h3>
-              <p className="text-gray-500 mb-4">Add your first gallery image to get started</p>
+            <CardContent className="flex flex-col items-center justify-center py-8 sm:py-12">
+              <Image className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mb-4" />
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">No images yet</h3>
+              <p className="text-sm text-gray-500 mb-4 text-center">Add your first gallery image to get started</p>
               <Button 
                 onClick={() => handleOpenDialog()}
                 className="bg-[#D4AF37] hover:bg-[#B8960C] text-black"
@@ -249,7 +249,7 @@ export const AdminGallery = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {images.map((image) => (
               <Card key={image.id} className={`overflow-hidden ${!image.isActive ? 'opacity-60' : ''}`}>
                 <div className="relative aspect-[4/3] bg-gray-100">
