@@ -10,8 +10,9 @@ import os
 import logging
 from pathlib import Path
 from typing import List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import shutil
+import uuid
 
 from models import (
     Booking, BookingCreate, BookingUpdate,
