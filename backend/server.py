@@ -663,6 +663,46 @@ async def create_gallery_image(
     await db.gallery.insert_one(image.dict())
     return {"success": True, "image": image.dict()}
 
+# Admin: Upload gallery image file
+@api_router.post("/admin/gallery/upload")
+async def upload_gallery_image(
+    file: UploadFile = File(...),
+    title: str = Form(...),
+    description: str = Form(None),
+    order: int = Form(0),
+    current_user: dict = Depends(require_admin)
+):
+    # Validate file type
+    allowed_types = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="Invalid file type. Only JPEG, PNG, WebP and GIF are allowed.")
+    
+    # Generate unique filename
+    file_ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+    unique_filename = f"gallery_{uuid.uuid4().hex[:8]}_{datetime.now().strftime('%Y%m%d%H%M%S')}.{file_ext}"
+    file_path = GALLERY_UPLOAD_DIR / unique_filename
+    
+    # Save file
+    try:
+        content = await file.read()
+        with open(file_path, "wb") as f:
+            f.write(content)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save file: {str(e)}")
+    
+    # Create gallery image record
+    image_url = f"/api/uploads/gallery/{unique_filename}"
+    image = GalleryImage(
+        title=title,
+        description=description,
+        imageUrl=image_url,
+        order=order,
+        isActive=True
+    )
+    await db.gallery.insert_one(image.dict())
+    
+    return {"success": True, "image": image.dict()}
+
 # Admin: Update gallery image
 @api_router.put("/admin/gallery/{image_id}")
 async def update_gallery_image(
