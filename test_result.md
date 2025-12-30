@@ -70,7 +70,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "K.A.V Auditorium Website - Testing fixes for calendar UI, receipt generation, notifications, and color-coded availability"
+user_problem_statement: "K.A.V Auditorium Website - Testing Gallery and Testimonials management features in admin panel and public website display"
 
 backend:
   - task: "Receipt PDF Generation"
