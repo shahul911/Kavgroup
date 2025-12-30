@@ -201,54 +201,54 @@ export const AdminDashboard = ({ children, currentPage }) => {
         <main className={`flex-1 p-3 sm:p-6 overflow-auto min-w-0 ${isSidebarOpen && !isMobile ? 'lg:ml-0' : ''}`}>
           {currentPage === 'overview' && stats && (
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Dashboard Overview</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Dashboard Overview</h2>
               
               {/* Stats Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
                 <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-gray-600">Total Bookings</CardTitle>
+                  <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-6">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Total Bookings</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
                     <div className="flex items-center justify-between">
-                      <span className="text-3xl font-bold text-gray-900">{stats.totalBookings}</span>
-                      <Calendar className="w-8 h-8 text-[#D4AF37]" />
+                      <span className="text-xl sm:text-3xl font-bold text-gray-900">{stats.totalBookings}</span>
+                      <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-[#D4AF37]" />
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-gray-600">Pending Bookings</CardTitle>
+                  <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-6">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Pending</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
                     <div className="flex items-center justify-between">
-                      <span className="text-3xl font-bold text-orange-600">{stats.pendingBookings}</span>
-                      <Clock className="w-8 h-8 text-orange-600" />
+                      <span className="text-xl sm:text-3xl font-bold text-orange-600">{stats.pendingBookings}</span>
+                      <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-orange-600" />
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-gray-600">New Enquiries</CardTitle>
+                  <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-6">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">New Enquiries</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
                     <div className="flex items-center justify-between">
-                      <span className="text-3xl font-bold text-blue-600">{stats.newEnquiries}</span>
-                      <MessageSquare className="w-8 h-8 text-blue-600" />
+                      <span className="text-xl sm:text-3xl font-bold text-blue-600">{stats.newEnquiries}</span>
+                      <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-gray-600">Upcoming Events</CardTitle>
+                  <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-6">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Upcoming</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
                     <div className="flex items-center justify-between">
-                      <span className="text-3xl font-bold text-green-600">{stats.upcomingBookings}</span>
-                      <CheckCircle className="w-8 h-8 text-green-600" />
+                      <span className="text-xl sm:text-3xl font-bold text-green-600">{stats.upcomingBookings}</span>
+                      <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
                     </div>
                   </CardContent>
                 </Card>
@@ -256,17 +256,17 @@ export const AdminDashboard = ({ children, currentPage }) => {
 
               {/* Reminders Section */}
               {totalReminders > 0 && (
-                <Card className="mb-8">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Bell className="w-5 h-5 text-red-500" />
+                <Card className="mb-6 sm:mb-8">
+                  <CardHeader className="p-3 sm:p-6">
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                      <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
                       Pending Reminders ({totalReminders})
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
                     <Button
-                      onClick={() => navigate('/admin-kav-Catlife41056/reminders')}
-                      className="bg-red-500 hover:bg-red-600 text-white"
+                      onClick={() => handleNavigation('/admin-kav-Catlife41056/reminders')}
+                      className="bg-red-500 hover:bg-red-600 text-white text-sm sm:text-base"
                     >
                       View All Reminders
                     </Button>
@@ -276,27 +276,29 @@ export const AdminDashboard = ({ children, currentPage }) => {
 
               {/* Quick Actions */}
               <Card>
-                <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
+                <CardHeader className="p-3 sm:p-6">
+                  <CardTitle className="text-base sm:text-lg">Quick Actions</CardTitle>
                 </CardHeader>
-                <CardContent className="flex flex-wrap gap-4">
+                <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0 flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4">
                   <Button
-                    onClick={() => navigate('/admin-kav-Catlife41056/bookings')}
-                    className="bg-[#D4AF37] text-black hover:bg-[#C19B2E]"
+                    onClick={() => handleNavigation('/admin-kav-Catlife41056/bookings')}
+                    className="bg-[#D4AF37] text-black hover:bg-[#C19B2E] text-sm sm:text-base w-full sm:w-auto"
                   >
                     <Calendar className="w-4 h-4 mr-2" />
                     Manage Bookings
                   </Button>
                   <Button
-                    onClick={() => navigate('/admin-kav-Catlife41056/enquiries')}
+                    onClick={() => handleNavigation('/admin-kav-Catlife41056/enquiries')}
                     variant="outline"
+                    className="text-sm sm:text-base w-full sm:w-auto"
                   >
                     <MessageSquare className="w-4 h-4 mr-2" />
                     Manage Enquiries
                   </Button>
                   <Button
-                    onClick={() => navigate('/admin-kav-Catlife41056/documents')}
+                    onClick={() => handleNavigation('/admin-kav-Catlife41056/documents')}
                     variant="outline"
+                    className="text-sm sm:text-base w-full sm:w-auto"
                   >
                     <FileSpreadsheet className="w-4 h-4 mr-2" />
                     Upload Document
