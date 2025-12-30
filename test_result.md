@@ -89,71 +89,53 @@ backend:
           comment: "TESTED: Receipt buttons are present for confirmed bookings. Receipt generation endpoint is working correctly with proper URL format /api/uploads/receipts/receipt_*.pdf. Minor: PDF opening in new tab needs user interaction due to browser popup blocking."
 
 frontend:
-  - task: "Admin Bookings List View - Calendar Bug Fix"
+  - task: "Admin Gallery Management"
     implemented: true
     working: true
-    file: "/app/frontend/src/admin/AdminBookings.jsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        - working: false
-          agent: "user"
-          comment: "User reported unwanted calendar widget appearing in list view Event Date column"
-        - working: true
-          agent: "main"
-          comment: "Fixed bug - was using Calendar component instead of CalendarIcon. Removed unused Calendar and Popover imports. List view now shows just calendar icon + date text."
-        - working: true
-          agent: "testing"
-          comment: "TESTED: ✅ Event Date column shows calendar ICONS (not full calendar widgets). ✅ Create Booking dialog uses 2 standard HTML date inputs. List view displays correctly with calendar icons next to dates like 'Jan 15, 2025'."
-
-  - task: "Admin Notifications for New Booking Requests"
-    implemented: true
-    working: true
-    file: "/app/frontend/src/admin/AdminDashboard.jsx"
+    file: "/app/frontend/src/admin/AdminGallery.jsx"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
         - working: true
-          agent: "main"
-          comment: "Added notification bell in header with red badge showing count of new enquiries. Added blue badge to Enquiries menu item in sidebar with pulsing animation."
-        - working: true
           agent: "testing"
-          comment: "TESTED: ✅ Notification bell in header shows red badge with count '1'. ✅ Enquiries menu in sidebar shows blue badge with count '1' and pulsing animation. All notification features working correctly."
+          comment: "TESTED: ✅ Gallery Management page loads successfully. ✅ Displays 6 existing images with expected titles (Main Hall, Stage View, Dining Hall, Interior Decor, Event Setup, Parking Area). ✅ Add Image dialog opens with two tabs: 'Upload File' and 'Use URL'. ✅ File upload area shows 'Click to upload an image' with supported formats (JPEG, PNG, WebP, GIF). ✅ Edit Image dialog opens with pre-filled data including title field. All core gallery management features working correctly."
 
-  - task: "Calendar Color-Coding for Availability"
+  - task: "Admin Testimonials Management"
     implemented: true
     working: true
-    file: "/app/frontend/src/components/BookingCalendar.jsx"
+    file: "/app/frontend/src/admin/AdminTestimonials.jsx"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
-        - working: false
-          agent: "user"
-          comment: "Color-coded availability (red for fully booked, orange for partially booked) not rendering despite backend returning correct data"
-        - working: true
-          agent: "main"
-          comment: "Fixed by switching from modifiersClassNames to modifiersStyles with inline styles. Default shadcn Calendar button styles were overriding CSS classes. Now uses inline backgroundColor/color."
         - working: true
           agent: "testing"
-          comment: "TESTED: ✅ January 15, 2026 shows RED/PINK background (rgb(254, 226, 226)) with strikethrough text for fully booked dates. ✅ Other dates show light green background (rgb(240, 253, 244)) for available dates. Color-coding working perfectly with inline styles."
+          comment: "TESTED: ✅ Testimonials Management page loads successfully. ✅ Displays 6 existing testimonials with star ratings (30 stars total = 6 testimonials × 5 stars). ✅ Add Testimonial dialog opens with all required fields: Client Name, Event Type, Rating (clickable stars), Date, and Testimonial Text. ✅ Edit Testimonial dialog opens with pre-filled data for name, event, and text fields. ✅ Visibility toggle is present. Minor: Star clicking in dialog has overlay interception issue but doesn't affect core functionality."
 
-  - task: "Admin Calendar View Color-Coding"
+  - task: "Public Gallery Display"
     implemented: true
     working: true
-    file: "/app/frontend/src/admin/BookingCalendarView.jsx"
+    file: "/app/frontend/src/components/Gallery.jsx"
     stuck_count: 0
-    priority: "medium"
+    priority: "high"
     needs_retesting: false
     status_history:
         - working: true
-          agent: "main"
-          comment: "Applied same fix as public calendar - using modifiersStyles instead of modifiersClassNames"
+          agent: "testing"
+          comment: "TESTED: ✅ Public Gallery section displays correctly on homepage. ✅ Shows 5 images from database with titles: Stage View, Dining Hall, Interior Decor, Event Setup, Parking Area. ✅ Images are properly integrated with backend data and display with hover effects and descriptions. Gallery integration between admin management and public display working perfectly."
+
+  - task: "Public Testimonials Display"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/Testimonials.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
         - working: true
           agent: "testing"
-          comment: "TESTED: ✅ Admin calendar view accessible via Calendar toggle button. ✅ Color-coding applied using same modifiersStyles approach as public calendar. Admin calendar shows color-coded dates correctly."
+          comment: "TESTED: ✅ Public Testimonials section displays correctly on homepage. ✅ Shows 6 testimonials from database with correct star ratings (30 stars total). ✅ Displays client names: Divya Prakash, Suresh Babu, Lakshmi Nair, Anand Krishnan, Priya Menon, Rajesh Kumar. ✅ Shows event types: Anniversary Party, Corporate Event, Wedding Ceremony, Cultural Program, Birthday Celebration, Wedding Reception. ✅ Star ratings and testimonial content properly integrated with backend data."
 
 metadata:
   created_by: "main_agent"
