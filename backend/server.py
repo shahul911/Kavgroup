@@ -49,7 +49,18 @@ GALLERY_UPLOAD_DIR = ROOT_DIR / 'uploads' / 'gallery'
 GALLERY_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 # Create the main app
-app = FastAPI()
+app = FastAPI(
+    title="K.A.V Auditorium API",
+    description="Secure API for K.A.V Auditorium booking system",
+    version="1.0.0"
+)
+
+# Add security middleware
+app.add_middleware(SecurityMiddleware)
+
+# Add rate limiter
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
