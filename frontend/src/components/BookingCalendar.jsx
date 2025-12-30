@@ -24,8 +24,12 @@ export const BookingCalendar = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    eventType: ''
+    eventType: '',
+    // Honeypot fields - hidden from users, bots fill these
+    website: '',
+    company_website: ''
   });
+  const [lastSubmitTime, setLastSubmitTime] = useState(0);
 
   useEffect(() => {
     loadAvailabilityForMonth(currentMonth);
