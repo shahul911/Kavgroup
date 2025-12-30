@@ -153,6 +153,16 @@ export const createGalleryImage = async (imageData) => {
   return response.data;
 };
 
+export const uploadGalleryImage = async (formData) => {
+  const response = await axios.post(`${API}/admin/gallery/upload`, formData, {
+    headers: {
+      Authorization: `Bearer ${getAuthToken()}`,
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+  return response.data;
+};
+
 export const updateGalleryImage = async (imageId, imageData) => {
   const response = await axios.put(`${API}/admin/gallery/${imageId}`, imageData, createAuthHeader());
   return response.data;
