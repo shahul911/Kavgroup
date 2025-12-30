@@ -37,6 +37,10 @@ db = client[os.environ['DB_NAME']]
 UPLOAD_DIR = ROOT_DIR / 'uploads' / 'documents'
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
+# Create gallery uploads directory
+GALLERY_UPLOAD_DIR = ROOT_DIR / 'uploads' / 'gallery'
+GALLERY_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
 # Create the main app
 app = FastAPI()
 
