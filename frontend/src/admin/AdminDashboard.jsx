@@ -91,40 +91,57 @@ export const AdminDashboard = ({ children, currentPage }) => {
 
   const totalReminders = (reminders?.enquiryReminders?.length || 0) + (reminders?.documentReminders?.length || 0);
 
+  // Handle navigation and close sidebar on mobile
+  const handleNavigation = (path) => {
+    navigate(path);
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Mobile Overlay */}
+      {isMobile && isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Top Header */}
-      <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-30">
-        <div className="flex items-center justify-between px-4 py-4">
-          <div className="flex items-center space-x-4">
+      <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-40">
+        <div className="flex items-center justify-between px-3 sm:px-4 py-3 sm:py-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="lg:hidden text-gray-600 hover:text-gray-900"
+              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              aria-label={isSidebarOpen ? 'Close menu' : 'Open menu'}
             >
-              {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isSidebarOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
             </button>
             <img
               src="https://customer-assets.emergentagent.com/job_1503fdb9-25f1-41c0-817c-a287fdbfacfe/artifacts/zciobxqk_Logo%20design%20for%20a%20we.png"
               alt="KAV Auditorium"
-              className="h-12 w-auto"
+              className="h-8 sm:h-12 w-auto"
             />
-            <h1 className="text-xl font-bold text-gray-900 hidden sm:block">Admin Panel</h1>
+            <h1 className="text-base sm:text-xl font-bold text-gray-900 hidden sm:block">Admin Panel</h1>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {/* Notification Bell */}
             {stats?.newEnquiries > 0 && (
               <button
-                onClick={() => navigate('/admin-kav-Catlife41056/enquiries')}
+                onClick={() => handleNavigation('/admin-kav-Catlife41056/enquiries')}
                 className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
                 title={`${stats.newEnquiries} new booking request${stats.newEnquiries > 1 ? 's' : ''}`}
               >
-                <Bell className="w-6 h-6 text-blue-600" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                <Bell className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center animate-pulse text-[10px] sm:text-xs">
                   {stats.newEnquiries}
                 </span>
               </button>
             )}
-            <div className="text-right hidden sm:block">
+            <div className="text-right hidden md:block">
               <p className="text-sm font-medium text-gray-900">{adminUser}</p>
               <p className="text-xs text-gray-500">{adminRole === 'admin' ? 'Administrator' : 'Manager'}</p>
             </div>
@@ -132,45 +149,45 @@ export const AdminDashboard = ({ children, currentPage }) => {
               onClick={handleLogout}
               variant="outline"
               size="sm"
-              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="text-red-600 hover:text-red-700 hover:bg-red-50 px-2 sm:px-3"
             >
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
+              <LogOut className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Logout</span>
             </Button>
           </div>
         </div>
       </header>
 
-      <div className="flex pt-20">
+      <div className="flex pt-16 sm:pt-20">
         {/* Sidebar */}
         <aside
-          className={`fixed lg:sticky top-20 left-0 h-[calc(100vh-5rem)] bg-white border-r border-gray-200 transition-all duration-300 z-20 ${
-            isSidebarOpen ? 'w-64' : 'w-0 lg:w-20'
-          }`}
+          className={`fixed top-16 sm:top-20 left-0 h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)] bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out z-30 w-64 ${
+            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } lg:translate-x-0 lg:sticky`}
         >
-          <nav className="p-4 space-y-2">
+          <nav className="p-3 sm:p-4 space-y-1 sm:space-y-2 overflow-y-auto h-full">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = currentPage === item.id;
               return (
                 <button
                   key={item.id}
-                  onClick={() => navigate(item.path)}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                  onClick={() => handleNavigation(item.path)}
+                  className={`w-full flex items-center space-x-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-colors text-sm sm:text-base ${
                     isActive
                       ? 'bg-[#D4AF37] text-black font-medium'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" />
-                  {isSidebarOpen && <span>{item.label}</span>}
+                  <span>{item.label}</span>
                   {item.id === 'reminders' && totalReminders > 0 && (
-                    <span className="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                    <span className="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-0.5">
                       {totalReminders}
                     </span>
                   )}
                   {item.badge > 0 && (
-                    <span className="ml-auto bg-blue-500 text-white text-xs rounded-full px-2 py-1 animate-pulse">
+                    <span className="ml-auto bg-blue-500 text-white text-xs rounded-full px-2 py-0.5 animate-pulse">
                       {item.badge}
                     </span>
                   )}
@@ -181,7 +198,7 @@ export const AdminDashboard = ({ children, currentPage }) => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-auto">
+        <main className={`flex-1 p-3 sm:p-6 overflow-auto min-w-0 ${isSidebarOpen && !isMobile ? 'lg:ml-0' : ''}`}>
           {currentPage === 'overview' && stats && (
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Dashboard Overview</h2>
