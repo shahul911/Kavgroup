@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, Phone } from 'lucide-react';
 import { Button } from './ui/button';
+import { UnicornLogo } from './UnicornLogo';
 
 export const Hero = () => {
   const scrollToSection = (id) => {
@@ -30,20 +31,14 @@ export const Hero = () => {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
-        {/* Logo with animation */}
+        {/* Unicorn Studio Animated Logo */}
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
           className="flex justify-center mb-8"
         >
-          <motion.img
-            src="https://customer-assets.emergentagent.com/job_1503fdb9-25f1-41c0-817c-a287fdbfacfe/artifacts/zciobxqk_Logo%20design%20for%20a%20we.png"
-            alt="KAV Auditorium"
-            className="h-48 w-auto"
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: 'spring', stiffness: 300 }}
-          />
+          <UnicornLogo width={300} height={200} className="mx-auto" />
         </motion.div>
 
         {/* Heading with staggered animation */}
