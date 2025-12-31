@@ -137,7 +137,7 @@ export const getDashboardStats = async () => {
 };
 
 export const convertEnquiryToBooking = async (enquiryId, bookingDetails) => {
-  const response = await axios.post(`${API}/admin/enquiries/${enquiryId}/convert-to-booking`, bookingDetails, createAuthHeader());
+  const response = await axios.post(`${API}/admin/enquiries/${enquiryId}/convert`, bookingDetails, createAuthHeader());
   return response.data;
 };
 
