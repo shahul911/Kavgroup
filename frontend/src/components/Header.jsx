@@ -74,18 +74,16 @@ export const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center space-x-3 cursor-pointer"
+          <div
+            className="flex items-center space-x-3 cursor-pointer transform transition-transform duration-200 hover:scale-105 active:scale-95"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
             <img
               src="https://customer-assets.emergentagent.com/job_1503fdb9-25f1-41c0-817c-a287fdbfacfe/artifacts/zciobxqk_Logo%20design%20for%20a%20we.png"
               alt="KAV Auditorium Logo"
-              className="h-14 w-auto transition-transform duration-300"
+              className="h-14 w-auto"
             />
-          </motion.div>
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
@@ -95,10 +93,8 @@ export const Header = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                whileHover={{ scale: 1.1, color: '#D4AF37' }}
-                whileTap={{ scale: 0.95 }}
                 onClick={() => scrollToSection(item.id)}
-                className="text-gray-300 hover:text-[#D4AF37] transition-colors duration-200 font-medium"
+                className="text-gray-300 hover:text-[#D4AF37] transition-all duration-200 font-medium hover:scale-105 active:scale-95"
               >
                 {item.label}
               </motion.button>
@@ -107,12 +103,10 @@ export const Header = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.5 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
             >
               <Button
                 onClick={() => scrollToSection('enquiry')}
-                className="bg-[#D4AF37] text-black hover:bg-[#C19B2E] transition-colors duration-200 font-semibold"
+                className="bg-[#D4AF37] text-black hover:bg-[#C19B2E] transition-all duration-200 font-semibold hover:scale-105 active:scale-95"
               >
                 <Phone className="w-4 h-4 mr-2" />
                 Enquire Now
@@ -121,11 +115,9 @@ export const Header = () => {
           </nav>
 
           {/* Mobile Menu Button */}
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+          <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden text-[#D4AF37] p-2"
+            className="md:hidden text-[#D4AF37] p-2 transition-transform duration-200 hover:scale-110 active:scale-90"
           >
             <AnimatePresence mode="wait">
               {isMobileMenuOpen ? (
@@ -150,7 +142,7 @@ export const Header = () => {
                 </motion.div>
               )}
             </AnimatePresence>
-          </motion.button>
+          </button>
         </div>
       </div>
 
@@ -172,9 +164,8 @@ export const Header = () => {
                   variants={menuItemVariants}
                   initial="closed"
                   animate="open"
-                  whileTap={{ scale: 0.95 }}
                   onClick={() => scrollToSection(item.id)}
-                  className="block w-full text-left text-gray-300 hover:text-[#D4AF37] transition-colors duration-200 py-2 font-medium"
+                  className="block w-full text-left text-gray-300 hover:text-[#D4AF37] transition-colors duration-200 py-2 font-medium active:scale-95"
                 >
                   {item.label}
                 </motion.button>
