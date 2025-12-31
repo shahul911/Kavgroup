@@ -973,7 +973,15 @@ export const AdminReminders = () => {
                 <Input
                   type="date"
                   value={convertData.eventDate}
-                  onChange={(e) => setConvertData({ ...convertData, eventDate: e.target.value })}
+                  min={new Date().toISOString().split('T')[0]}
+                  onChange={(e) => {
+                    const newStartDate = e.target.value;
+                    // If end date is before new start date, clear it
+                    const updatedEndDate = convertData.eventEndDate && convertData.eventEndDate < newStartDate 
+                      ? '' 
+                      : convertData.eventEndDate;
+                    setConvertData({ ...convertData, eventDate: newStartDate, eventEndDate: updatedEndDate });
+                  }}
                 />
               </div>
               <div className="space-y-2">
@@ -981,6 +989,7 @@ export const AdminReminders = () => {
                 <Input
                   type="date"
                   value={convertData.eventEndDate}
+                  min={convertData.eventDate || new Date().toISOString().split('T')[0]}
                   onChange={(e) => setConvertData({ ...convertData, eventEndDate: e.target.value })}
                 />
               </div>
