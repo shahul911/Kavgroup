@@ -88,18 +88,12 @@ export const Contact = () => {
             <motion.div
               key={index}
               variants={itemVariants}
-              whileHover={{ y: -10, scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="group bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-[#D4AF37] transition-shadow duration-300"
+              className="group bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-[#D4AF37] transition-all duration-300 hover:-translate-y-2"
             >
               <div className="flex flex-col items-center text-center space-y-4">
-                <motion.div
-                  whileHover={{ scale: 1.15, rotate: 10 }}
-                  transition={{ type: 'spring', stiffness: 300 }}
-                  className="p-4 bg-[#D4AF37]/10 rounded-full"
-                >
+                <div className="p-4 bg-[#D4AF37]/10 rounded-full transition-transform duration-200 group-hover:scale-110">
                   <card.icon className="w-8 h-8 text-[#D4AF37]" />
-                </motion.div>
+                </div>
                 <h3 className="text-xl font-semibold text-gray-900">{card.title}</h3>
                 
                 {card.isHours ? (
@@ -118,14 +112,12 @@ export const Contact = () => {
                     >
                       {card.phone}
                     </a>
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full">
-                      <Button
-                        onClick={() => window.location.href = `tel:${card.phone}`}
-                        className="w-full bg-[#D4AF37] text-black hover:bg-[#C19B2E] transition-colors duration-200"
-                      >
-                        Call Now
-                      </Button>
-                    </motion.div>
+                    <Button
+                      onClick={() => window.location.href = `tel:${card.phone}`}
+                      className="w-full bg-[#D4AF37] text-black hover:bg-[#C19B2E] transition-all duration-200 hover:scale-105 active:scale-95"
+                    >
+                      Call Now
+                    </Button>
                   </>
                 )}
               </div>
