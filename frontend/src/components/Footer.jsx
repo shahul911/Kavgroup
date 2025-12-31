@@ -86,46 +86,35 @@ export const Footer = () => {
           <motion.div variants={itemVariants}>
             <h3 className="text-[#D4AF37] font-semibold text-lg mb-4">Contact Info</h3>
             <ul className="space-y-3">
-              <motion.li
-                whileHover={{ x: 5 }}
-                className="flex items-start space-x-2"
-              >
+              <li className="flex items-start space-x-2 hover:translate-x-1 transition-transform duration-200">
                 <Phone className="w-5 h-5 text-[#D4AF37] flex-shrink-0 mt-0.5" />
                 <div className="text-sm">
-                  <motion.a
-                    whileHover={{ color: '#D4AF37' }}
+                  <a
                     href={`tel:${contactInfo.phone1}`}
-                    className="text-gray-400 transition-colors duration-200 block"
+                    className="text-gray-400 hover:text-[#D4AF37] transition-colors duration-200 block"
                   >
                     {contactInfo.phone1}
-                  </motion.a>
-                  <motion.a
-                    whileHover={{ color: '#D4AF37' }}
+                  </a>
+                  <a
                     href={`tel:${contactInfo.phone2}`}
-                    className="text-gray-400 transition-colors duration-200 block"
+                    className="text-gray-400 hover:text-[#D4AF37] transition-colors duration-200 block"
                   >
                     {contactInfo.phone2}
-                  </motion.a>
+                  </a>
                 </div>
-              </motion.li>
-              <motion.li
-                whileHover={{ x: 5 }}
-                className="flex items-start space-x-2"
-              >
+              </li>
+              <li className="flex items-start space-x-2 hover:translate-x-1 transition-transform duration-200">
                 <MapPin className="w-5 h-5 text-[#D4AF37] flex-shrink-0 mt-0.5" />
                 <p className="text-gray-400 text-sm">
                   {contactInfo.address}
                 </p>
-              </motion.li>
-              <motion.li
-                whileHover={{ x: 5 }}
-                className="flex items-start space-x-2"
-              >
+              </li>
+              <li className="flex items-start space-x-2 hover:translate-x-1 transition-transform duration-200">
                 <Clock className="w-5 h-5 text-[#D4AF37] flex-shrink-0 mt-0.5" />
                 <p className="text-gray-400 text-sm">
                   Open Daily: 9:00 AM - 6:00 PM
                 </p>
-              </motion.li>
+              </li>
             </ul>
           </motion.div>
         </motion.div>
