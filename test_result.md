@@ -179,17 +179,17 @@ backend:
         agent: "testing"
         comment: "GET /api/admin/bill-categories tested successfully. Returns 9 predefined categories (water-test, building-tax, land-tax, electricity-bill, staff-payment, maintenance, insurance, license, other) with proper counts and required fields (id, name, icon, count)."
 
-  - task: "Bills by Category API - Get bills for specific category"
+  - task: "Root API endpoint"
     implemented: true
     working: true
-    file: "/app/backend/routes/dashboard.py"
+    file: "/app/backend/server.py"
     stuck_count: 0
-    priority: "high"
+    priority: "low"
     needs_retesting: false
     status_history:
       - working: true
         agent: "testing"
-        comment: "GET /api/admin/bills/water-test tested successfully. Returns documents filtered by category with proper response format including documents array and category field. Verified correct category filtering."
+        comment: "GET /api/ tested successfully. Returns welcome message confirming API is running."
 
 frontend:
   - task: "Mobile responsiveness fixes"
