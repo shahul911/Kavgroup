@@ -111,6 +111,16 @@ export const markDocumentReminderDone = async (documentId) => {
   return response.data;
 };
 
+export const rescheduleEnquiryReminder = async (enquiryId, data) => {
+  const response = await axios.put(`${API}/admin/reminders/enquiry/${enquiryId}/reschedule`, data, createAuthHeader());
+  return response.data;
+};
+
+export const rescheduleDocumentReminder = async (documentId, data) => {
+  const response = await axios.put(`${API}/admin/reminders/document/${documentId}/reschedule`, data, createAuthHeader());
+  return response.data;
+};
+
 export const getBillCategories = async () => {
   const response = await axios.get(`${API}/admin/bill-categories`, createAuthHeader());
   return response.data;
