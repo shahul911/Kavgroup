@@ -203,19 +203,45 @@ export const BookingCalendar = () => {
   };
 
   return (
-    <section id="booking" className="py-20 bg-white">
+    <section id="booking" className="py-20 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+          className="text-center mb-16"
+        >
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Check Availability & Request Booking</h2>
-          <div className="w-24 h-1 bg-[#D4AF37] mx-auto mb-6"></div>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            View available dates and submit a booking request. We'll contact you to confirm your reservation.
-          </p>
-        </div>
+          <motion.div
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+            className="w-24 h-1 bg-[#D4AF37] mx-auto mb-6 origin-center"
+          />
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-xl text-gray-600 max-w-2xl mx-auto"
+          >
+            View available dates and submit a booking request. We&apos;ll contact you to confirm your reservation.
+          </motion.p>
+        </motion.div>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
           {/* Calendar */}
-          <div className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg border border-gray-100">
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+            whileHover={{ y: -5 }}
+            className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg border border-gray-100 transition-shadow duration-300 hover:shadow-xl"
+          >
             <div className="flex items-center justify-center mb-6">
               <CalendarIcon className="w-6 h-6 text-[#D4AF37] mr-2" />
               <h3 className="text-2xl font-semibold text-gray-900">Select Your Date</h3>
@@ -232,65 +258,96 @@ export const BookingCalendar = () => {
                 className="rounded-xl border-2 border-[#D4AF37]/20 p-4"
               />
             </div>
-          </div>
+          </motion.div>
 
           {/* Legend and Info */}
           <div className="space-y-8">
-            <div className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg border border-gray-100">
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.7, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+              whileHover={{ y: -5 }}
+              className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg border border-gray-100 transition-shadow duration-300 hover:shadow-xl"
+            >
               <h3 className="text-2xl font-semibold text-gray-900 mb-6">Legend</h3>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-6 h-6 bg-green-100 rounded border-2 border-green-500"></div>
-                  <div>
-                    <p className="font-medium text-gray-900">Fully Available</p>
-                    <p className="text-sm text-gray-600">Click to book any time</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-6 h-6 bg-orange-100 rounded border-2 border-orange-500"></div>
-                  <div>
-                    <p className="font-medium text-gray-900">Partially Booked</p>
-                    <p className="text-sm text-gray-600">Some time slots available</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-6 h-6 bg-red-100 rounded border-2 border-red-500"></div>
-                  <div>
-                    <p className="font-medium text-gray-900">Fully Booked</p>
-                    <p className="text-sm text-gray-600">No availability</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-6 h-6 bg-gray-100 rounded border-2 border-gray-300"></div>
-                  <div>
-                    <p className="font-medium text-gray-900">Past Dates</p>
-                    <p className="text-sm text-gray-600">Cannot be selected</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={{
+                  visible: { transition: { staggerChildren: 0.1 } }
+                }}
+                className="space-y-4"
+              >
+                {[
+                  { color: 'green', label: 'Fully Available', desc: 'Click to book any time' },
+                  { color: 'orange', label: 'Partially Booked', desc: 'Some time slots available' },
+                  { color: 'red', label: 'Fully Booked', desc: 'No availability' },
+                  { color: 'gray', label: 'Past Dates', desc: 'Cannot be selected' }
+                ].map((item, index) => (
+                  <motion.div
+                    key={index}
+                    variants={{
+                      hidden: { opacity: 0, x: -20 },
+                      visible: { opacity: 1, x: 0, transition: { duration: 0.4 } }
+                    }}
+                    whileHover={{ x: 5 }}
+                    className="flex items-center space-x-3"
+                  >
+                    <div className={`w-6 h-6 bg-${item.color}-100 rounded border-2 border-${item.color}-${item.color === 'gray' ? '300' : '500'}`}></div>
+                    <div>
+                      <p className="font-medium text-gray-900">{item.label}</p>
+                      <p className="text-sm text-gray-600">{item.desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
 
-            <div className="bg-gradient-to-r from-black via-gray-900 to-black p-8 rounded-2xl shadow-xl">
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+              whileHover={{ scale: 1.01 }}
+              className="bg-gradient-to-r from-black via-gray-900 to-black p-8 rounded-2xl shadow-xl"
+            >
               <h3 className="text-2xl font-semibold text-white mb-4">How to Request Booking</h3>
-              <ol className="space-y-3 text-gray-300">
-                <li className="flex items-start">
-                  <span className="flex-shrink-0 w-6 h-6 bg-[#D4AF37] rounded-full flex items-center justify-center text-black font-bold text-sm mr-3 mt-0.5">1</span>
-                  <span>Check available dates in the calendar (green dates)</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="flex-shrink-0 w-6 h-6 bg-[#D4AF37] rounded-full flex items-center justify-center text-black font-bold text-sm mr-3 mt-0.5">2</span>
-                  <span>Click on your preferred date to submit request</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="flex-shrink-0 w-6 h-6 bg-[#D4AF37] rounded-full flex items-center justify-center text-black font-bold text-sm mr-3 mt-0.5">3</span>
-                  <span>Fill in your details and event information</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="flex-shrink-0 w-6 h-6 bg-[#D4AF37] rounded-full flex items-center justify-center text-black font-bold text-sm mr-3 mt-0.5">4</span>
-                  <span>We'll call you to confirm and finalize your booking</span>
-                </li>
-              </ol>
-            </div>
+              <motion.ol
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={{
+                  visible: { transition: { staggerChildren: 0.15 } }
+                }}
+                className="space-y-3 text-gray-300"
+              >
+                {[
+                  'Check available dates in the calendar (green dates)',
+                  'Click on your preferred date to submit request',
+                  'Fill in your details and event information',
+                  "We'll call you to confirm and finalize your booking"
+                ].map((step, index) => (
+                  <motion.li
+                    key={index}
+                    variants={{
+                      hidden: { opacity: 0, x: -20 },
+                      visible: { opacity: 1, x: 0, transition: { duration: 0.4 } }
+                    }}
+                    className="flex items-start"
+                  >
+                    <motion.span
+                      whileHover={{ scale: 1.2 }}
+                      className="flex-shrink-0 w-6 h-6 bg-[#D4AF37] rounded-full flex items-center justify-center text-black font-bold text-sm mr-3 mt-0.5"
+                    >
+                      {index + 1}
+                    </motion.span>
+                    <span>{step}</span>
+                  </motion.li>
+                ))}
+              </motion.ol>
+            </motion.div>
           </div>
         </div>
       </div>
