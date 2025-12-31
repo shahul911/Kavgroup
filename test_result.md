@@ -212,8 +212,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Backend API refactoring verification"
-    - "All modular routes testing"
+    - "Enhanced Reminders & Bills functionality verification"
+    - "All new API endpoints testing"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
