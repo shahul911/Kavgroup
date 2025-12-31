@@ -97,7 +97,6 @@ export const Location = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-            whileHover={{ y: -5 }}
             className="bg-white p-4 rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow duration-300"
           >
             <div className="relative w-full h-full min-h-[400px] rounded-xl overflow-hidden">
