@@ -271,3 +271,82 @@ agent_communication:
 - /app/backend/routes/dashboard.py - Enhanced reminders API + new bill endpoints
 - /app/frontend/src/admin/AdminReminders.jsx - Complete rewrite with new features
 - /app/frontend/src/utils/api.js - Added new API functions
+
+---
+
+## Session Update: Major Refactoring of Admin Components
+
+### Refactoring Completed:
+
+**AdminReminders.jsx (1229 → ~320 lines)**
+- Extracted state management into custom hooks:
+  - `useReminders.js` - handles reminders state, API calls (mark done, delete, reschedule, convert)
+  - `useBills.js` - handles bills/categories state, uploads, downloads
+
+- Created reusable components:
+  - `components/reminders/EnquiryReminderCard.jsx` - individual enquiry follow-up card
+  - `components/reminders/BillReminderCard.jsx` - individual bill reminder card
+  - `components/reminders/CategoryGrid.jsx` - category selection grid
+  - `components/reminders/CategoryBillsView.jsx` - bills list for selected category
+  - `components/reminders/dialogs/UploadBillDialog.jsx` - upload new bill
+  - `components/reminders/dialogs/EnquiryEditDialog.jsx` - reschedule enquiry
+  - `components/reminders/dialogs/DocumentEditDialog.jsx` - edit document reminder
+  - `components/reminders/dialogs/ConvertToBookingDialog.jsx` - convert enquiry to booking
+
+- Created constants file:
+  - `constants/reminderConstants.js` - categoryIcons, categoryNames, timeOptions
+
+**AdminGallery.jsx (490 → ~140 lines)**
+- Extracted into:
+  - `hooks/useGallery.js` - handles gallery CRUD operations
+  - `components/gallery/GalleryCard.jsx` - individual image card
+  - `components/gallery/GalleryDialog.jsx` - add/edit image dialog
+
+**AdminTestimonials.jsx (350 → ~110 lines)**
+- Extracted into:
+  - `hooks/useTestimonials.js` - handles testimonials CRUD operations  
+  - `components/testimonials/TestimonialCard.jsx` - individual testimonial card
+  - `components/testimonials/TestimonialDialog.jsx` - add/edit dialog
+  - `components/testimonials/StarRating.jsx` - reusable star rating component
+
+### New Directory Structure:
+```
+/app/frontend/src/admin/
+├── hooks/
+│   ├── index.js
+│   ├── useReminders.js
+│   ├── useBills.js
+│   ├── useGallery.js
+│   └── useTestimonials.js
+├── components/
+│   ├── reminders/
+│   │   ├── index.js
+│   │   ├── EnquiryReminderCard.jsx
+│   │   ├── BillReminderCard.jsx
+│   │   ├── CategoryGrid.jsx
+│   │   ├── CategoryBillsView.jsx
+│   │   └── dialogs/
+│   │       ├── index.js
+│   │       ├── UploadBillDialog.jsx
+│   │       ├── EnquiryEditDialog.jsx
+│   │       ├── DocumentEditDialog.jsx
+│   │       └── ConvertToBookingDialog.jsx
+│   ├── gallery/
+│   │   ├── index.js
+│   │   ├── GalleryCard.jsx
+│   │   └── GalleryDialog.jsx
+│   └── testimonials/
+│       ├── index.js
+│       ├── TestimonialCard.jsx
+│       ├── TestimonialDialog.jsx
+│       └── StarRating.jsx
+└── constants/
+    └── reminderConstants.js
+```
+
+### Benefits:
+1. **Better Code Organization** - Logic separated from presentation
+2. **Improved Reusability** - Components can be reused elsewhere
+3. **Easier Testing** - Hooks and components can be unit tested independently
+4. **Reduced File Sizes** - Main components now much smaller and easier to understand
+5. **Better Maintainability** - Changes isolated to specific files
