@@ -170,7 +170,7 @@ export const Contact = () => {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 onClick={() => window.location.href = `tel:${contactInfo.phone1}`}
-                className="bg-[#D4AF37] text-black hover:bg-[#C19B2E] px-8 py-6 text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-[#D4AF37]/50 min-w-[200px]"
+                className="bg-[#D4AF37] text-black hover:bg-[#C19B2E] px-8 py-6 text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-[#D4AF37]/50 w-[220px]"
               >
                 <Phone className="w-5 h-5 mr-2" />
                 Call Now
@@ -183,7 +183,7 @@ export const Contact = () => {
                   if (element) element.scrollIntoView({ behavior: 'smooth' });
                 }}
                 variant="outline"
-                className="border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black px-8 py-6 text-lg font-semibold transition-all duration-300 min-w-[200px]"
+                className="border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black px-8 py-6 text-lg font-semibold transition-all duration-300 w-[220px]"
               >
                 Send Enquiry
               </Button>
