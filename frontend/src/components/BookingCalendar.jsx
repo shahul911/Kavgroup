@@ -308,7 +308,6 @@ export const BookingCalendar = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-              whileHover={{ scale: 1.01 }}
               className="bg-gradient-to-r from-black via-gray-900 to-black p-8 rounded-2xl shadow-xl"
             >
               <h3 className="text-2xl font-semibold text-white mb-4">How to Request Booking</h3>
@@ -335,12 +334,9 @@ export const BookingCalendar = () => {
                     }}
                     className="flex items-start"
                   >
-                    <motion.span
-                      whileHover={{ scale: 1.2 }}
-                      className="flex-shrink-0 w-6 h-6 bg-[#D4AF37] rounded-full flex items-center justify-center text-black font-bold text-sm mr-3 mt-0.5"
-                    >
+                    <span className="flex-shrink-0 w-6 h-6 bg-[#D4AF37] rounded-full flex items-center justify-center text-black font-bold text-sm mr-3 mt-0.5">
                       {index + 1}
-                    </motion.span>
+                    </span>
                     <span>{step}</span>
                   </motion.li>
                 ))}
