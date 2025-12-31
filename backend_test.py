@@ -469,6 +469,10 @@ def main():
     test_content()
     test_dashboard()
     
+    # Test new enhanced functionality
+    test_reminders_functionality()
+    test_bill_categories()
+    
     # Print final results
     results.summary()
     
