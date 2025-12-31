@@ -245,6 +245,8 @@ export const AdminReminders = () => {
     setSelectedEnquiry(enquiry);
     setEnquiryEditData({
       followUpDate: enquiry.followUpDate || '',
+      eventDate: enquiry.eventDate || '',
+      eventEndDate: enquiry.eventEndDate || '',
       notes: enquiry.notes || ''
     });
     setIsEnquiryEditOpen(true);
@@ -257,11 +259,11 @@ export const AdminReminders = () => {
     }
     try {
       await rescheduleEnquiryReminder(selectedEnquiry.id, enquiryEditData);
-      toast.success('Follow-up rescheduled');
+      toast.success('Enquiry updated successfully');
       setIsEnquiryEditOpen(false);
       loadReminders();
     } catch (error) {
-      toast.error('Failed to reschedule');
+      toast.error('Failed to update: ' + (error.response?.data?.detail || error.message));
     }
   };
 
