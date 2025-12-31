@@ -104,6 +104,73 @@ async def mark_document_reminder_done(
     return {"success": True, "message": "Reminder marked as done"}
 
 
+@router.put("/admin/reminders/enquiry/{enquiry_id}/reschedule")
+async def reschedule_enquiry_reminder(
+    enquiry_id: str,
+    data: dict,
+    current_user: str = Depends(get_current_user)
+):
+    """Reschedule an enquiry follow-up reminder"""
+    new_date = data.get('followUpDate')
+    notes = data.get('notes')
+    
+    if not new_date:
+        raise HTTPException(status_code=400, detail="New follow-up date is required")
+    
+    update_data = {
+        "followUpDate": new_date,
+        "followUpReminder": True,
+        "updatedAt": datetime.utcnow()
+    }
+    if notes is not None:
+        update_data["notes"] = notes
+    
+    result = await db.enquiries.update_one(
+        {"id": enquiry_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Enquiry not found")
+    
+    enquiry = await db.enquiries.find_one({"id": enquiry_id}, {"_id": 0})
+    return {"success": True, "enquiry": enquiry}
+
+
+@router.put("/admin/reminders/document/{document_id}/reschedule")
+async def reschedule_document_reminder(
+    document_id: str,
+    data: dict,
+    current_user: str = Depends(get_current_user)
+):
+    """Reschedule a document reminder and optionally update details"""
+    new_date = data.get('reminderDate')
+    
+    update_data = {"updatedAt": datetime.utcnow()}
+    
+    if new_date:
+        update_data["reminderDate"] = new_date
+        update_data["reminderEnabled"] = True
+    
+    if data.get('notes') is not None:
+        update_data["notes"] = data.get('notes')
+    if data.get('amount') is not None:
+        update_data["amount"] = data.get('amount')
+    if data.get('dueDate') is not None:
+        update_data["dueDate"] = data.get('dueDate')
+    
+    result = await db.documents.update_one(
+        {"id": document_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Document not found")
+    
+    document = await db.documents.find_one({"id": document_id}, {"_id": 0})
+    return {"success": True, "document": document}
+
+
 @router.get("/admin/bill-categories")
 async def get_bill_categories(current_user: str = Depends(get_current_user)):
     """Get all bill/document categories with counts"""
