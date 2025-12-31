@@ -42,23 +42,20 @@ async def get_reminders(current_user: str = Depends(get_current_user)):
     """Get pending reminders - enquiry follow-ups and document reminders"""
     today = datetime.utcnow().date().isoformat()
     
-    # Enquiry follow-ups - include all with followUpReminder enabled and not closed
-    # Show reminders that are today, overdue, or upcoming (within 7 days)
-    next_week = (datetime.utcnow().date() + timedelta(days=7)).isoformat()
+    # Enquiry follow-ups - show ALL enquiries with followUpReminder enabled and not closed
+    # No date filtering - show all pending follow-ups regardless of event date or follow-up date
+    # This allows seeing follow-ups even when customer changes event date to a later date
     enquiry_reminders = await db.enquiries.find({
         "followUpReminder": True,
-        "followUpDate": {"$lte": next_week},
         "status": {"$nin": ["closed"]}
     }, {
-        '_id': 0, 'id': 1, 'name': 1, 'phone': 1, 'eventDate': 1, 
+        '_id': 0, 'id': 1, 'name': 1, 'phone': 1, 'eventDate': 1, 'eventEndDate': 1,
         'eventType': 1, 'followUpDate': 1, 'notes': 1, 'status': 1
     }).sort('followUpDate', 1).limit(100).to_list(100)
     
-    # Document reminders (within next 14 days or overdue)
-    two_weeks = (datetime.utcnow().date() + timedelta(days=14)).isoformat()
+    # Document reminders - show all with reminder enabled (no date filter to catch overdue ones too)
     document_reminders = await db.documents.find({
-        "reminderEnabled": True,
-        "reminderDate": {"$lte": two_weeks}
+        "reminderEnabled": True
     }, {
         '_id': 0, 'id': 1, 'documentType': 1, 'fileName': 1, 'fileUrl': 1,
         'reminderDate': 1, 'billDate': 1, 'dueDate': 1, 'amount': 1, 'notes': 1
