@@ -74,20 +74,14 @@ export const Amenities = () => {
             <motion.div
               key={amenity.id}
               variants={itemVariants}
-              whileHover={{ y: -8, scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="group bg-white p-8 rounded-xl shadow-md hover:shadow-2xl transition-shadow duration-300 border border-gray-100 hover:border-[#D4AF37] cursor-default"
+              className="group bg-white p-8 rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-[#D4AF37] cursor-default hover:-translate-y-2"
             >
               <div className="flex flex-col items-center text-center space-y-4">
-                <motion.div
-                  whileHover={{ scale: 1.15, rotate: 5 }}
-                  transition={{ type: 'spring', stiffness: 300 }}
-                  className="p-4 bg-gradient-to-br from-[#D4AF37]/10 to-[#D4AF37]/5 rounded-full"
-                >
+                <div className="p-4 bg-gradient-to-br from-[#D4AF37]/10 to-[#D4AF37]/5 rounded-full transition-transform duration-200 group-hover:scale-110">
                   <div className="text-[#D4AF37]">
                     {getIcon(amenity.icon)}
                   </div>
-                </motion.div>
+                </div>
                 <h3 className="text-xl font-semibold text-gray-900 group-hover:text-[#D4AF37] transition-colors duration-300">
                   {amenity.title}
                 </h3>
