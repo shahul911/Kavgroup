@@ -263,9 +263,44 @@ export const AdminReminders = () => {
     }
   };
 
-  const handleConvertToBooking = () => {
-    // Navigate to enquiries page with the enquiry selected for conversion
-    navigate('/admin-kav-Catlife41056/enquiries');
+  // Open convert to booking dialog
+  const openConvertDialog = (enquiry) => {
+    setSelectedEnquiry(enquiry);
+    setConvertData({
+      eventDate: enquiry.eventDate || '',
+      eventEndDate: enquiry.eventEndDate || '',
+      eventTimeFrom: enquiry.eventTimeFrom || '07:00 AM',
+      eventTimeTo: enquiry.eventTimeTo || '08:00 PM',
+      amount: '',
+      advancePaid: '',
+      notes: enquiry.notes || ''
+    });
+    setIsConvertDialogOpen(true);
+  };
+
+  const handleConvertToBooking = async () => {
+    if (!convertData.eventDate) {
+      toast.error('Please select an event date');
+      return;
+    }
+    try {
+      const bookingDetails = {
+        eventDate: convertData.eventDate,
+        eventEndDate: convertData.eventEndDate || convertData.eventDate,
+        eventTimeFrom: convertData.eventTimeFrom,
+        eventTimeTo: convertData.eventTimeTo,
+        amount: parseFloat(convertData.amount) || 0,
+        advancePaid: parseFloat(convertData.advancePaid) || 0,
+        balanceDue: (parseFloat(convertData.amount) || 0) - (parseFloat(convertData.advancePaid) || 0),
+        notes: convertData.notes
+      };
+      await convertEnquiryToBooking(selectedEnquiry.id, bookingDetails);
+      toast.success('Enquiry converted to booking successfully!');
+      setIsConvertDialogOpen(false);
+      loadReminders();
+    } catch (error) {
+      toast.error('Failed to convert: ' + (error.response?.data?.detail || error.message));
+    }
   };
 
   // Edit document reminder - clicking on bill reminder card
