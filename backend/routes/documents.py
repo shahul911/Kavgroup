@@ -49,8 +49,8 @@ async def upload_document(
     # Create document record
     document = Document(
         fileName=file.filename,
-        filePath=str(file_path),
         fileUrl=f"/api/uploads/documents/{unique_filename}",
+        fileSize=len(content),
         documentType=documentType,
         billDate=billDate,
         dueDate=dueDate,
