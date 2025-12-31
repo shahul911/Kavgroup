@@ -518,7 +518,11 @@ export const BookingCalendar = () => {
                         mode="single"
                         selected={selectedEndDate}
                         onSelect={setSelectedEndDate}
-                        disabled={(date) => !selectedDate || date < selectedDate}
+                        disabled={(date) => {
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          return !selectedDate || date < selectedDate || date < today;
+                        }}
                         initialFocus
                       />
                       {selectedEndDate && (
