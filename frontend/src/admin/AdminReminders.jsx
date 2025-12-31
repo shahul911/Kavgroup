@@ -951,6 +951,130 @@ export const AdminReminders = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Convert to Booking Dialog */}
+      <Dialog open={isConvertDialogOpen} onOpenChange={setIsConvertDialogOpen}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Convert to Booking: {selectedEnquiry?.name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            {/* Customer Info */}
+            <div className="bg-gray-50 p-3 rounded-lg">
+              <p className="text-sm"><span className="font-medium">Customer:</span> {selectedEnquiry?.name}</p>
+              <p className="text-sm"><span className="font-medium">Phone:</span> {selectedEnquiry?.phone}</p>
+              <p className="text-sm"><span className="font-medium">Event Type:</span> {selectedEnquiry?.eventType}</p>
+            </div>
+
+            {/* Event Dates */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Event Start Date *</Label>
+                <Input
+                  type="date"
+                  value={convertData.eventDate}
+                  onChange={(e) => setConvertData({ ...convertData, eventDate: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Event End Date</Label>
+                <Input
+                  type="date"
+                  value={convertData.eventEndDate}
+                  onChange={(e) => setConvertData({ ...convertData, eventEndDate: e.target.value })}
+                />
+              </div>
+            </div>
+
+            {/* Event Times */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Time From</Label>
+                <Select 
+                  value={convertData.eventTimeFrom} 
+                  onValueChange={(value) => setConvertData({ ...convertData, eventTimeFrom: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {['07:00 AM', '08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
+                      '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM'].map(time => (
+                      <SelectItem key={time} value={time}>{time}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Time To</Label>
+                <Select 
+                  value={convertData.eventTimeTo} 
+                  onValueChange={(value) => setConvertData({ ...convertData, eventTimeTo: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {['12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM',
+                      '06:00 PM', '07:00 PM', '08:00 PM', '09:00 PM', '10:00 PM', '11:00 PM'].map(time => (
+                      <SelectItem key={time} value={time}>{time}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Payment Details */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Total Amount (Rs.)</Label>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  value={convertData.amount}
+                  onChange={(e) => setConvertData({ ...convertData, amount: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Advance Paid (Rs.)</Label>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  value={convertData.advancePaid}
+                  onChange={(e) => setConvertData({ ...convertData, advancePaid: e.target.value })}
+                />
+              </div>
+            </div>
+
+            {/* Balance Due */}
+            {(convertData.amount || convertData.advancePaid) && (
+              <div className="bg-yellow-50 p-3 rounded-lg">
+                <p className="text-sm font-medium">
+                  Balance Due: Rs. {((parseFloat(convertData.amount) || 0) - (parseFloat(convertData.advancePaid) || 0)).toLocaleString()}
+                </p>
+              </div>
+            )}
+
+            {/* Notes */}
+            <div className="space-y-2">
+              <Label>Notes</Label>
+              <Textarea
+                placeholder="Any special instructions or notes..."
+                value={convertData.notes}
+                onChange={(e) => setConvertData({ ...convertData, notes: e.target.value })}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsConvertDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleConvertToBooking} className="bg-green-600 text-white hover:bg-green-700">
+              <Calendar className="w-4 h-4 mr-2" />
+              Convert to Booking
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminDashboard>
   );
 };
