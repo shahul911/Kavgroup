@@ -277,6 +277,8 @@ agent_communication:
     message: "Enhanced Reminders & Bills functionality testing completed successfully. All 4 new API endpoints tested and working properly. Verified enquiry reminders include eventType field, marking reminders as done updates database correctly, bill categories return 9 categories with counts, and bills by category endpoint works. Database persistence confirmed - marked reminders no longer appear in subsequent queries."
   - agent: "testing"
     message: "Admin panel refactoring testing completed successfully. All three refactored components (AdminReminders, AdminGallery, AdminTestimonials) are working perfectly after major code restructuring. Custom hooks, sub-components, and modular architecture functioning correctly. Tab switching, dialog functionality, mobile responsiveness, and all UI interactions tested and verified. No JavaScript errors detected. The refactoring has improved code organization without breaking any functionality."
+  - agent: "testing"
+    message: "Booking calendar end date picker testing completed successfully. All test requirements verified: Past dates (before today, Dec 31 2024) are properly disabled in the end date picker, dates before the selected start date are also disabled, and only future dates on or after the start date are selectable. The disabled dates correctly prevent clicking (throw errors when clicked), while enabled dates allow selection. Found 32 disabled dates and 3 enabled dates in the test scenario. The end date picker opens correctly when clicking the 'Event End Date (Optional)' button, and the calendar popover displays with proper date restrictions. All functionality working as expected with no critical issues."
 
 ---
 
