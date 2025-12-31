@@ -40,8 +40,6 @@ async def get_dashboard_stats(current_user: str = Depends(get_current_user)):
 @router.get("/admin/reminders")
 async def get_reminders(current_user: str = Depends(get_current_user)):
     """Get pending reminders - enquiry follow-ups and document reminders"""
-    today = datetime.utcnow().date().isoformat()
-    
     # Enquiry follow-ups - show ALL enquiries with followUpReminder enabled and not closed
     # No date filtering - show all pending follow-ups regardless of event date or follow-up date
     # This allows seeing follow-ups even when customer changes event date to a later date

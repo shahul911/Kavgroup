@@ -4,17 +4,17 @@ def parse_time(time_str):
     """Parse time string like '04:00 PM' to time object"""
     try:
         return datetime.strptime(time_str, '%I:%M %p').time()
-    except:
+    except ValueError:
         try:
             return datetime.strptime(time_str, '%H:%M').time()
-        except:
+        except ValueError:
             return None
 
 def parse_date(date_str):
     """Parse date string to date object"""
     try:
         return datetime.strptime(date_str, '%Y-%m-%d').date()
-    except:
+    except ValueError:
         return None
 
 def get_date_range(start_date_str, end_date_str):
@@ -97,7 +97,7 @@ def format_time_12hr(time_str):
     try:
         time_obj = datetime.strptime(time_str, '%H:%M').time()
         return time_obj.strftime('%I:%M %p')
-    except:
+    except ValueError:
         return time_str
 
 def check_multiday_conflict(new_booking, existing_bookings):

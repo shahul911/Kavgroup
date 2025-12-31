@@ -29,13 +29,11 @@ def generate_receipt_pdf(booking_data, output_path):
     page_width = A4[0] - 40*mm  # 170mm available
     
     elements = []
-    styles = getSampleStyleSheet()
     
     # Colors
     GOLD = colors.HexColor('#B8860B')  # Darker gold for better print
     BLACK = colors.HexColor('#000000')
     GRAY = colors.HexColor('#555555')
-    LIGHT_GRAY = colors.HexColor('#F5F5F5')
     
     # ============ STYLES ============
     title_style = ParagraphStyle(
@@ -79,13 +77,6 @@ def generate_receipt_pdf(booking_data, output_path):
         fontSize=9,
         textColor=GRAY,
         fontName='Helvetica'
-    )
-    
-    value_style = ParagraphStyle(
-        'Value',
-        fontSize=9,
-        textColor=BLACK,
-        fontName='Helvetica-Bold'
     )
     
     # ============ HEADER ============
