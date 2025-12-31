@@ -239,7 +239,6 @@ export const BookingCalendar = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
-            whileHover={{ y: -5 }}
             className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg border border-gray-100 transition-shadow duration-300 hover:shadow-xl"
           >
             <div className="flex items-center justify-center mb-6">
@@ -267,7 +266,6 @@ export const BookingCalendar = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.7, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
-              whileHover={{ y: -5 }}
               className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-lg border border-gray-100 transition-shadow duration-300 hover:shadow-xl"
             >
               <h3 className="text-2xl font-semibold text-gray-900 mb-6">Legend</h3>
