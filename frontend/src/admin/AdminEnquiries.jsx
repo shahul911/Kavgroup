@@ -570,7 +570,12 @@ export const AdminEnquiries = () => {
                           mode="single"
                           selected={bookingData.eventEndDate}
                           onSelect={(date) => setBookingData({ ...bookingData, eventEndDate: date })}
-                          disabled={(date) => bookingData.eventDate && date < bookingData.eventDate}
+                          defaultMonth={bookingData.eventDate || new Date()}
+                          disabled={(date) => {
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            return (bookingData.eventDate && date < bookingData.eventDate) || date < today;
+                          }}
                         />
                       </PopoverContent>
                     </Popover>
