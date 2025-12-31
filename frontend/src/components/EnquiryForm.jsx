@@ -97,7 +97,6 @@ export const EnquiryForm = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-            whileHover={{ y: -5 }}
             className="bg-white p-8 md:p-12 rounded-2xl shadow-xl border border-gray-100 transition-shadow duration-300 hover:shadow-2xl"
           >
             <form onSubmit={handleSubmit} className="space-y-6">
