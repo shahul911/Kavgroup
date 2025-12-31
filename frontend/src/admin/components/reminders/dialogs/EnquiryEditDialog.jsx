@@ -29,7 +29,7 @@ export const EnquiryEditDialog = ({
 
           {/* Event Dates - Customer may change their preferred date */}
           <div className="space-y-2">
-            <Label className="text-blue-600 font-medium">Event Date (Customer's Preferred Date)</Label>
+            <Label className="text-blue-600 font-medium">Event Date (Customer&apos;s Preferred Date)</Label>
             <p className="text-xs text-gray-500">Update if customer changed their preferred event date</p>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">

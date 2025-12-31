@@ -32,7 +32,7 @@ export const TestimonialCard = ({
 
         {/* Testimonial Text */}
         <p className="text-gray-700 italic mb-4 line-clamp-4">
-          "{testimonial.text}"
+          &ldquo;{testimonial.text}&rdquo;
         </p>
 
         {/* Client Info */}
