@@ -192,6 +192,18 @@ backend:
         comment: "GET /api/ tested successfully. Returns welcome message confirming API is running."
 
 frontend:
+  - task: "iOS-style animations implementation"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Comprehensive iOS-style animation testing completed successfully. All animations working perfectly: Hero section (logo fade-in, text stagger, CTA buttons, stats counters with stagger, bouncing scroll indicator), About section (header animation, golden underline scaling from center, content card fade-in, decorative quotes), Amenities section (staggered grid animation, hover lift effects, icon scale animations), Gallery section (staggered image animations, hover effects with image scaling, smooth overlay appearance, caption slide-up), Testimonials section (staggered card animations, sequential star rating animations, hover lift effects), Contact section (staggered card animations, hover effects), Mobile menu (smooth slide-down animation, staggered menu items, proper close animation). All animations feel smooth and iOS-like with proper easing curves. No animation glitches or console errors detected. Framer Motion integration working flawlessly."
+
   - task: "Mobile responsiveness fixes"
     implemented: true
     working: true
