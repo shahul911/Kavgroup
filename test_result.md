@@ -131,17 +131,65 @@ backend:
         agent: "testing"
         comment: "GET /api/admin/reminders tested successfully. Returns enquiry and document reminders with proper authentication."
 
-  - task: "Root API endpoint"
+  - task: "Enhanced Reminders API - Get reminders with eventType"
     implemented: true
     working: true
-    file: "/app/backend/server.py"
+    file: "/app/backend/routes/dashboard.py"
     stuck_count: 0
-    priority: "low"
+    priority: "high"
     needs_retesting: false
     status_history:
       - working: true
         agent: "testing"
-        comment: "GET /api/ tested successfully. Returns welcome message confirming API is running."
+        comment: "GET /api/admin/reminders tested successfully. Returns enquiryReminders with eventType field and documentReminders. Verified enquiry reminders include all required fields including eventType."
+
+  - task: "Enhanced Reminders API - Mark enquiry reminder as done"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/dashboard.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "PUT /api/admin/reminders/enquiry/{id}/done tested successfully. Marks enquiry reminder as done by setting followUpReminder to false. Database update confirmed - marked reminders no longer appear in subsequent queries."
+
+  - task: "Enhanced Reminders API - Mark document reminder as done"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/dashboard.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "PUT /api/admin/reminders/document/{id}/done tested successfully. Marks document reminder as done by setting reminderEnabled to false. Database update confirmed - marked reminders no longer appear in subsequent queries."
+
+  - task: "Bill Categories API - Get categories with counts"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/dashboard.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /api/admin/bill-categories tested successfully. Returns 9 predefined categories (water-test, building-tax, land-tax, electricity-bill, staff-payment, maintenance, insurance, license, other) with proper counts and required fields (id, name, icon, count)."
+
+  - task: "Bills by Category API - Get bills for specific category"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/dashboard.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "GET /api/admin/bills/water-test tested successfully. Returns documents filtered by category with proper response format including documents array and category field. Verified correct category filtering."
 
 frontend:
   - task: "Mobile responsiveness fixes"
