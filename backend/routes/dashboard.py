@@ -107,18 +107,26 @@ async def reschedule_enquiry_reminder(
     data: dict,
     current_user: str = Depends(get_current_user)
 ):
-    """Reschedule an enquiry follow-up reminder"""
-    new_date = data.get('followUpDate')
+    """Reschedule an enquiry follow-up reminder and optionally update event date"""
+    new_follow_up_date = data.get('followUpDate')
+    new_event_date = data.get('eventDate')
+    new_event_end_date = data.get('eventEndDate')
     notes = data.get('notes')
     
-    if not new_date:
+    if not new_follow_up_date:
         raise HTTPException(status_code=400, detail="New follow-up date is required")
     
     update_data = {
-        "followUpDate": new_date,
+        "followUpDate": new_follow_up_date,
         "followUpReminder": True,
         "updatedAt": datetime.utcnow()
     }
+    
+    # Allow updating event date if customer changed their preferred date
+    if new_event_date:
+        update_data["eventDate"] = new_event_date
+    if new_event_end_date is not None:
+        update_data["eventEndDate"] = new_event_end_date if new_event_end_date else None
     if notes is not None:
         update_data["notes"] = notes
     
