@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api", tags=["Dashboard"])
 
 
-@router.get("/admin/dashboard/stats")
+@router.get("/admin/stats")
 async def get_dashboard_stats(current_user: str = Depends(get_current_user)):
     """Get dashboard statistics"""
     today = datetime.utcnow().date().isoformat()
