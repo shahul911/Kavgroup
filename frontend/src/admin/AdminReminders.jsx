@@ -613,6 +613,14 @@ export const AdminReminders = () => {
                               <div className="flex flex-wrap gap-2">
                                 <Button
                                   size="sm"
+                                  onClick={() => openConvertDialog(enquiry)}
+                                  className="bg-green-600 text-white hover:bg-green-700 text-xs"
+                                >
+                                  <Calendar className="w-3 h-3 mr-1" />
+                                  Convert to Booking
+                                </Button>
+                                <Button
+                                  size="sm"
                                   onClick={() => handleCall(enquiry.phone)}
                                   className="bg-[#D4AF37] text-black hover:bg-[#C19B2E] text-xs"
                                 >
