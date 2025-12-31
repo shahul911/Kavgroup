@@ -63,7 +63,7 @@ async def get_all_enquiries(
     if status:
         query['status'] = status
     
-    enquiries = await db.enquiries.find(query, {'_id': 0}).sort('createdAt', -1).to_list(None)
+    enquiries = await db.enquiries.find(query, {'_id': 0}).sort('createdAt', -1).to_list(500)
     return {"enquiries": enquiries}
 
 
@@ -119,10 +119,10 @@ async def convert_to_booking(
     event_time_from = booking_details.get('eventTimeFrom', enquiry.get('eventTimeFrom', '07:00 AM'))
     event_time_to = booking_details.get('eventTimeTo', enquiry.get('eventTimeTo', '08:00 PM'))
     
-    # Check for conflicts
+    # Check for conflicts - limited query for performance
     existing_bookings = await db.bookings.find({
         "status": {"$in": ["pending", "confirmed"]}
-    }, {'_id': 0}).to_list(None)
+    }, {'_id': 0}).to_list(1000)
     
     has_conflict = check_multiday_conflict(
         event_date, event_end_date, event_time_from, event_time_to, existing_bookings

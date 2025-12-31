@@ -74,7 +74,7 @@ async def get_documents(
     if documentType:
         query['documentType'] = documentType
     
-    documents = await db.documents.find(query, {'_id': 0}).sort('createdAt', -1).to_list(None)
+    documents = await db.documents.find(query, {'_id': 0}).sort('createdAt', -1).to_list(200)
     return {"documents": documents}
 
 

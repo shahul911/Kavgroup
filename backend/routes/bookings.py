@@ -29,11 +29,11 @@ async def get_availability_overview(start_date: str = None, end_date: str = None
         next_month = today.replace(day=28) + timedelta(days=4)
         end_date = (next_month.replace(day=1) + timedelta(days=32)).replace(day=1).strftime('%Y-%m-%d')
     
-    # Get all bookings with projection (only needed fields)
+    # Get bookings with projection (only needed fields) - limited for performance
     bookings = await db.bookings.find(
         {"status": {"$in": ["pending", "confirmed"]}}, 
         {'_id': 0, 'eventDate': 1, 'eventEndDate': 1, 'eventTimeFrom': 1, 'eventTimeTo': 1, 'name': 1, 'eventType': 1, 'status': 1}
-    ).to_list(None)
+    ).to_list(1000)
     
     # Generate date range
     dates_to_check = get_date_range(start_date, end_date)
@@ -65,10 +65,10 @@ async def get_availability_overview(start_date: str = None, end_date: str = None
 @router.get("/bookings/availability/{date}")
 async def get_date_availability(date: str):
     """Get available and booked time slots for a specific date"""
-    # Get all bookings that might affect this date
+    # Get bookings that might affect this date - limited for performance
     bookings = await db.bookings.find({
         "status": {"$in": ["pending", "confirmed"]}
-    }, {'_id': 0, 'eventDate': 1, 'eventEndDate': 1, 'eventTimeFrom': 1, 'eventTimeTo': 1, 'name': 1, 'eventType': 1, 'status': 1}).to_list(None)
+    }, {'_id': 0, 'eventDate': 1, 'eventEndDate': 1, 'eventTimeFrom': 1, 'eventTimeTo': 1, 'name': 1, 'eventType': 1, 'status': 1}).to_list(1000)
     
     # Filter bookings that overlap with this date
     relevant_bookings = []
@@ -116,7 +116,7 @@ async def get_all_bookings(
     if status:
         query['status'] = status
     
-    bookings = await db.bookings.find(query, {'_id': 0}).sort('eventDate', -1).to_list(None)
+    bookings = await db.bookings.find(query, {'_id': 0}).sort('eventDate', -1).to_list(500)
     return {"bookings": bookings}
 
 
@@ -134,7 +134,7 @@ async def create_direct_booking(
     
     existing_bookings = await db.bookings.find({
         "status": {"$in": ["pending", "confirmed"]}
-    }, {'_id': 0}).to_list(None)
+    }, {'_id': 0}).to_list(1000)
     
     has_conflict = check_multiday_conflict(
         event_date, event_end_date, event_time_from, event_time_to, existing_bookings
