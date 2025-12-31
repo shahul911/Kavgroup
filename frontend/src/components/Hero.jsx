@@ -85,7 +85,7 @@ export const Hero = () => {
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               onClick={() => scrollToSection('booking')}
-              className="bg-[#D4AF37] text-black hover:bg-[#C19B2E] px-8 py-6 text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-[#D4AF37]/50"
+              className="bg-[#D4AF37] text-black hover:bg-[#C19B2E] px-8 py-6 text-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-[#D4AF37]/50"
             >
               <Calendar className="w-5 h-5 mr-2" />
               Check Availability
@@ -95,7 +95,7 @@ export const Hero = () => {
             <Button
               onClick={() => scrollToSection('enquiry')}
               variant="outline"
-              className="border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black px-8 py-6 text-lg font-semibold transition-all duration-300"
+              className="border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black px-8 py-6 text-lg font-semibold transition-all duration-200"
             >
               <Phone className="w-5 h-5 mr-2" />
               Contact Us
