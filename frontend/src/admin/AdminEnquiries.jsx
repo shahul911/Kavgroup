@@ -552,6 +552,11 @@ export const AdminEnquiries = () => {
                           mode="single"
                           selected={bookingData.eventDate}
                           onSelect={(date) => setBookingData({ ...bookingData, eventDate: date })}
+                          disabled={(date) => {
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            return date < today;
+                          }}
                         />
                       </PopoverContent>
                     </Popover>
