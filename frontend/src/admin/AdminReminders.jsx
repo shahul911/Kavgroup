@@ -796,19 +796,59 @@ export const AdminReminders = () => {
 
       {/* Enquiry Edit Dialog */}
       <Dialog open={isEnquiryEditOpen} onOpenChange={setIsEnquiryEditOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Reschedule Follow-up: {selectedEnquiry?.name}</DialogTitle>
+            <DialogTitle>Edit Enquiry: {selectedEnquiry?.name}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
+            {/* Customer Info */}
+            <div className="bg-gray-50 p-3 rounded-lg text-sm">
+              <p><span className="font-medium">Customer:</span> {selectedEnquiry?.name}</p>
+              <p><span className="font-medium">Phone:</span> {selectedEnquiry?.phone}</p>
+              <p><span className="font-medium">Event Type:</span> {selectedEnquiry?.eventType}</p>
+            </div>
+
+            {/* Event Dates - Customer may change their preferred date */}
             <div className="space-y-2">
-              <Label>New Follow-up Date *</Label>
+              <Label className="text-blue-600 font-medium">Event Date (Customer's Preferred Date)</Label>
+              <p className="text-xs text-gray-500">Update if customer changed their preferred event date</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label className="text-xs">Start Date</Label>
+                  <Input
+                    type="date"
+                    value={enquiryEditData.eventDate}
+                    onChange={(e) => {
+                      const newDate = e.target.value;
+                      const updatedEndDate = enquiryEditData.eventEndDate && enquiryEditData.eventEndDate < newDate 
+                        ? '' : enquiryEditData.eventEndDate;
+                      setEnquiryEditData({ ...enquiryEditData, eventDate: newDate, eventEndDate: updatedEndDate });
+                    }}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">End Date</Label>
+                  <Input
+                    type="date"
+                    value={enquiryEditData.eventEndDate}
+                    min={enquiryEditData.eventDate || undefined}
+                    onChange={(e) => setEnquiryEditData({ ...enquiryEditData, eventEndDate: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Follow-up Date */}
+            <div className="space-y-2">
+              <Label>Follow-up Date *</Label>
               <Input
                 type="date"
                 value={enquiryEditData.followUpDate}
                 onChange={(e) => setEnquiryEditData({ ...enquiryEditData, followUpDate: e.target.value })}
               />
             </div>
+
+            {/* Notes */}
             <div className="space-y-2">
               <Label>Notes</Label>
               <Textarea
@@ -822,7 +862,7 @@ export const AdminReminders = () => {
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsEnquiryEditOpen(false)}>Cancel</Button>
             <Button onClick={handleRescheduleEnquiry} className="bg-[#D4AF37] text-black hover:bg-[#C19B2E]">
-              Save
+              Save Changes
             </Button>
           </DialogFooter>
         </DialogContent>
