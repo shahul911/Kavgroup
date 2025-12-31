@@ -13,31 +13,31 @@ export const BookingCalendarView = ({ bookings, onDateClick }) => {
 
   // Load availability status for calendar month
   useEffect(() => {
-    loadAvailabilityForMonth(currentMonth);
+    const loadAvailability = async () => {
+      try {
+        const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+        const lastDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 2, 0);
+        
+        // Format dates in local timezone
+        const formatDateLocal = (date) => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+        
+        const startDate = formatDateLocal(firstDay);
+        const endDate = formatDateLocal(lastDay);
+        
+        const response = await getAvailabilityOverview(startDate, endDate);
+        setDateStatusMap(response.dateStatus || {});
+      } catch (error) {
+        console.error('Failed to load availability:', error);
+      }
+    };
+    
+    loadAvailability();
   }, [currentMonth, bookings]); // Reload when bookings change
-
-  const loadAvailabilityForMonth = async (monthDate) => {
-    try {
-      const firstDay = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
-      const lastDay = new Date(monthDate.getFullYear(), monthDate.getMonth() + 2, 0);
-      
-      // Format dates in local timezone
-      const formatDateLocal = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      };
-      
-      const startDate = formatDateLocal(firstDay);
-      const endDate = formatDateLocal(lastDay);
-      
-      const response = await getAvailabilityOverview(startDate, endDate);
-      setDateStatusMap(response.dateStatus || {});
-    } catch (error) {
-      console.error('Failed to load availability:', error);
-    }
-  };
 
   const getDateStatus = (date) => {
     // Format date in local timezone

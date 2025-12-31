@@ -44,25 +44,28 @@ export const AdminDashboard = ({ children, currentPage }) => {
       return;
     }
 
-    loadData();
-  }, [navigate]);
-
-  const loadData = async () => {
-    try {
-      const [statsData, remindersData] = await Promise.all([
-        getDashboardStats(),
-        getReminders()
-      ]);
-      setStats(statsData);
-      setReminders(remindersData);
-    } catch (error) {
-      if (error.response?.status === 401) {
-        handleLogout();
-      } else {
-        toast.error('Failed to load dashboard data');
+    const fetchData = async () => {
+      try {
+        const [statsData, remindersData] = await Promise.all([
+          getDashboardStats(),
+          getReminders()
+        ]);
+        setStats(statsData);
+        setReminders(remindersData);
+      } catch (error) {
+        if (error.response?.status === 401) {
+          localStorage.removeItem('adminToken');
+          localStorage.removeItem('adminUser');
+          localStorage.removeItem('adminRole');
+          navigate('/admin-kav-Catlife41056');
+        } else {
+          toast.error('Failed to load dashboard data');
+        }
       }
-    }
-  };
+    };
+    
+    fetchData();
+  }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
