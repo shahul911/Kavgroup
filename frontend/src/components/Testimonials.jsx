@@ -169,9 +169,7 @@ export const Testimonials = () => {
               <motion.div
                 key={testimonial.id}
                 variants={itemVariants}
-                whileHover={{ y: -8, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-100 hover:border-[#D4AF37] relative cursor-default"
+                className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[#D4AF37] relative cursor-default hover:-translate-y-2"
               >
                 <motion.div
                   initial={{ opacity: 0, scale: 0 }}
