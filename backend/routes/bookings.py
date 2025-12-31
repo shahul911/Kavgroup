@@ -136,12 +136,18 @@ async def create_direct_booking(
         "status": {"$in": ["pending", "confirmed"]}
     }, {'_id': 0}).to_list(1000)
     
-    has_conflict = check_multiday_conflict(
-        event_date, event_end_date, event_time_from, event_time_to, existing_bookings
-    )
+    # Build new booking dict for conflict check
+    new_booking = {
+        'eventDate': event_date,
+        'eventEndDate': event_end_date,
+        'eventTimeFrom': event_time_from,
+        'eventTimeTo': event_time_to
+    }
+    
+    has_conflict, conflict_msg = check_multiday_conflict(new_booking, existing_bookings)
     
     if has_conflict:
-        raise HTTPException(status_code=400, detail="Time slot conflict with existing booking")
+        raise HTTPException(status_code=400, detail=f"Time slot conflict: {conflict_msg}")
     
     booking = Booking(
         name=booking_data.get('name'),
