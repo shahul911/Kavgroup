@@ -252,6 +252,18 @@ frontend:
         agent: "testing"
         comment: "AdminTestimonials page tested successfully after refactoring. 'Testimonials Management' header displays correctly, 'Add Testimonial' button present and functional. Testimonial cards display with star ratings, proper content, and action icons (eye/edit/delete). Custom hooks and sub-components functioning correctly. Mobile responsiveness verified."
 
+  - task: "Booking calendar end date picker past dates disabled"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/BookingCalendar.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Booking calendar end date picker testing completed successfully. All test requirements verified: Past dates (before today, Dec 31 2024) are properly disabled in the end date picker, dates before the selected start date are also disabled, and only future dates on or after the start date are selectable. The disabled dates correctly prevent clicking (throw errors when clicked), while enabled dates allow selection. Found 32 disabled dates and 3 enabled dates in the test scenario. The end date picker opens correctly when clicking the 'Event End Date (Optional)' button, and the calendar popover displays with proper date restrictions. Screenshots captured showing disabled past dates (grayed out) and enabled future dates. All functionality working as expected with no critical issues."
+
 metadata:
   created_by: "testing_agent"
   version: "1.0"
