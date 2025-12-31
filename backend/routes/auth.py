@@ -29,10 +29,8 @@ async def admin_login(request: Request, login_data: AdminLogin):
         ip_blocker.record_failed_attempt(ip, "Failed login attempt")
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    # Reset failed attempts on successful login
-    ip_blocker.reset_attempts(ip)
-    
     token = create_jwt_token(admin['username'])
+    logger.info(f"Successful login for user: {admin['username']} from IP: {ip}")
     return {
         "success": True,
         "token": token,
