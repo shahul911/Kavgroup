@@ -518,6 +518,7 @@ export const BookingCalendar = () => {
                         mode="single"
                         selected={selectedEndDate}
                         onSelect={setSelectedEndDate}
+                        defaultMonth={selectedDate || new Date()}
                         disabled={(date) => {
                           const today = new Date();
                           today.setHours(0, 0, 0, 0);
