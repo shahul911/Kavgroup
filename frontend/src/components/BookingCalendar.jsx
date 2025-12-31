@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Calendar as CalendarIcon, CheckCircle2, XCircle } from 'lucide-react';
 import { Calendar } from './ui/calendar';
 import { Button } from './ui/button';
