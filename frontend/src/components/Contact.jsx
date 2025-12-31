@@ -167,27 +167,23 @@ export const Contact = () => {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                onClick={() => window.location.href = `tel:${contactInfo.phone1}`}
-                className="bg-[#D4AF37] text-black hover:bg-[#C19B2E] px-8 py-6 text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-[#D4AF37]/50 w-[220px]"
-              >
-                <Phone className="w-5 h-5 mr-2" />
-                Call Now
-              </Button>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                onClick={() => {
-                  const element = document.getElementById('enquiry');
-                  if (element) element.scrollIntoView({ behavior: 'smooth' });
-                }}
-                variant="outline"
-                className="border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black px-8 py-6 text-lg font-semibold transition-all duration-300 w-[220px]"
-              >
-                Send Enquiry
-              </Button>
-            </motion.div>
+            <Button
+              onClick={() => window.location.href = `tel:${contactInfo.phone1}`}
+              className="bg-[#D4AF37] text-black hover:bg-[#C19B2E] px-8 py-6 text-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-[#D4AF37]/50 w-[220px] hover:scale-105 active:scale-95"
+            >
+              <Phone className="w-5 h-5 mr-2" />
+              Call Now
+            </Button>
+            <Button
+              onClick={() => {
+                const element = document.getElementById('enquiry');
+                if (element) element.scrollIntoView({ behavior: 'smooth' });
+              }}
+              variant="outline"
+              className="border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-black px-8 py-6 text-lg font-semibold transition-all duration-200 w-[220px] hover:scale-105 active:scale-95"
+            >
+              Send Enquiry
+            </Button>
           </motion.div>
         </motion.div>
       </div>
