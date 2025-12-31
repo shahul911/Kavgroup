@@ -552,6 +552,7 @@ export const AdminEnquiries = () => {
                           mode="single"
                           selected={bookingData.eventDate}
                           onSelect={(date) => setBookingData({ ...bookingData, eventDate: date })}
+                          defaultMonth={bookingData.eventDate || new Date()}
                           disabled={(date) => {
                             const today = new Date();
                             today.setHours(0, 0, 0, 0);
