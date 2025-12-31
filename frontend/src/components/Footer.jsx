@@ -49,11 +49,10 @@ export const Footer = () => {
         >
           {/* Logo and About */}
           <motion.div variants={itemVariants} className="space-y-4">
-            <motion.img
-              whileHover={{ scale: 1.05 }}
+            <img
               src="https://customer-assets.emergentagent.com/job_1503fdb9-25f1-41c0-817c-a287fdbfacfe/artifacts/zciobxqk_Logo%20design%20for%20a%20we.png"
               alt="KAV Auditorium"
-              className="h-24 w-auto"
+              className="h-24 w-auto transition-transform duration-200 hover:scale-105"
             />
             <p className="text-gray-400 text-sm leading-relaxed">
               A warm, traditional, and beautifully designed space for weddings, celebrations, and events in the heart of Palakkad.
