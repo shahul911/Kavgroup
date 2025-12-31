@@ -292,12 +292,142 @@ def test_dashboard():
             data = response.json()
             if 'enquiryReminders' in data and 'documentReminders' in data:
                 results.add_pass("GET /admin/reminders - Reminders retrieved")
+                
+                # Check if enquiry reminders include eventType field
+                enquiry_reminders = data.get('enquiryReminders', [])
+                if enquiry_reminders:
+                    first_reminder = enquiry_reminders[0]
+                    if 'eventType' in first_reminder:
+                        results.add_pass("GET /admin/reminders - Enquiry reminders include eventType field")
+                    else:
+                        results.add_fail("GET /admin/reminders", "Enquiry reminders missing eventType field")
+                else:
+                    print("   ℹ️  No enquiry reminders found to verify eventType field")
+                
             else:
                 results.add_fail("GET /admin/reminders", f"Invalid response format: {data}")
         except json.JSONDecodeError:
             results.add_fail("GET /admin/reminders", "Invalid JSON response")
     else:
         results.add_fail("GET /admin/reminders", f"Status {response.status_code}: {response.text}")
+
+
+def test_reminders_functionality():
+    """Test enhanced reminders functionality"""
+    print("\n🔔 Testing Enhanced Reminders Functionality...")
+    
+    # First get reminders to find IDs for testing
+    response = make_request('GET', '/admin/reminders')
+    if response is None or response.status_code != 200:
+        results.add_fail("Reminders functionality test", "Could not retrieve reminders for testing")
+        return
+    
+    try:
+        data = response.json()
+        enquiry_reminders = data.get('enquiryReminders', [])
+        document_reminders = data.get('documentReminders', [])
+        
+        # Test marking enquiry reminder as done
+        if enquiry_reminders:
+            enquiry_id = enquiry_reminders[0].get('id')
+            if enquiry_id:
+                response = make_request('PUT', f'/admin/reminders/enquiry/{enquiry_id}/done')
+                if response is None:
+                    results.add_fail("PUT /admin/reminders/enquiry/{id}/done", "Request failed - connection error")
+                elif response.status_code == 200:
+                    try:
+                        result = response.json()
+                        if result.get('success'):
+                            results.add_pass("PUT /admin/reminders/enquiry/{id}/done - Enquiry reminder marked as done")
+                        else:
+                            results.add_fail("PUT /admin/reminders/enquiry/{id}/done", f"Unexpected response: {result}")
+                    except json.JSONDecodeError:
+                        results.add_fail("PUT /admin/reminders/enquiry/{id}/done", "Invalid JSON response")
+                else:
+                    results.add_fail("PUT /admin/reminders/enquiry/{id}/done", f"Status {response.status_code}: {response.text}")
+            else:
+                results.add_fail("Enquiry reminder test", "No enquiry ID found in reminders")
+        else:
+            print("   ℹ️  No enquiry reminders found to test marking as done")
+        
+        # Test marking document reminder as done
+        if document_reminders:
+            document_id = document_reminders[0].get('id')
+            if document_id:
+                response = make_request('PUT', f'/admin/reminders/document/{document_id}/done')
+                if response is None:
+                    results.add_fail("PUT /admin/reminders/document/{id}/done", "Request failed - connection error")
+                elif response.status_code == 200:
+                    try:
+                        result = response.json()
+                        if result.get('success'):
+                            results.add_pass("PUT /admin/reminders/document/{id}/done - Document reminder marked as done")
+                        else:
+                            results.add_fail("PUT /admin/reminders/document/{id}/done", f"Unexpected response: {result}")
+                    except json.JSONDecodeError:
+                        results.add_fail("PUT /admin/reminders/document/{id}/done", "Invalid JSON response")
+                else:
+                    results.add_fail("PUT /admin/reminders/document/{id}/done", f"Status {response.status_code}: {response.text}")
+            else:
+                results.add_fail("Document reminder test", "No document ID found in reminders")
+        else:
+            print("   ℹ️  No document reminders found to test marking as done")
+            
+    except json.JSONDecodeError:
+        results.add_fail("Reminders functionality test", "Invalid JSON response from reminders endpoint")
+
+
+def test_bill_categories():
+    """Test bill categories functionality"""
+    print("\n📋 Testing Bill Categories Functionality...")
+    
+    # Test get bill categories
+    response = make_request('GET', '/admin/bill-categories')
+    if response is None:
+        results.add_fail("GET /admin/bill-categories", "Request failed - connection error")
+    elif response.status_code == 200:
+        try:
+            data = response.json()
+            if 'categories' in data:
+                categories = data['categories']
+                if len(categories) == 9:
+                    results.add_pass("GET /admin/bill-categories - Returns 9 categories")
+                    
+                    # Check if categories have required fields
+                    required_fields = ['id', 'name', 'icon', 'count']
+                    if all(all(field in cat for field in required_fields) for cat in categories):
+                        results.add_pass("GET /admin/bill-categories - Categories have required fields")
+                    else:
+                        results.add_fail("GET /admin/bill-categories", "Categories missing required fields")
+                    
+                    # Test specific category endpoint (water-test)
+                    response = make_request('GET', '/admin/bills/water-test')
+                    if response is None:
+                        results.add_fail("GET /admin/bills/water-test", "Request failed - connection error")
+                    elif response.status_code == 200:
+                        try:
+                            bills_data = response.json()
+                            if 'documents' in bills_data and 'category' in bills_data:
+                                results.add_pass("GET /admin/bills/water-test - Bills by category retrieved")
+                                if bills_data['category'] == 'water-test':
+                                    results.add_pass("GET /admin/bills/water-test - Correct category returned")
+                                else:
+                                    results.add_fail("GET /admin/bills/water-test", f"Wrong category returned: {bills_data['category']}")
+                            else:
+                                results.add_fail("GET /admin/bills/water-test", f"Invalid response format: {bills_data}")
+                        except json.JSONDecodeError:
+                            results.add_fail("GET /admin/bills/water-test", "Invalid JSON response")
+                    else:
+                        results.add_fail("GET /admin/bills/water-test", f"Status {response.status_code}: {response.text}")
+                        
+                else:
+                    results.add_fail("GET /admin/bill-categories", f"Expected 9 categories, got {len(categories)}")
+            else:
+                results.add_fail("GET /admin/bill-categories", f"Invalid response format: {data}")
+        except json.JSONDecodeError:
+            results.add_fail("GET /admin/bill-categories", "Invalid JSON response")
+    else:
+        results.add_fail("GET /admin/bill-categories", f"Status {response.status_code}: {response.text}")
 
 def test_root_endpoint():
     """Test root API endpoint"""
