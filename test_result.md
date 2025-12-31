@@ -260,6 +260,7 @@ metadata:
 
 test_plan:
   current_focus:
+    - "iOS-style animations testing"
     - "Enhanced Reminders & Bills functionality verification"
     - "All new API endpoints testing"
     - "Admin panel refactoring verification"
