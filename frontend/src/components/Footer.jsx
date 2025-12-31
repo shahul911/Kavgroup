@@ -71,14 +71,12 @@ export const Footer = () => {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1, duration: 0.4 }}
                 >
-                  <motion.button
-                    whileHover={{ x: 5, color: '#D4AF37' }}
-                    whileTap={{ scale: 0.95 }}
+                  <button
                     onClick={() => document.getElementById(link.id)?.scrollIntoView({ behavior: 'smooth' })}
-                    className="text-gray-400 hover:text-[#D4AF37] transition-colors duration-200 text-sm"
+                    className="text-gray-400 hover:text-[#D4AF37] hover:translate-x-1 transition-all duration-200 text-sm"
                   >
                     {link.label}
-                  </motion.button>
+                  </button>
                 </motion.li>
               ))}
             </ul>
