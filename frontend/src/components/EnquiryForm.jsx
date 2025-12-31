@@ -220,15 +220,11 @@ export const EnquiryForm = () => {
                 whileInView="visible"
                 viewport={{ once: true }}
               >
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                <Button
+                  type="submit"
+                  className="w-full bg-[#D4AF37] text-black hover:bg-[#C19B2E] h-14 text-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-[#D4AF37]/50 hover:scale-[1.02] active:scale-[0.98]"
+                  disabled={isSubmitting}
                 >
-                  <Button
-                    type="submit"
-                    className="w-full bg-[#D4AF37] text-black hover:bg-[#C19B2E] h-14 text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-[#D4AF37]/50"
-                    disabled={isSubmitting}
-                  >
                     {isSubmitting ? (
                       <>
                         <motion.div
