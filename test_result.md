@@ -270,6 +270,8 @@ test_plan:
 
 agent_communication:
   - agent: "testing"
+    message: "iOS-style animations testing completed successfully. All animation scenarios tested and working perfectly: Hero section animations (logo fade-in, text stagger, CTA buttons, stats counters, bouncing scroll indicator), scroll-triggered animations for all sections (About, Amenities, Gallery, Testimonials, Contact), hover effects (card lifts, icon scaling, image scaling with overlays), mobile menu animations (slide-down, staggered items, smooth close). All animations use proper iOS-like easing curves and feel smooth. No animation glitches or console errors detected. Framer Motion integration working flawlessly across desktop and mobile viewports."
+  - agent: "testing"
     message: "Backend refactoring testing completed successfully. All 12 API endpoints tested and working properly. Modular route structure is functioning correctly with proper authentication, data retrieval, and response formatting. No critical issues found."
   - agent: "testing"
     message: "Enhanced Reminders & Bills functionality testing completed successfully. All 4 new API endpoints tested and working properly. Verified enquiry reminders include eventType field, marking reminders as done updates database correctly, bill categories return 9 categories with counts, and bills by category endpoint works. Database persistence confirmed - marked reminders no longer appear in subsequent queries."
