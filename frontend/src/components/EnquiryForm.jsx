@@ -241,7 +241,6 @@ export const EnquiryForm = () => {
                       </>
                     )}
                   </Button>
-                </motion.div>
               </motion.div>
             </form>
           </motion.div>
