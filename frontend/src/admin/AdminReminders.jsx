@@ -60,6 +60,7 @@ export const AdminReminders = () => {
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [isEnquiryEditOpen, setIsEnquiryEditOpen] = useState(false);
   const [isDocEditOpen, setIsDocEditOpen] = useState(false);
+  const [isConvertDialogOpen, setIsConvertDialogOpen] = useState(false);
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
   const [selectedDoc, setSelectedDoc] = useState(null);
   
@@ -77,6 +78,16 @@ export const AdminReminders = () => {
   
   const [enquiryEditData, setEnquiryEditData] = useState({
     followUpDate: '',
+    notes: ''
+  });
+  
+  const [convertData, setConvertData] = useState({
+    eventDate: '',
+    eventEndDate: '',
+    eventTimeFrom: '07:00 AM',
+    eventTimeTo: '08:00 PM',
+    amount: '',
+    advancePaid: '',
     notes: ''
   });
   
