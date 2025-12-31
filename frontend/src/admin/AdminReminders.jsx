@@ -78,6 +78,8 @@ export const AdminReminders = () => {
   
   const [enquiryEditData, setEnquiryEditData] = useState({
     followUpDate: '',
+    eventDate: '',
+    eventEndDate: '',
     notes: ''
   });
   
