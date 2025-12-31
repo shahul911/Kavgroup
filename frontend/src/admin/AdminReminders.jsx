@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AdminDashboard } from './AdminDashboard';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { Checkbox } from '../components/ui/checkbox';
+import { Textarea } from '../components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { 
   getReminders, markEnquiryReminderDone, markDocumentReminderDone,
   getBillCategories, getBillsByCategory, deleteDocument, deleteEnquiry,
-  uploadDocument
+  uploadDocument, rescheduleEnquiryReminder, rescheduleDocumentReminder,
+  convertEnquiryToBooking
 } from '../utils/api';
 import { toast } from 'sonner';
 import { 
   Bell, Phone, Calendar, FileText, AlertCircle, CheckCircle, Trash2, 
-  Download, Eye, Plus, Droplet, Building, Map, Zap, Users, Wrench,
-  Shield, FileCheck, ArrowLeft, X
+  Download, Plus, Droplet, Building, Map, Zap, Users, Wrench,
+  Shield, FileCheck, ArrowLeft, Edit, CalendarPlus, RefreshCw
 } from 'lucide-react';
 import { format, isPast, isToday } from 'date-fns';
 
@@ -32,22 +34,55 @@ const categoryIcons = {
   'other': FileText
 };
 
+const categoryNames = {
+  'water-test': 'Water Test Results',
+  'building-tax': 'Building Tax',
+  'land-tax': 'Land Tax',
+  'electricity-bill': 'Electricity Bill',
+  'staff-payment': 'Staff Payment',
+  'maintenance': 'Maintenance',
+  'insurance': 'Insurance',
+  'license': 'License & Permits',
+  'other': 'Other Bills'
+};
+
 export const AdminReminders = () => {
+  const navigate = useNavigate();
   const [reminders, setReminders] = useState({ enquiryReminders: [], documentReminders: [] });
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('reminders'); // 'reminders' or 'bills'
+  const [activeTab, setActiveTab] = useState('reminders');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categoryBills, setCategoryBills] = useState([]);
   const [isLoadingBills, setIsLoadingBills] = useState(false);
+  
+  // Dialog states
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [isEnquiryEditOpen, setIsEnquiryEditOpen] = useState(false);
+  const [isDocEditOpen, setIsDocEditOpen] = useState(false);
+  const [selectedEnquiry, setSelectedEnquiry] = useState(null);
+  const [selectedDoc, setSelectedDoc] = useState(null);
+  
+  // Form states
   const [uploadData, setUploadData] = useState({
     file: null,
     documentType: '',
     billDate: '',
     dueDate: '',
     reminderDate: '',
-    reminderEnabled: false,
+    reminderEnabled: true,
+    amount: '',
+    notes: ''
+  });
+  
+  const [enquiryEditData, setEnquiryEditData] = useState({
+    followUpDate: '',
+    notes: ''
+  });
+  
+  const [docEditData, setDocEditData] = useState({
+    reminderDate: '',
+    dueDate: '',
     amount: '',
     notes: ''
   });
@@ -167,23 +202,118 @@ export const AdminReminders = () => {
       await uploadDocument(formData);
       toast.success('Bill uploaded successfully');
       setIsUploadDialogOpen(false);
-      setUploadData({
-        file: null,
-        documentType: '',
-        billDate: '',
-        dueDate: '',
-        reminderDate: '',
-        reminderEnabled: false,
-        amount: '',
-        notes: ''
-      });
+      resetUploadData();
       loadCategories();
       loadReminders();
       if (selectedCategory) {
         loadCategoryBills(selectedCategory);
       }
     } catch (error) {
-      toast.error('Failed to upload bill');
+      console.error('Upload error:', error);
+      toast.error('Failed to upload bill: ' + (error.response?.data?.detail || error.message));
+    }
+  };
+
+  const resetUploadData = () => {
+    setUploadData({
+      file: null,
+      documentType: '',
+      billDate: '',
+      dueDate: '',
+      reminderDate: '',
+      reminderEnabled: true,
+      amount: '',
+      notes: ''
+    });
+  };
+
+  // Edit enquiry follow-up
+  const openEnquiryEdit = (enquiry) => {
+    setSelectedEnquiry(enquiry);
+    setEnquiryEditData({
+      followUpDate: enquiry.followUpDate || '',
+      notes: enquiry.notes || ''
+    });
+    setIsEnquiryEditOpen(true);
+  };
+
+  const handleRescheduleEnquiry = async () => {
+    if (!enquiryEditData.followUpDate) {
+      toast.error('Please select a follow-up date');
+      return;
+    }
+    try {
+      await rescheduleEnquiryReminder(selectedEnquiry.id, enquiryEditData);
+      toast.success('Follow-up rescheduled');
+      setIsEnquiryEditOpen(false);
+      loadReminders();
+    } catch (error) {
+      toast.error('Failed to reschedule');
+    }
+  };
+
+  const handleConvertToBooking = () => {
+    // Navigate to enquiries page with the enquiry selected for conversion
+    navigate('/admin-kav-Catlife41056/enquiries');
+  };
+
+  // Edit document reminder - clicking on bill reminder card
+  const openDocEdit = (doc) => {
+    setSelectedDoc(doc);
+    setDocEditData({
+      reminderDate: doc.reminderDate || '',
+      dueDate: doc.dueDate || '',
+      amount: doc.amount || '',
+      notes: doc.notes || ''
+    });
+    // Also prepare for upload if they want to add new bill
+    setUploadData({
+      ...uploadData,
+      documentType: doc.documentType,
+      reminderDate: '',
+      billDate: '',
+      dueDate: '',
+      amount: '',
+      notes: ''
+    });
+    setIsDocEditOpen(true);
+  };
+
+  const handleUpdateDocReminder = async () => {
+    try {
+      await rescheduleDocumentReminder(selectedDoc.id, docEditData);
+      toast.success('Reminder updated');
+      setIsDocEditOpen(false);
+      loadReminders();
+    } catch (error) {
+      toast.error('Failed to update reminder');
+    }
+  };
+
+  const handleUploadNewForCategory = async () => {
+    if (!uploadData.file) {
+      toast.error('Please select a file');
+      return;
+    }
+    try {
+      const formData = new FormData();
+      formData.append('file', uploadData.file);
+      formData.append('documentType', selectedDoc.documentType);
+      if (uploadData.billDate) formData.append('billDate', uploadData.billDate);
+      if (uploadData.dueDate) formData.append('dueDate', uploadData.dueDate);
+      if (uploadData.reminderDate) formData.append('reminderDate', uploadData.reminderDate);
+      formData.append('reminderEnabled', !!uploadData.reminderDate);
+      if (uploadData.amount) formData.append('amount', uploadData.amount);
+      if (uploadData.notes) formData.append('notes', uploadData.notes);
+
+      await uploadDocument(formData);
+      toast.success('New bill uploaded');
+      setIsDocEditOpen(false);
+      resetUploadData();
+      loadReminders();
+      loadCategories();
+    } catch (error) {
+      toast.error('Failed to upload: ' + (error.response?.data?.detail || error.message));
     }
   };
 
@@ -206,7 +336,6 @@ export const AdminReminders = () => {
     return (
       <AdminDashboard currentPage="reminders">
         <div className="space-y-4 sm:space-y-6">
-          {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
               <Button variant="ghost" size="sm" onClick={() => setSelectedCategory(null)}>
@@ -230,7 +359,6 @@ export const AdminReminders = () => {
             </Button>
           </div>
 
-          {/* Bills List */}
           {isLoadingBills ? (
             <div className="p-8 text-center">Loading bills...</div>
           ) : categoryBills.length === 0 ? (
@@ -302,10 +430,9 @@ export const AdminReminders = () => {
           )}
         </div>
 
-        {/* Upload Dialog */}
         <UploadDialog
           isOpen={isUploadDialogOpen}
-          onClose={() => setIsUploadDialogOpen(false)}
+          onClose={() => { setIsUploadDialogOpen(false); resetUploadData(); }}
           uploadData={uploadData}
           setUploadData={setUploadData}
           onUpload={handleUpload}
@@ -351,7 +478,9 @@ export const AdminReminders = () => {
               </Button>
             </div>
             {activeTab === 'reminders' && (
-              <Button onClick={loadReminders} variant="outline" size="sm">Refresh</Button>
+              <Button onClick={loadReminders} variant="outline" size="sm">
+                <RefreshCw className="w-4 h-4" />
+              </Button>
             )}
             {activeTab === 'bills' && (
               <Button 
@@ -396,54 +525,46 @@ export const AdminReminders = () => {
                         return (
                           <div
                             key={enquiry.id}
-                            className={`border rounded-lg p-3 sm:p-4 ${status.color.includes('red') ? 'border-red-200' : status.color.includes('orange') ? 'border-orange-200' : 'border-gray-200'}`}
+                            className={`border rounded-lg p-3 sm:p-4 ${status.color.includes('red') ? 'border-red-200 bg-red-50/30' : status.color.includes('orange') ? 'border-orange-200 bg-orange-50/30' : 'border-gray-200'}`}
                           >
-                            <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                              {/* Checkbox */}
-                              <div className="flex items-center gap-3">
-                                <Checkbox
-                                  id={`enquiry-${enquiry.id}`}
-                                  onCheckedChange={() => handleMarkEnquiryDone(enquiry.id)}
-                                  className="mt-1"
-                                />
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                                    <h3 className="font-semibold text-gray-900">{enquiry.name}</h3>
-                                    <span className={`px-2 py-0.5 rounded text-xs font-medium border ${status.color}`}>
-                                      {status.text}
-                                    </span>
+                            <div className="flex flex-col gap-3">
+                              <div className="flex-1 min-w-0">
+                                <div className="flex flex-wrap items-center gap-2 mb-2">
+                                  <h3 className="font-semibold text-gray-900">{enquiry.name}</h3>
+                                  <span className={`px-2 py-0.5 rounded text-xs font-medium border ${status.color}`}>
+                                    {status.text}
+                                  </span>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-sm text-gray-600">
+                                  <div className="flex items-center gap-1">
+                                    <Phone className="w-3 h-3" />
+                                    <button
+                                      onClick={() => handleCall(enquiry.phone)}
+                                      className="text-blue-600 hover:text-blue-800"
+                                    >
+                                      {enquiry.phone}
+                                    </button>
                                   </div>
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-sm text-gray-600">
-                                    <div className="flex items-center gap-1">
-                                      <Phone className="w-3 h-3" />
-                                      <button
-                                        onClick={() => handleCall(enquiry.phone)}
-                                        className="text-blue-600 hover:text-blue-800"
-                                      >
-                                        {enquiry.phone}
-                                      </button>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                      <Calendar className="w-3 h-3" />
-                                      <span>Event: {format(new Date(enquiry.eventDate), 'MMM dd, yyyy')}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                      <AlertCircle className="w-3 h-3" />
-                                      <span>Follow-up: {format(new Date(enquiry.followUpDate), 'MMM dd, yyyy')}</span>
-                                    </div>
-                                    {enquiry.eventType && (
-                                      <div className="flex items-center gap-1">
-                                        <span className="font-medium">Type:</span> {enquiry.eventType}
-                                      </div>
-                                    )}
+                                  <div className="flex items-center gap-1">
+                                    <Calendar className="w-3 h-3" />
+                                    <span>Event: {format(new Date(enquiry.eventDate), 'MMM dd, yyyy')}</span>
                                   </div>
-                                  {enquiry.notes && (
-                                    <p className="mt-2 text-xs text-gray-500 bg-gray-50 p-2 rounded">{enquiry.notes}</p>
+                                  <div className="flex items-center gap-1">
+                                    <AlertCircle className="w-3 h-3" />
+                                    <span>Follow-up: {format(new Date(enquiry.followUpDate), 'MMM dd, yyyy')}</span>
+                                  </div>
+                                  {enquiry.eventType && (
+                                    <div className="flex items-center gap-1">
+                                      <span className="font-medium">Type:</span> {enquiry.eventType}
+                                    </div>
                                   )}
                                 </div>
+                                {enquiry.notes && (
+                                  <p className="mt-2 text-xs text-gray-500 bg-gray-100 p-2 rounded">{enquiry.notes}</p>
+                                )}
                               </div>
                               {/* Actions */}
-                              <div className="flex gap-2 sm:ml-auto">
+                              <div className="flex flex-wrap gap-2">
                                 <Button
                                   size="sm"
                                   onClick={() => handleCall(enquiry.phone)}
@@ -451,6 +572,15 @@ export const AdminReminders = () => {
                                 >
                                   <Phone className="w-3 h-3 mr-1" />
                                   Call
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => openEnquiryEdit(enquiry)}
+                                  className="text-blue-600 border-blue-600 hover:bg-blue-50 text-xs"
+                                >
+                                  <CalendarPlus className="w-3 h-3 mr-1" />
+                                  Reschedule
                                 </Button>
                                 <Button
                                   size="sm"
@@ -478,7 +608,7 @@ export const AdminReminders = () => {
                   </Card>
                 )}
 
-                {/* Document Reminders */}
+                {/* Document/Bill Reminders */}
                 {reminders.documentReminders.length > 0 && (
                   <Card>
                     <CardHeader className="pb-3">
@@ -494,43 +624,36 @@ export const AdminReminders = () => {
                         return (
                           <div
                             key={doc.id}
-                            className={`border rounded-lg p-3 sm:p-4 ${status.color.includes('red') ? 'border-red-200' : status.color.includes('orange') ? 'border-orange-200' : 'border-gray-200'}`}
+                            className={`border rounded-lg p-3 sm:p-4 cursor-pointer hover:shadow-md transition-shadow ${status.color.includes('red') ? 'border-red-200 bg-red-50/30' : status.color.includes('orange') ? 'border-orange-200 bg-orange-50/30' : 'border-gray-200'}`}
+                            onClick={() => openDocEdit(doc)}
                           >
-                            <div className="flex flex-col sm:flex-row sm:items-start gap-3">
-                              {/* Checkbox */}
-                              <div className="flex items-center gap-3">
-                                <Checkbox
-                                  id={`doc-${doc.id}`}
-                                  onCheckedChange={() => handleMarkDocumentDone(doc.id)}
-                                  className="mt-1"
-                                />
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                                    <CategoryIcon className="w-4 h-4 text-[#D4AF37]" />
-                                    <h3 className="font-semibold text-gray-900">
-                                      {doc.documentType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                                    </h3>
-                                    <span className={`px-2 py-0.5 rounded text-xs font-medium border ${status.color}`}>
-                                      {status.text}
-                                    </span>
-                                  </div>
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-sm text-gray-600">
-                                    <div><span className="font-medium">File:</span> {doc.fileName}</div>
-                                    <div><span className="font-medium">Reminder:</span> {format(new Date(doc.reminderDate), 'MMM dd, yyyy')}</div>
-                                    {doc.dueDate && (
-                                      <div><span className="font-medium">Due:</span> {format(new Date(doc.dueDate), 'MMM dd, yyyy')}</div>
-                                    )}
-                                    {doc.amount && (
-                                      <div><span className="font-medium">Amount:</span> Rs. {doc.amount.toLocaleString()}</div>
-                                    )}
-                                  </div>
-                                  {doc.notes && (
-                                    <p className="mt-2 text-xs text-gray-500 bg-gray-50 p-2 rounded">{doc.notes}</p>
+                            <div className="flex flex-col gap-3">
+                              <div className="flex-1 min-w-0">
+                                <div className="flex flex-wrap items-center gap-2 mb-2">
+                                  <CategoryIcon className="w-4 h-4 text-[#D4AF37]" />
+                                  <h3 className="font-semibold text-gray-900">
+                                    {categoryNames[doc.documentType] || doc.documentType}
+                                  </h3>
+                                  <span className={`px-2 py-0.5 rounded text-xs font-medium border ${status.color}`}>
+                                    {status.text}
+                                  </span>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-sm text-gray-600">
+                                  <div><span className="font-medium">File:</span> {doc.fileName}</div>
+                                  <div><span className="font-medium">Reminder:</span> {format(new Date(doc.reminderDate), 'MMM dd, yyyy')}</div>
+                                  {doc.dueDate && (
+                                    <div><span className="font-medium">Due:</span> {format(new Date(doc.dueDate), 'MMM dd, yyyy')}</div>
+                                  )}
+                                  {doc.amount && (
+                                    <div><span className="font-medium">Amount:</span> Rs. {doc.amount.toLocaleString()}</div>
                                   )}
                                 </div>
+                                {doc.notes && (
+                                  <p className="mt-2 text-xs text-gray-500 bg-gray-100 p-2 rounded">{doc.notes}</p>
+                                )}
                               </div>
                               {/* Actions */}
-                              <div className="flex gap-2 sm:ml-auto">
+                              <div className="flex flex-wrap gap-2" onClick={(e) => e.stopPropagation()}>
                                 <Button
                                   size="sm"
                                   onClick={() => handleDownload(doc.fileUrl)}
@@ -538,6 +661,15 @@ export const AdminReminders = () => {
                                 >
                                   <Download className="w-3 h-3 mr-1" />
                                   View
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => openDocEdit(doc)}
+                                  className="text-blue-600 border-blue-600 hover:bg-blue-50 text-xs"
+                                >
+                                  <Edit className="w-3 h-3 mr-1" />
+                                  Edit / Add New
                                 </Button>
                                 <Button
                                   size="sm"
@@ -597,12 +729,174 @@ export const AdminReminders = () => {
       {/* Upload Dialog */}
       <UploadDialog
         isOpen={isUploadDialogOpen}
-        onClose={() => setIsUploadDialogOpen(false)}
+        onClose={() => { setIsUploadDialogOpen(false); resetUploadData(); }}
         uploadData={uploadData}
         setUploadData={setUploadData}
         onUpload={handleUpload}
         categories={categories}
       />
+
+      {/* Enquiry Edit Dialog */}
+      <Dialog open={isEnquiryEditOpen} onOpenChange={setIsEnquiryEditOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reschedule Follow-up: {selectedEnquiry?.name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>New Follow-up Date *</Label>
+              <Input
+                type="date"
+                value={enquiryEditData.followUpDate}
+                onChange={(e) => setEnquiryEditData({ ...enquiryEditData, followUpDate: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Notes</Label>
+              <Textarea
+                placeholder="Add notes about this follow-up..."
+                value={enquiryEditData.notes}
+                onChange={(e) => setEnquiryEditData({ ...enquiryEditData, notes: e.target.value })}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEnquiryEditOpen(false)}>Cancel</Button>
+            <Button onClick={handleRescheduleEnquiry} className="bg-[#D4AF37] text-black hover:bg-[#C19B2E]">
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Document Edit / Upload New Dialog */}
+      <Dialog open={isDocEditOpen} onOpenChange={setIsDocEditOpen}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {categoryNames[selectedDoc?.documentType] || selectedDoc?.documentType}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            {/* Section 1: Update Current Reminder */}
+            <div className="space-y-4 border-b pb-4">
+              <h3 className="font-semibold text-gray-900">Update Current Reminder</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>New Reminder Date</Label>
+                  <Input
+                    type="date"
+                    value={docEditData.reminderDate}
+                    onChange={(e) => setDocEditData({ ...docEditData, reminderDate: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Due Date</Label>
+                  <Input
+                    type="date"
+                    value={docEditData.dueDate}
+                    onChange={(e) => setDocEditData({ ...docEditData, dueDate: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Amount (Rs.)</Label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={docEditData.amount}
+                    onChange={(e) => setDocEditData({ ...docEditData, amount: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Notes</Label>
+                <Textarea
+                  placeholder="Add notes..."
+                  value={docEditData.notes}
+                  onChange={(e) => setDocEditData({ ...docEditData, notes: e.target.value })}
+                  rows={2}
+                />
+              </div>
+              <Button onClick={handleUpdateDocReminder} className="w-full bg-[#D4AF37] text-black hover:bg-[#C19B2E]">
+                Update Reminder
+              </Button>
+            </div>
+
+            {/* Section 2: Upload New Bill */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-gray-900">Upload New Bill/Receipt</h3>
+              <div className="space-y-2">
+                <Label>File *</Label>
+                <Input
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={(e) => setUploadData({ ...uploadData, file: e.target.files[0] })}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Bill Date</Label>
+                  <Input
+                    type="date"
+                    value={uploadData.billDate}
+                    onChange={(e) => setUploadData({ ...uploadData, billDate: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Amount (Rs.)</Label>
+                  <Input
+                    type="number"
+                    placeholder="0"
+                    value={uploadData.amount}
+                    onChange={(e) => setUploadData({ ...uploadData, amount: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Due Date</Label>
+                  <Input
+                    type="date"
+                    value={uploadData.dueDate}
+                    onChange={(e) => setUploadData({ ...uploadData, dueDate: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Reminder Date</Label>
+                  <Input
+                    type="date"
+                    value={uploadData.reminderDate}
+                    onChange={(e) => setUploadData({ ...uploadData, reminderDate: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Notes</Label>
+                <Input
+                  placeholder="Optional notes..."
+                  value={uploadData.notes}
+                  onChange={(e) => setUploadData({ ...uploadData, notes: e.target.value })}
+                />
+              </div>
+              <Button 
+                onClick={handleUploadNewForCategory} 
+                variant="outline"
+                className="w-full"
+                disabled={!uploadData.file}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Upload New Bill
+              </Button>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDocEditOpen(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminDashboard>
   );
 };
@@ -616,7 +910,6 @@ const UploadDialog = ({ isOpen, onClose, uploadData, setUploadData, onUpload, ca
           <DialogTitle>Upload Bill / Document</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
-          {/* File Input */}
           <div className="space-y-2">
             <Label>File *</Label>
             <Input
@@ -627,7 +920,6 @@ const UploadDialog = ({ isOpen, onClose, uploadData, setUploadData, onUpload, ca
             <p className="text-xs text-gray-500">PDF or images (max 10MB)</p>
           </div>
 
-          {/* Category */}
           <div className="space-y-2">
             <Label>Category *</Label>
             <Select 
@@ -645,7 +937,6 @@ const UploadDialog = ({ isOpen, onClose, uploadData, setUploadData, onUpload, ca
             </Select>
           </div>
 
-          {/* Bill Date & Amount */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Bill Date</Label>
@@ -666,7 +957,6 @@ const UploadDialog = ({ isOpen, onClose, uploadData, setUploadData, onUpload, ca
             </div>
           </div>
 
-          {/* Due Date & Reminder */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Due Date</Label>
@@ -686,17 +976,6 @@ const UploadDialog = ({ isOpen, onClose, uploadData, setUploadData, onUpload, ca
             </div>
           </div>
 
-          {/* Enable Reminder */}
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="reminderEnabled"
-              checked={uploadData.reminderEnabled}
-              onCheckedChange={(checked) => setUploadData({ ...uploadData, reminderEnabled: checked })}
-            />
-            <Label htmlFor="reminderEnabled" className="text-sm">Enable reminder notification</Label>
-          </div>
-
-          {/* Notes */}
           <div className="space-y-2">
             <Label>Notes</Label>
             <Input
