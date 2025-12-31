@@ -101,6 +101,26 @@ export const getReminders = async () => {
   return response.data;
 };
 
+export const markEnquiryReminderDone = async (enquiryId) => {
+  const response = await axios.put(`${API}/admin/reminders/enquiry/${enquiryId}/done`, {}, createAuthHeader());
+  return response.data;
+};
+
+export const markDocumentReminderDone = async (documentId) => {
+  const response = await axios.put(`${API}/admin/reminders/document/${documentId}/done`, {}, createAuthHeader());
+  return response.data;
+};
+
+export const getBillCategories = async () => {
+  const response = await axios.get(`${API}/admin/bill-categories`, createAuthHeader());
+  return response.data;
+};
+
+export const getBillsByCategory = async (category) => {
+  const response = await axios.get(`${API}/admin/bills/${category}`, createAuthHeader());
+  return response.data;
+};
+
 export const getDashboardStats = async () => {
   const response = await axios.get(`${API}/admin/stats`, createAuthHeader());
   return response.data;
