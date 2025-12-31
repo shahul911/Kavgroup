@@ -173,3 +173,51 @@ test_plan:
 agent_communication:
   - agent: "testing"
     message: "Backend refactoring testing completed successfully. All 12 API endpoints tested and working properly. Modular route structure is functioning correctly with proper authentication, data retrieval, and response formatting. No critical issues found."
+
+---
+
+## Session Update: Reminders & Bills Enhancement
+
+### New Features Implemented:
+
+1. **Enquiry Follow-up Reminders (FIXED)**
+   - Now properly showing in reminders with eventType
+   - Shows all reminders due today, overdue, or within 7 days
+   - Includes: name, phone, event date, event type, follow-up date, notes
+
+2. **Checkbox to Mark Reminders as Done**
+   - Both enquiry follow-ups and bill reminders have checkboxes
+   - Clicking checkbox or "Done" button disables the reminder
+
+3. **Delete Button for Reminders**
+   - Can delete enquiry follow-ups and bill reminders
+
+4. **Bill Tracker System (NEW)**
+   - 9 predefined categories: Water Test, Building Tax, Land Tax, Electricity, Staff Payment, Maintenance, Insurance, License, Other
+   - Each category shows icon and record count
+   - Click category to view all bills in that category
+   - Add Bill button to upload new bills
+
+5. **Category Bill View**
+   - View all uploaded bills by category
+   - Download/view any bill
+   - Delete bills
+   - Back button to return to categories
+
+6. **Upload Bill Dialog**
+   - File upload (PDF/images)
+   - Category selection
+   - Bill date, due date, amount
+   - Reminder date with enable/disable toggle
+   - Notes field
+
+### API Endpoints Added:
+- PUT /api/admin/reminders/enquiry/{id}/done - Mark enquiry reminder done
+- PUT /api/admin/reminders/document/{id}/done - Mark document reminder done
+- GET /api/admin/bill-categories - Get all bill categories with counts
+- GET /api/admin/bills/{category} - Get bills by category
+
+### Files Modified:
+- /app/backend/routes/dashboard.py - Enhanced reminders API + new bill endpoints
+- /app/frontend/src/admin/AdminReminders.jsx - Complete rewrite with new features
+- /app/frontend/src/utils/api.js - Added new API functions
