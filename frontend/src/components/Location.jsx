@@ -42,13 +42,12 @@ export const Location = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
-            whileHover={{ y: -5 }}
             className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300"
           >
             <div className="flex items-start space-x-4 mb-6">
               <motion.div
-                whileHover={{ scale: 1.15, rotate: 10 }}
-                transition={{ type: 'spring', stiffness: 300 }}
+                whileHover={{ scale: 1.1 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                 className="p-3 bg-[#D4AF37]/10 rounded-full"
               >
                 <MapPin className="w-6 h-6 text-[#D4AF37]" />
@@ -68,7 +67,7 @@ export const Location = () => {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="mt-8"
             >
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Button
                   onClick={() => window.open(contactInfo.mapLink, '_blank')}
                   className="w-full bg-[#D4AF37] text-black hover:bg-[#C19B2E] py-6 text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-[#D4AF37]/30"
