@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 import { getTestimonials } from '../utils/api';
 
@@ -6,7 +7,6 @@ export const Testimonials = () => {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Default placeholder testimonials if none in database
   const defaultTestimonials = [
     {
       id: 1,
@@ -80,41 +80,108 @@ export const Testimonials = () => {
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, index) => (
-      <Star
+      <motion.div
         key={index}
-        className={`w-4 h-4 ${
-          index < rating ? 'fill-[#D4AF37] text-[#D4AF37]' : 'fill-gray-300 text-gray-300'
-        }`}
-      />
+        initial={{ opacity: 0, scale: 0 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.3, delay: index * 0.1 }}
+      >
+        <Star
+          className={`w-4 h-4 ${
+            index < rating ? 'fill-[#D4AF37] text-[#D4AF37]' : 'fill-gray-300 text-gray-300'
+          }`}
+        />
+      </motion.div>
     ));
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.12,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.25, 0.1, 0.25, 1]
+      }
+    }
+  };
+
   return (
-    <section id="testimonials" className="py-20 bg-white">
+    <section id="testimonials" className="py-20 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+          className="text-center mb-16"
+        >
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">What Our Clients Say</h2>
-          <div className="w-24 h-1 bg-[#D4AF37] mx-auto mb-6"></div>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Don't just take our word for it - hear from our happy clients
-          </p>
-        </div>
+          <motion.div
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+            className="w-24 h-1 bg-[#D4AF37] mx-auto mb-6 origin-center"
+          />
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-xl text-gray-600 max-w-2xl mx-auto"
+          >
+            Don&apos;t just take our word for it - hear from our happy clients
+          </motion.p>
+        </motion.div>
 
         {loading ? (
           <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D4AF37]"></div>
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              className="rounded-full h-8 w-8 border-b-2 border-[#D4AF37]"
+            />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {testimonials.map((testimonial) => (
+              <motion.div
                 key={testimonial.id}
-                className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[#D4AF37] relative"
-                style={{ animationDelay: `${index * 100}ms` }}
+                variants={itemVariants}
+                whileHover={{ y: -8, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-100 hover:border-[#D4AF37] relative cursor-default"
               >
-                <div className="absolute top-4 right-4 text-[#D4AF37] opacity-20">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0 }}
+                  whileInView={{ opacity: 0.2, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="absolute top-4 right-4 text-[#D4AF37]"
+                >
                   <Quote className="w-12 h-12" />
-                </div>
+                </motion.div>
                 
                 <div className="relative z-10">
                   <div className="flex items-center gap-1 mb-4">
@@ -122,30 +189,56 @@ export const Testimonials = () => {
                   </div>
                   
                   <p className="text-gray-700 mb-6 italic leading-relaxed">
-                    "{testimonial.text}"
+                    &ldquo;{testimonial.text}&rdquo;
                   </p>
                   
-                  <div className="border-t border-gray-200 pt-4">
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    whileInView={{ scaleX: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="border-t border-gray-200 pt-4 origin-left"
+                  >
                     <p className="font-semibold text-gray-900 text-lg">{testimonial.name}</p>
                     <p className="text-sm text-[#D4AF37] font-medium">{testimonial.event}</p>
                     {testimonial.date && (
                       <p className="text-xs text-gray-500 mt-1">{testimonial.date}</p>
                     )}
-                  </div>
+                  </motion.div>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
 
-        <div className="mt-16 bg-gradient-to-r from-black via-gray-900 to-black p-8 md:p-12 rounded-2xl text-center shadow-xl">
-          <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+        {/* CTA Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-50px' }}
+          transition={{ duration: 0.7, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+          whileHover={{ scale: 1.01 }}
+          className="mt-16 bg-gradient-to-r from-black via-gray-900 to-black p-8 md:p-12 rounded-2xl text-center shadow-xl"
+        >
+          <motion.h3
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-2xl md:text-3xl font-bold text-white mb-4"
+          >
             Join Our <span className="text-[#D4AF37]">Happy Clients</span>
-          </h3>
-          <p className="text-gray-300 text-lg mb-6 max-w-2xl mx-auto">
+          </motion.h3>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="text-gray-300 text-lg mb-6 max-w-2xl mx-auto"
+          >
             Experience the perfect venue for your special occasion
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
       </div>
     </section>
   );
