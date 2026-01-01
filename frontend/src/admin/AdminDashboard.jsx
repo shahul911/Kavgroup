@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Calendar, FileText, MessageSquare, Bell, LogOut, Menu, X,
@@ -35,6 +35,28 @@ export const AdminDashboard = ({ children, currentPage }) => {
     handleResize(); // Initial check
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Fetch dashboard data
+  const fetchDashboardData = useCallback(async () => {
+    const token = localStorage.getItem('adminToken');
+    if (!token) return;
+    
+    try {
+      const [statsData, remindersData] = await Promise.all([
+        getDashboardStats(),
+        getReminders()
+      ]);
+      setStats(statsData);
+      setReminders(remindersData);
+    } catch (error) {
+      if (error.response?.status === 401) {
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminUser');
+        localStorage.removeItem('adminRole');
+        navigate('/admin-kav-Catlife41056');
+      }
+    }
+  }, [navigate]);
 
   useEffect(() => {
     // Check if user is logged in
