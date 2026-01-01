@@ -515,6 +515,7 @@ export const BookingCalendar = () => {
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
+                        key={selectedDate ? selectedDate.toISOString() : 'no-date'}
                         mode="single"
                         selected={selectedEndDate}
                         onSelect={setSelectedEndDate}
