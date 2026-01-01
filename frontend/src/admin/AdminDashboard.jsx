@@ -36,28 +36,6 @@ export const AdminDashboard = ({ children, currentPage }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Fetch dashboard data
-  const fetchDashboardData = useCallback(async () => {
-    const token = localStorage.getItem('adminToken');
-    if (!token) return;
-    
-    try {
-      const [statsData, remindersData] = await Promise.all([
-        getDashboardStats(),
-        getReminders()
-      ]);
-      setStats(statsData);
-      setReminders(remindersData);
-    } catch (error) {
-      if (error.response?.status === 401) {
-        localStorage.removeItem('adminToken');
-        localStorage.removeItem('adminUser');
-        localStorage.removeItem('adminRole');
-        navigate('/admin-kav-Catlife41056');
-      }
-    }
-  }, [navigate]);
-
   useEffect(() => {
     // Check if user is logged in
     const token = localStorage.getItem('adminToken');
