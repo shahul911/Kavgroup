@@ -34,6 +34,16 @@ export const BookingCalendar = () => {
 
   useEffect(() => {
     loadAvailabilityForMonth(currentMonth);
+    
+    // Refresh availability when tab becomes visible again
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadAvailabilityForMonth(currentMonth);
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [currentMonth]);
 
   const loadAvailabilityForMonth = async (monthDate) => {
