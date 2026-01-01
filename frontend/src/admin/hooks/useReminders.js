@@ -30,6 +30,16 @@ export const useReminders = () => {
 
   useEffect(() => {
     loadReminders();
+    
+    // Refresh data when tab becomes visible again
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadReminders();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [loadReminders]);
 
   const handleMarkEnquiryDone = async (enquiryId) => {
