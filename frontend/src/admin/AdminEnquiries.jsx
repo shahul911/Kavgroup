@@ -549,6 +549,7 @@ export const AdminEnquiries = () => {
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
                         <Calendar
+                          key={`start-${bookingData.eventDate ? bookingData.eventDate.toISOString() : 'none'}`}
                           mode="single"
                           selected={bookingData.eventDate}
                           onSelect={(date) => setBookingData({ ...bookingData, eventDate: date })}
@@ -573,6 +574,7 @@ export const AdminEnquiries = () => {
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
                         <Calendar
+                          key={`end-${bookingData.eventDate ? bookingData.eventDate.toISOString() : 'none'}`}
                           mode="single"
                           selected={bookingData.eventEndDate}
                           onSelect={(date) => setBookingData({ ...bookingData, eventEndDate: date })}
