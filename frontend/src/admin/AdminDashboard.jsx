@@ -66,28 +66,26 @@ export const AdminDashboard = ({ children, currentPage }) => {
       return;
     }
 
-    const fetchData = async () => {
-      try {
-        const [statsData, remindersData] = await Promise.all([
-          getDashboardStats(),
-          getReminders()
-        ]);
-        setStats(statsData);
-        setReminders(remindersData);
-      } catch (error) {
-        if (error.response?.status === 401) {
-          localStorage.removeItem('adminToken');
-          localStorage.removeItem('adminUser');
-          localStorage.removeItem('adminRole');
-          navigate('/admin-kav-Catlife41056');
-        } else {
-          toast.error('Failed to load dashboard data');
-        }
+    // Initial data fetch
+    fetchDashboardData();
+    
+    // Refresh data when tab becomes visible again
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchDashboardData();
       }
     };
     
-    fetchData();
-  }, [navigate]);
+    // Refresh data periodically (every 30 seconds)
+    const intervalId = setInterval(fetchDashboardData, 30000);
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      clearInterval(intervalId);
+    };
+  }, [navigate, fetchDashboardData]);
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
