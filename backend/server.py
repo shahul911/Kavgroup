@@ -70,11 +70,16 @@ async def root():
 # Serve uploaded files - mounted under /api to ensure it goes through backend
 app.mount("/api/uploads", StaticFiles(directory=str(UPLOAD_DIR.parent)), name="uploads")
 
-# CORS middleware
+
 app.add_middleware(
     CORSMiddleware,
+    allow_origins=[
+        "https://kavgroup.in",
+        "https://www.kavgroup.in",
+        "https://kav-group.netlify.app",  # optional (can remove later)
+        "http://localhost:3000",          # local dev
+    ],
     allow_credentials=True,
-    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
