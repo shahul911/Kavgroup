@@ -8,6 +8,7 @@ from models import Enquiry, EnquiryCreate, EnquiryUpdate, Booking
 from auth import get_current_user, require_admin
 from database import db
 from security import limiter, ip_blocker, InputValidator, validate_request_body
+from whatsapp_service import send_whatsapp_notification
 from email_service import send_booking_notification
 from time_utils import check_multiday_conflict
 
@@ -46,6 +47,12 @@ async def create_enquiry(request: Request, enquiry_data: EnquiryCreate):
         send_booking_notification(enquiry.dict())
     except Exception as e:
         logger.error(f"Failed to send booking notification email: {e}")
+    
+    # Send WhatsApp notification to admin (non-blocking)
+    try:
+        send_whatsapp_notification(enquiry.dict())
+    except Exception as e:
+        logger.error(f"Failed to send booking notification WhatsApp: {e}")
     
     return {
         "success": True,
