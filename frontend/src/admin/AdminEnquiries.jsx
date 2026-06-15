@@ -83,7 +83,7 @@ export const AdminEnquiries = () => {
     setEditData({
       status: enquiry.status,
       notes: enquiry.notes || '',
-      followUpDate: enquiry.followUpDate ? new Date(enquiry.followUpDate) : null,
+      followUpDate: enquiry.followUpDate || null,
       followUpReminder: enquiry.followUpReminder || false
     });
     setIsEditDialogOpen(true);
@@ -129,8 +129,8 @@ export const AdminEnquiries = () => {
   const handleConvertToBooking = (enquiry) => {
     setSelectedEnquiry(enquiry);
     setBookingData({
-      eventDate: enquiry.eventDate ? new Date(enquiry.eventDate) : null,
-      eventEndDate: enquiry.eventEndDate ? new Date(enquiry.eventEndDate) : null,
+      eventDate: enquiry.eventDate || null,
+      eventEndDate: enquiry.eventEndDate || null,
       amount: '',
       advancePaid: '',
       balanceDue: '',

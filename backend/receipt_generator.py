@@ -6,6 +6,7 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
 from datetime import datetime
 from pathlib import Path
+from time_utils import format_time_12hr, parse_date
 
 # Get the assets directory
 ASSETS_DIR = Path(__file__).parent / 'assets'
@@ -96,15 +97,51 @@ def generate_receipt_pdf(booking_data, output_path):
     elements.append(Spacer(1, 8*mm))
     
     # ============ FIXED: CUSTOMER & EVENT DETAILS ALIGNMENT ============
+    # Format dates properly
+    event_date = booking_data.get('event_date', '2026-01-27')
+    event_end_date = booking_data.get('event_end_date')
+    
+    # Parse and format dates to readable format (e.g., "27 Jan 2026")
+    try:
+        date_obj = datetime.strptime(event_date, '%Y-%m-%d')
+        formatted_start_date = date_obj.strftime('%d %b %Y')
+    except:
+        formatted_start_date = event_date
+    
+    # Format times to 12-hour format
+    time_from = booking_data.get('event_time_from', '07:00 AM')
+    time_to = booking_data.get('event_time_to', '08:00 PM')
+    
+    # Ensure times are in 12-hour format
+    time_from_12hr = format_time_12hr(time_from) if time_from else '07:00 AM'
+    time_to_12hr = format_time_12hr(time_to) if time_to else '08:00 PM'
+    
     details_data = [
         [Paragraph("CUSTOMER DETAILS", left_label_bold), Paragraph("EVENT DETAILS", right_label_bold)],
-        [Paragraph(f"Name: <b>{booking_data.get('customer_name', 'Basim')}</b>", left_text), 
+        [Paragraph(f"Name: <b>{booking_data.get('customer_name', 'Basim')}</b>", left_text),
          Paragraph(f"Event Type: <b>{booking_data.get('event_type', 'Convention')}</b>", right_text)],
-        [Paragraph(f"Phone: <b>{booking_data.get('customer_phone', '6235632987')}</b>", left_text), 
-         Paragraph(f"Date: <b>{booking_data.get('event_date', '2026-01-27')}</b>", right_text)],
-        [Paragraph("", left_text), 
-         Paragraph(f"Time: <b>{booking_data.get('event_time_from', '20:07')} - {booking_data.get('event_time_to', '20:08')}</b>", right_text)]
+        [Paragraph(f"Phone: <b>{booking_data.get('customer_phone', '6235632987')}</b>", left_text),
+         Paragraph(f"Start Date: <b>{formatted_start_date} {time_from_12hr}</b>", right_text)],
     ]
+    
+    # Add end date row if multi-day event
+    if event_end_date and event_end_date != event_date:
+        try:
+            end_date_obj = datetime.strptime(event_end_date, '%Y-%m-%d')
+            formatted_end_date = end_date_obj.strftime('%d %b %Y')
+        except:
+            formatted_end_date = event_end_date
+        
+        details_data.append([
+            Paragraph("", left_text),
+            Paragraph(f"End Date: <b>{formatted_end_date} {time_to_12hr}</b>", right_text)
+        ])
+    else:
+        # Single day event - show end time on same row
+        details_data.append([
+            Paragraph("", left_text),
+            Paragraph(f"End Time: <b>{time_to_12hr}</b>", right_text)
+        ])
     
     details_table = Table(details_data, colWidths=[page_width/2, page_width/2])
     details_table.setStyle(TableStyle([

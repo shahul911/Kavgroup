@@ -40,8 +40,8 @@ export const CreateBookingDialog = ({ isOpen, onClose, createData, setCreateData
             <Label className="text-sm font-semibold">Event Start Date *</Label>
             <Input
               type="date"
-              value={createData.eventDate ? createData.eventDate.toISOString().split('T')[0] : ''}
-              onChange={(e) => setCreateData({ ...createData, eventDate: e.target.value ? new Date(e.target.value + 'T00:00:00') : null })}
+              value={createData.eventDate || ''}
+              onChange={(e) => setCreateData({ ...createData, eventDate: e.target.value || null })}
               className="h-11 border-2"
               required
             />
@@ -50,9 +50,9 @@ export const CreateBookingDialog = ({ isOpen, onClose, createData, setCreateData
             <Label className="text-sm font-semibold">Event End Date (Optional - for multi-day)</Label>
             <Input
               type="date"
-              value={createData.eventEndDate ? createData.eventEndDate.toISOString().split('T')[0] : ''}
-              onChange={(e) => setCreateData({ ...createData, eventEndDate: e.target.value ? new Date(e.target.value + 'T00:00:00') : null })}
-              min={createData.eventDate ? createData.eventDate.toISOString().split('T')[0] : ''}
+              value={createData.eventEndDate || ''}
+              onChange={(e) => setCreateData({ ...createData, eventEndDate: e.target.value || null })}
+              min={createData.eventDate || ''}
               className="h-11 border-2"
             />
             {createData.eventEndDate && (
@@ -175,8 +175,8 @@ export const EditBookingDialog = ({ isOpen, onClose, booking, editData, setEditD
               <Label className="text-sm font-semibold">Event Start Date</Label>
               <Input
                 type="date"
-                value={editData.eventDate ? editData.eventDate.toISOString().split('T')[0] : ''}
-                onChange={(e) => setEditData({ ...editData, eventDate: e.target.value ? new Date(e.target.value + 'T00:00:00') : null })}
+                value={editData.eventDate || ''}
+                onChange={(e) => setEditData({ ...editData, eventDate: e.target.value || null })}
                 className="h-11 border-2"
               />
             </div>
@@ -184,9 +184,9 @@ export const EditBookingDialog = ({ isOpen, onClose, booking, editData, setEditD
               <Label className="text-sm font-semibold">Event End Date (Multi-day)</Label>
               <Input
                 type="date"
-                value={editData.eventEndDate ? editData.eventEndDate.toISOString().split('T')[0] : ''}
-                onChange={(e) => setEditData({ ...editData, eventEndDate: e.target.value ? new Date(e.target.value + 'T00:00:00') : null })}
-                min={editData.eventDate ? editData.eventDate.toISOString().split('T')[0] : ''}
+                value={editData.eventEndDate || ''}
+                onChange={(e) => setEditData({ ...editData, eventEndDate: e.target.value || null })}
+                min={editData.eventDate || ''}
                 className="h-11 border-2"
               />
               {editData.eventEndDate && (
