@@ -112,19 +112,11 @@ export const AdminBookings = () => {
     }
 
     try {
-      // Format dates in local timezone to avoid timezone conversion issues
-      const formatDateLocal = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      };
-
       const balanceDue = parseFloat(createData.amount) - parseFloat(createData.advancePaid || 0);
       const bookingData = {
         ...createData,
-        eventDate: formatDateLocal(createData.eventDate),
-        eventEndDate: createData.eventEndDate ? formatDateLocal(createData.eventEndDate) : null,
+        eventDate: createData.eventDate, // Already in YYYY-MM-DD format from date input
+        eventEndDate: createData.eventEndDate || null,
         amount: parseFloat(createData.amount),
         advancePaid: parseFloat(createData.advancePaid || 0),
         balanceDue: balanceDue,
@@ -159,20 +151,13 @@ export const AdminBookings = () => {
         notes: editData.notes
       };
 
-      // Format dates in local timezone to avoid timezone conversion issues
-      const formatDateLocal = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      };
-
       // Include date and payment fields if changed
+      // Dates are already in YYYY-MM-DD format from date input
       if (editData.eventDate) {
-        updatePayload.eventDate = formatDateLocal(editData.eventDate);
+        updatePayload.eventDate = editData.eventDate;
       }
       if (editData.eventEndDate) {
-        updatePayload.eventEndDate = formatDateLocal(editData.eventEndDate);
+        updatePayload.eventEndDate = editData.eventEndDate;
       }
       if (editData.eventTimeFrom) updatePayload.eventTimeFrom = editData.eventTimeFrom;
       if (editData.eventTimeTo) updatePayload.eventTimeTo = editData.eventTimeTo;

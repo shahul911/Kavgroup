@@ -98,7 +98,7 @@ export const AdminEnquiries = () => {
       };
       
       if (editData.followUpDate) {
-        updatePayload.followUpDate = editData.followUpDate.toISOString().split('T')[0];
+        updatePayload.followUpDate = editData.followUpDate; // Already in YYYY-MM-DD format from date input
       }
 
       await updateEnquiry(selectedEnquiry.id, updatePayload);
@@ -153,18 +153,10 @@ export const AdminEnquiries = () => {
     }
 
     try {
-      // Format dates in local timezone to avoid timezone conversion issues
-      const formatDateLocal = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      };
-
       const balanceDue = parseFloat(bookingData.amount) - parseFloat(bookingData.advancePaid);
       const convertData = {
-        eventDate: formatDateLocal(bookingData.eventDate),
-        eventEndDate: bookingData.eventEndDate ? formatDateLocal(bookingData.eventEndDate) : null,
+        eventDate: bookingData.eventDate, // Already in YYYY-MM-DD format from date input
+        eventEndDate: bookingData.eventEndDate || null,
         eventTimeFrom: bookingData.eventTimeFrom,
         eventTimeTo: bookingData.eventTimeTo,
         amount: parseFloat(bookingData.amount),
