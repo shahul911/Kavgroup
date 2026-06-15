@@ -121,7 +121,7 @@ def generate_receipt_pdf(booking_data, output_path):
         [Paragraph(f"Name: <b>{booking_data.get('customer_name', 'Basim')}</b>", left_text),
          Paragraph(f"Event Type: <b>{booking_data.get('event_type', 'Convention')}</b>", right_text)],
         [Paragraph(f"Phone: <b>{booking_data.get('customer_phone', '6235632987')}</b>", left_text),
-         Paragraph(f"Start Date: <b>{formatted_start_date} {time_from_12hr}</b>", right_text)],
+         Paragraph(f"Start Date: <b>{formatted_start_date}</b> Time from : <b>{time_from_12hr}</b>", right_text)],
     ]
     
     # Add end date row if multi-day event
@@ -134,13 +134,13 @@ def generate_receipt_pdf(booking_data, output_path):
         
         details_data.append([
             Paragraph("", left_text),
-            Paragraph(f"End Date: <b>{formatted_end_date} {time_to_12hr}</b>", right_text)
+            Paragraph(f"End Date: <b>{formatted_end_date}</b> Time to : <b>{time_to_12hr}</b>", right_text)
         ])
     else:
-        # Single day event - show end time on same row
+        # Single day event - show end time on separate line
         details_data.append([
             Paragraph("", left_text),
-            Paragraph(f"End Time: <b>{time_to_12hr}</b>", right_text)
+            Paragraph(f"End Date: <b>{formatted_start_date}</b> Time to : <b>{time_to_12hr}</b>", right_text)
         ])
     
     details_table = Table(details_data, colWidths=[page_width/2, page_width/2])
