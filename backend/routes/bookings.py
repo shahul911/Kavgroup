@@ -236,6 +236,7 @@ async def generate_receipt(
         'customer_phone': booking['phone'],
         'customer_email': booking.get('email', ''),
         'event_date': booking['eventDate'],
+        'event_end_date': booking.get('eventEndDate'),
         'event_time_from': booking.get('eventTimeFrom', '07:00 AM'),
         'event_time_to': booking.get('eventTimeTo', '08:00 PM'),
         'event_type': booking['eventType'],
